@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SRC=${0%/*}
+SQL=/tmp/chula-gen-db.sql
+cd $SRC
+
+cat /dev/null > $SQL
+
+files=`ls *.sql`
+for file in $files ; do
+    cat $file >> $SQL
+done
+
+psql --quiet -U postgres template1 < $SQL
