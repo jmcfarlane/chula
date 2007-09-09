@@ -47,7 +47,6 @@ class Cookie(object):
         """
         Destroy cookie by saving the expire date to the past
         """
-        logger.debug('Destroying the cookie')
         
         c = Apache.MarshalCookie(self.name, '', self.HMAC)
         c.expires = time.time() - 60 * 1000
@@ -61,15 +60,12 @@ class Cookie(object):
         @type value: Dictionary, list, integer, string
         """
         if value is None:
-            logger.error("No value was given to be persisted")
             raise ValueError, "Please pass the value to be persisted"
 
         c = Apache.MarshalCookie(self.name, value, self.HMAC)
         c.expires = time.time() + 60 * 45
         c.path = path # /foo/bar would restrict the cookie to a directory
         Apache.add_cookie(self.req, c)
-        logger.debug('cookie persisted: name:%s, value:%s' % (self.name,
-                                                                  value))
         self.cookies[self.name] = c
 
     def value(self):
@@ -80,10 +76,8 @@ class Cookie(object):
         
         try:
             value = self.cookies[self.name].value
-            logger.debug('value() returning: %s' % value)
             return value
         except KeyError, ex:
             msg = 'Requested cookie does not exist: %s' % self.name
-            logger.exception(msg)
             raise KeyError, msg
 

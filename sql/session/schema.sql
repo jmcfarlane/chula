@@ -1,13 +1,13 @@
-DROP DATABASE session;
+DROP DATABASE chula_session;
 
-CREATE DATABASE session WITH
+CREATE DATABASE chula_session WITH
     OWNER = postgres
     TEMPLATE = template0
     ENCODING = 'UTF-8';
 
-CREATE USER session;
+CREATE USER chula;
 
-\c session
+\c chula_session
 
 -- Install LANGUAGE plpgsql;
 CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler AS
@@ -23,15 +23,13 @@ CREATE TABLE session
 (
     id SERIAL PRIMARY KEY,
     guid VARCHAR(64) UNIQUE NOT NULL,
-    created_dt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    updated_dt TIMESTAMPTZ,
+    created TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMPTZ,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     values TEXT
 );
-ALTER TABLE session OWNER TO postgres;
-GRANT ALL ON TABLE session TO postgres;
-GRANT ALL ON TABLE session TO session;
-GRANT ALL ON TABLE session_id_seq TO session;
+GRANT ALL ON TABLE session TO chula;
+GRANT ALL ON TABLE session_id_seq TO chula;
 
 --Create an index on the guid
 CREATE INDEX session_guid_idx ON session (guid);
@@ -62,7 +60,7 @@ BEGIN
         IF FOUND THEN
             --Update the existing session
             UPDATE session SET
-                updated_dt = CURRENT_TIMESTAMP,
+                updated = CURRENT_TIMESTAMP,
                 values = _values,
                 active = _active
             WHERE guid = rs.guid;

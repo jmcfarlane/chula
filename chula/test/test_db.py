@@ -33,62 +33,59 @@ class Test_db(unittest.TestCase):
         self.int = 7
         self.str = "foobar"
 
-    def test_clean_bool(self):
-        self.assertEqual(db.clean_bool(True), 'TRUE')
-        self.assertEqual(db.clean_bool(1), 'TRUE')
-        self.assertEqual(db.clean_bool('1'), 'TRUE')
-        self.assertEqual(db.clean_bool('true'), 'TRUE')
-        self.assertEqual(db.clean_bool('t'), 'TRUE')
-        self.assertEqual(db.clean_bool('y'), 'TRUE')
-        self.assertEqual(db.clean_bool('On'), 'TRUE')
-        self.assertEqual(db.clean_bool(False), 'FALSE')
-        self.assertEqual(db.clean_bool(0), 'FALSE')
-        self.assertEqual(db.clean_bool('0'), 'FALSE')
-        self.assertEqual(db.clean_bool('false'), 'FALSE')
-        self.assertEqual(db.clean_bool('f'), 'FALSE')
-        self.assertEqual(db.clean_bool('n'), 'FALSE')
-        self.assertEqual(db.clean_bool('Off'), 'FALSE')
-        self.assertEqual(db.clean_bool(None), 'NULL')
-        self.assertEqual(db.clean_bool(''), 'NULL')
-        self.assertRaises(ValueError,
-                          db.clean_bool,
-                          datetime.datetime.now())
+    def test_cbool(self):
+        self.assertEqual(db.cbool(True), 'TRUE')
+        self.assertEqual(db.cbool(1), 'TRUE')
+        self.assertEqual(db.cbool('1'), 'TRUE')
+        self.assertEqual(db.cbool('true'), 'TRUE')
+        self.assertEqual(db.cbool('t'), 'TRUE')
+        self.assertEqual(db.cbool('y'), 'TRUE')
+        self.assertEqual(db.cbool('On'), 'TRUE')
+        self.assertEqual(db.cbool(False), 'FALSE')
+        self.assertEqual(db.cbool(0), 'FALSE')
+        self.assertEqual(db.cbool('0'), 'FALSE')
+        self.assertEqual(db.cbool('false'), 'FALSE')
+        self.assertEqual(db.cbool('f'), 'FALSE')
+        self.assertEqual(db.cbool('n'), 'FALSE')
+        self.assertEqual(db.cbool('Off'), 'FALSE')
+        self.assertEqual(db.cbool(None), 'NULL')
+        self.assertEqual(db.cbool(''), 'NULL')
+        self.assertRaises(ValueError, db.cbool, datetime.datetime.now())
     
-    def test_clean_date(self):
-        self.assertEqual(db.clean_date(None), 'NULL')
-        self.assertEqual(db.clean_date(''), 'NULL')
-        self.assertEqual(db.clean_date('1/1/2005'), "'1/1/2005'")
-        self.assertEqual(db.clean_date('now()', bool_dbfunction=True),
-                         'now()')
+    def test_cdate(self):
+        self.assertEqual(db.cdate(None), 'NULL')
+        self.assertEqual(db.cdate(''), 'NULL')
+        self.assertEqual(db.cdate('1/1/2005'), "'1/1/2005'")
+        self.assertEqual(db.cdate('now()', dodbfunction=True), 'now()')
         # Not leap year
-        self.assertEqual(db.clean_date('2/29/2008'), "'2/29/2008'")
-        self.assertRaises(ValueError, db.clean_date, 2)
-        self.assertRaises(ValueError, db.clean_date, '1/41/2005')
+        self.assertEqual(db.cdate('2/29/2008'), "'2/29/2008'")
+        self.assertRaises(ValueError, db.cdate, 2)
+        self.assertRaises(ValueError, db.cdate, '1/41/2005')
         # Leap year
-        self.assertRaises(ValueError, db.clean_date, '2/29/2006')
+        self.assertRaises(ValueError, db.cdate, '2/29/2006')
     
-    def test_clean_float(self):
-        self.assertEqual(db.clean_float(None), 'NULL')
-        self.assertEqual(db.clean_float(35), 35)
-        self.assertEqual(db.clean_float('35'), 35)
-        self.assertEqual(db.clean_float(35.00), 35.00)
-        self.assertEqual(db.clean_float(35.000000001), 35.000000001)
-        self.assertEqual(db.clean_float('35.000000001'), 35.000000001)
-        self.assertRaises(ValueError, db.clean_float, True)
-        self.assertRaises(ValueError, db.clean_float, False)
-        self.assertRaises(ValueError, db.clean_float, '35a')
+    def test_cfloat(self):
+        self.assertEqual(db.cfloat(None), 'NULL')
+        self.assertEqual(db.cfloat(35), 35)
+        self.assertEqual(db.cfloat('35'), 35)
+        self.assertEqual(db.cfloat(35.00), 35.00)
+        self.assertEqual(db.cfloat(35.000000001), 35.000000001)
+        self.assertEqual(db.cfloat('35.000000001'), 35.000000001)
+        self.assertRaises(ValueError, db.cfloat, True)
+        self.assertRaises(ValueError, db.cfloat, False)
+        self.assertRaises(ValueError, db.cfloat, '35a')
         
-    def test_clean_int(self):
-        self.assertEqual(db.clean_int(None), 'NULL')
-        self.assertEqual(db.clean_int(35), 35)
-        self.assertEqual(db.clean_int('35'), 35)
-        self.assertEqual(db.clean_int('Null'), 'NULL')
-        self.assertRaises(ValueError, db.clean_int, True)
-        self.assertRaises(ValueError, db.clean_int, False)
-        self.assertRaises(ValueError, db.clean_int, '35a')
+    def test_cint(self):
+        self.assertEqual(db.cint(None), 'NULL')
+        self.assertEqual(db.cint(35), 35)
+        self.assertEqual(db.cint('35'), 35)
+        self.assertEqual(db.cint('Null'), 'NULL')
+        self.assertRaises(ValueError, db.cint, True)
+        self.assertRaises(ValueError, db.cint, False)
+        self.assertRaises(ValueError, db.cint, '35a')
     
-    def test_clean_str(self):
-        clean = db.clean_str
+    def test_cstr(self):
+        clean = db.cstr
         self.assertEqual(clean('Null'), 'NULL')
         self.assertEqual(clean(''), "''")
         self.assertEqual(clean(""), "''")
@@ -101,20 +98,20 @@ class Test_db(unittest.TestCase):
         self.assertEqual(clean("don''t"), "'don''''t'")
         self.assertEqual(clean('a'), "'a'")
         self.assertEqual(clean("a'"), "'a'''")
-        self.assertEqual(clean("a'", bool_quote=False), "a''")
-        self.assertEqual(clean("a'", bool_quote=False, bool_escape=False), "a'")
+        self.assertEqual(clean("a'", doquote=False), "a''")
+        self.assertEqual(clean("a'", doquote=False, doescape=False), "a'")
         self.assertEqual(clean(None), 'NULL')
         self.assertEqual(clean(5), "'5'")
         self.assertEqual(clean(True), "'True'")
         self.assertEqual(clean(False), "'False'")
     
-    def test_clean_tags(self):
-        self.assertEqual(db.clean_tags('abc'), "'abc'")
-        self.assertEqual(db.clean_tags('Abc'), "'abc'")
-        self.assertEqual(db.clean_tags('a b c'), "'a b c'")
-        self.assertRaises(ValueError, db.clean_tags, 'abc!')
-        self.assertRaises(ValueError, db.clean_tags, None)
-        self.assertRaises(ValueError, db.clean_tags, 4)
+    def test_ctags(self):
+        self.assertEqual(db.ctags('abc'), "'abc'")
+        self.assertEqual(db.ctags('Abc'), "'abc'")
+        self.assertEqual(db.ctags('a b c'), "'a b c'")
+        self.assertRaises(ValueError, db.ctags, 'abc!')
+        self.assertRaises(ValueError, db.ctags, None)
+        self.assertRaises(ValueError, db.ctags, 4)
     
     def test_empty2null(self):
         self.assertEqual(db.empty2null(''), 'NULL')
@@ -123,15 +120,12 @@ class Test_db(unittest.TestCase):
         self.assertEqual(db.empty2null(2), 2)
     
 def run_unittest():
-    # Never change this, leave as is
     unittest.TextTestRunner(verbosity=2).run(get_tests())
 
 def get_tests():
-    # Replace "example" with the name of your test class and module name
     tests = unittest.makeSuite(Test_db)
     tests.addTest(doctest.DocTestSuite(db))
     return tests
 
 if __name__ == '__main__':
-    # Never change this, leave as is
     run_unittest()

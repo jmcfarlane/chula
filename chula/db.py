@@ -31,7 +31,7 @@ class Datastore(object):
     only implemented using psycopg2.
     """
     
-    def __init__(self, str_conn, str_passwd=''):
+    def __init__(self, conn, passwd=''):
         """
         Datastore constructor. Creates an instance of the Datastore class.
         
@@ -43,27 +43,27 @@ class Datastore(object):
             
             eg: pg:username@server/databasename
         
-        @param str_conn: Connection string
-        @type str_conn: String
-        @param str_passwd: Database password
-        @type str_passwd: String
+        @param conn: Connection string
+        @type conn: String
+        @param passwd: Database password
+        @type passwd: String
         @return: Instance
         
-            >>> obj_conn = Datastore('pg:chula@localhost/chulatest', 'password')
+            >>> conn = Datastore('pg:chula@localhost/chula_test', 'passwd')
             
         """
         
         # TODO: Add regex check on the connection string
-        tup_db = (str_conn[str_conn.find('@')+1:str_conn.find('/')],
-                  str_conn[str_conn.find('/')+1:],
-                  str_conn[str_conn.find(':')+1:str_conn.find('@')],
-                  str_passwd)
+        dbinfo = (conn[conn.find('@')+1:conn.find('/')],
+                  conn[conn.find('/')+1:],
+                  conn[conn.find(':')+1:conn.find('@')],
+                  passwd)
         
         self.conn = psycopg2.connect(
-            ('host=%s dbname=%s user=%s password=%s') % (tup_db)
+            ('host=%s dbname=%s user=%s password=%s') % (dbinfo)
         )
         
-    def set_isolation(self, int_level=1):
+    def set_isolation(self, level=1):
         """
         Toggle the isolation level. Here are the available
         isolation levels:
@@ -71,12 +71,11 @@ class Datastore(object):
             - 1 = READ COMMITTED (the default)
             - 3 = SERIALIZABLE
         
-        @param int_level: Isolation level
-        @type int_level: Integer
-        @return: Nothing
+        @param level: Isolation level
+        @type level: Integer
         """
         
-        self.conn.set_isolation_level(int_level)
+        self.conn.set_isolation_level(level)
     
     def close(self):
         """
@@ -99,41 +98,44 @@ class Datastore(object):
         
         self.conn.rollback()
     
-    def cursor(self, str_type='dict'):
+    def cursor(self, type='dict'):
         """
         Create database cursor.
         
+        @param type: Type of cursor to return
+        @type type: string, I{dict} or I{tuple}
         @return: Instance
         """
-        if str_type == 'tuple':
+        if type == 'tuple':
             return self.conn.cursor(cursor_factory=Cursor)
         else:
             return self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
-    def execute(self, str_sql):
+    def execute(self, sql):
         """
-        Execute I{SQL} statement.
+        Execute I{sql} statement.
         
-        @param str_sql: SQL statement to execute
-        @type str_sql: String
+        @param sql: sql statement to execute
+        @type sql: String
         @return: Cursor
         
-            >>> obj_conn = Datastore('pg:chula@localhost/chulatest', 'password')
-            >>> obj_rs = obj_conn.cursor()
-            >>> obj_rs.execute("SELECT * FROM cars;")
-            >>> obj_rs.execute("INSERT INTO cars(make, model) VALUES('Honda', 'Civic');")
-            >>> obj_conn.commit()
+            >>> conn = Datastore('pg:chula@localhost/chula_test', 'password')
+            >>> rs = conn.cursor()
+            >>> rs.execute("SELECT * FROM cars;")
+            >>> sql = "INSERT INTO cars(make, model) VALUES('Honda', 'Civic');"
+            >>> rs.execute(sql)
+            >>> conn.commit()
             
         """
         
-        print "I think this function needs to be depricated?"
-        str_temp = str_sql.upper()
-        print str_temp.find('DELETE')
-        if str_temp.find('UPDATE') >= 0 or str_temp.find('DELETE') >= 0:
-            if str_temp.find('WHERE') <= 0:
+        #TODO: I think this function needs to be depricated?
+        temp = sql.upper()
+        print temp.find('DELETE')
+        if temp.find('UPDATE') >= 0 or temp.find('DELETE') >= 0:
+            if temp.find('WHERE') <= 0:
                 raise Exception, 'Dummy, please try adding a WHERE clause!'
             
-        return self.cursor().execute(str_sql)
+        return self.cursor().execute(sql)
 
 class Cursor(psycopg2.extensions.cursor):
     """
@@ -163,38 +165,39 @@ class Cursor(psycopg2.extensions.cursor):
         d = psycopg2.extensions.cursor.fetchmany(self)
         return d
     
-def clean_bool(str_input):
+def cbool(input):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it will
     return 'NULL' so as to insert a NULL value into the database.
     
-    @param str_input: String to be cleaned
-    @type str_input: String
+    @param input: String to be cleaned
+    @type input: String
     @return: String I{TRUE/FALSE}, or 'NULL'
     
-        >>> print 'SET active = %s;' % clean_bool(True)
+        >>> print 'SET active = %s;' % cbool(True)
         SET active = TRUE;
     
     """
     
-    if str_input is None or str_input == '': return 'NULL'
+    if input is None or input == '': return 'NULL'
     
-    if isinstance(str_input, str):
-        list_true = [1, 'on', 't', 'true', 'y', 'yes', '1']
-        list_false = [0, 'off', 'f', 'false', 'n', 'no', '0']
-        str_input = str_input.lower()
+    if isinstance(input, str):
+        true = [1, 'on', 't', 'true', 'y', 'yes', '1']
+        false = [0, 'off', 'f', 'false', 'n', 'no', '0']
+        input = input.lower()
     else:
-        list_true = [True]
-        list_false = [False]
+        true = [True]
+        false = [False]
         
-    if str_input in list_true:
+    if input in true:
         return 'TRUE'
-    elif str_input in list_false:
+    elif input in false:
         return 'FALSE'
     else:
-        raise ValueError, "Unable to determine boolean from " + type(str_input).__name__
+        msg = "Unable to determine boolean from " + type(input).__name__
+        raise ValueError, msg
 
-def clean_date(str_input, bool_quote=True, bool_dbfunction=False):
+def cdate(input, doquote=True, dodbfunction=False):
     """
     Returns a formatted string safe for use in SQL. If None or an empty
     string is passed, it will return 'NULL' so as to insert a NULL value
@@ -203,32 +206,31 @@ def clean_date(str_input, bool_quote=True, bool_dbfunction=False):
     B{Todo:}
     I{This function needs to be able to receive datetime.datetime types too.}
     
-    @param str_input: Date to be cleaned
-    @type str_input: String
+    @param input: Date to be cleaned
+    @type input: String
     @return: String, or 'NULL'
     
-        >>> print 'SET date_updated = %s;' % clean_date('1/1/2005')
-        SET date_updated = '1/1/2005';
+        >>> print 'SET updated = %s;' % cdate('1/1/2005')
+        SET updated = '1/1/2005';
         
-        >>> print 'SET date_updated = %s;' % clean_date('now()', bool_dbfunction=True)
-        SET date_updated = now();
+        >>> print 'SET updated = %s;' % cdate('now()', dodbfunction=True)
+        SET updated = now();
     
     """
     
     # Is the value NULL
-    if str_input is None or str_input == '':
+    if input is None or input == '':
         return 'NULL'
     else:
-        if not bool_dbfunction and not data.isdate(str_input):
-            print 'Invalid date:', str_input
+        if not dodbfunction and not data.isdate(input):
             raise ValueError, 'Value passed is not a valid date.'
         
-        if bool_quote and not bool_dbfunction:
-            str_input = data.str_wrap(str_input, "'")
+        if doquote and not dodbfunction:
+            input = data.wrap(input, "'")
         
-    return str_input
+    return input
 
-def clean_float(str_input):
+def cfloat(input):
     """
     Returns a formatted string safe for use in SQL. If None is
     passed, it will return 'NULL' so as to insert a NULL value
@@ -238,31 +240,30 @@ def clean_float(str_input):
     I{If True/False is passed should these be
     converted to 1/0 respectively?}
         
-    @param str_input: Float to be cleaned
-    @type str_input: Anything
+    @param input: Float to be cleaned
+    @type input: Anything
     @return: Float, or 'NULL'
     
-        >>> print 'WHERE field = %s;' % clean_float("45")
+        >>> print 'WHERE field = %s;' % cfloat("45")
         WHERE field = 45.0;
     
     """
     
     # Check if the data passed is really NULL
-    if str_input is None: return 'NULL'
-    if str_input is True or str_input is False:
+    if input is None: return 'NULL'
+    if input is True or input is False:
         raise ValueError, 'True/False is not valid integer. Convert to 0/1?'
     try:
-        if str_input.upper() == 'NULL' or str_input == '': return 'NULL'
+        if input.upper() == 'NULL' or input == '': return 'NULL'
     except:
         pass
     
     try:
-        return float(str_input)
+        return float(input)
     except:
-        print "Invalid float:", str_input
         raise ValueError, 'Value passed cannot be safely stored as float'
 
-def clean_int(str_input):
+def cint(input):
     """
     Returns a formatted string safe for use in SQL. If None is
     passed, it will return 'NULL' so as to insert a NULL value
@@ -272,31 +273,31 @@ def clean_int(str_input):
     I{If True/False is passed should these be
     converted to 1/0 respectively?}  
       
-    @param str_input: Integer to be cleaned
-    @type str_input: Anything
+    @param input: Integer to be cleaned
+    @type input: Anything
     @return: Integer, or 'NULL'
     
-        >>> print 'WHERE field = %s;' % clean_int("45")
+        >>> print 'WHERE field = %s;' % cint("45")
         WHERE field = 45;
     
     """
     
     # Check if the data passed is really NULL
-    if str_input is None: return 'NULL'
-    if str_input is True or str_input is False:
+    if input is None: return 'NULL'
+    if input is True or input is False:
         raise ValueError, 'True/False is not valid integer. Convert to 0/1?'
     try:
-        if str_input.upper() == 'NULL' or str_input == '': return 'NULL'
+        if input.upper() == 'NULL' or input == '': return 'NULL'
     except:
         pass
     
     try:
-        return int(str_input)
+        return int(input)
     except:
-        print "Invalid int:", str_input
-        raise ValueError, 'Value passed cannot be safely stored as int: ' + str(str_input)
+        msg = 'Value passed cannot be safely stored as int: ' + str(input)
+        raise ValueError, msg
 
-def clean_str(str_input, bool_quote=True, bool_escape=True):
+def cstr(input, doquote=True, doescape=True):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it will
     return 'NULL' so as to insert a NULL value into the database. Single
@@ -306,83 +307,74 @@ def clean_str(str_input, bool_quote=True, bool_escape=True):
     I{This function needs to support mssql's annoying single quote padding
     style too.}
     
-    @param str_input: String to be cleaned
-    @type str_input: String
-    @param bool_quote: I{OPTIONAL}: Wrapped in single quotes, defaults to B{True}
-    @type bool_quote: Boolean
-    @param bool_escape: I{OPTIONAL}: Escape single quotes, defaults to B{True}
-    @type bool_escape: Boolean
+    @param input: String to be cleaned
+    @type input: String
+    @param doquote: I{OPTIONAL}: Wrapped in single quotes, defaults to B{True}
+    @type doquote: Boolean
+    @param doescape: I{OPTIONAL}: Escape single quotes, defaults to B{True}
+    @type doescape: Boolean
     @return: String, or 'NULL'
     
-        >>> print 'SET description = %s;' % clean_str("I don't")
+        >>> print 'SET description = %s;' % cstr("I don't")
         SET description = 'I don''t';
-        >>> print 'SET date_now = %s;' % clean_str("CURRENT_TIME", bool_quote=False)
-        SET date_now = CURRENT_TIME;
+        >>> print 'SET now = %s;' % cstr("CURRENT_TIME", doquote=False)
+        SET now = CURRENT_TIME;
     
     """
     
     # Is the value NULL
-    if str_input is None: return 'NULL'
+    if input is None: return 'NULL'
     
     try:
-        str_input = str(str_input)
-        if str_input.upper() == 'NULL': return 'NULL'
+        input = str(input)
+        if input.upper() == 'NULL': return 'NULL'
     except:
         pass
     
-    if not data.isstr(str_input):
-        print 'Invalid string:', str_input
+    if not data.isstr(input):
+        print 'Invalid string:', input
         raise ValueError, "Value is not a string."
     
     # Is the value an empty string
-    if str_input == '':
+    if input == '':
         return "''"
     
-    if bool_escape:
-        dict_escape = {"'":"''", "\\":"\\\\"}
-        str_input = data.replace_all(dict_escape, str_input)
+    if doescape:
+        escape = {"'":"''", "\\":"\\\\"}
+        input = data.replace_all(escape, input)
 
-    if bool_quote:
-        str_input = data.str_wrap(str_input, "'")
-    return str_input
+    if doquote:
+        input = data.wrap(input, "'")
+    return input
 
-def clean_tags(str_input):
+def ctags(input):
     """
     Returns a string safe for use in a sql statement
-    @param: str_input
-    @type str_input: Anything
+    @param: input
+    @type input: Anything
     @return: 'NULL', or input string
     
-        >>> print clean_tags('')
+        >>> print ctags('')
         NULL
     """
-    if str_input == '':
+    if input == '':
         return 'NULL'
     
-    list_tags = data.str2tags(str_input)
-    str_tags = data.tags2str(list_tags)
-    return "'%s'" % str_tags.lower()
+    tags = data.str2tags(input)
+    tags = data.tags2str(tags)
+    return "'%s'" % tags.lower()
 
-def empty2null(str_input):
+def empty2null(input):
     """
     Returns NULL if an empty string is passed, else returns the input string.
-    @param: str_input
-    @type str_input: Anything
+    @param: input
+    @type input: Anything
     @return: 'NULL', or input string
     
         >>> print empty2null('')
         NULL
     """
-    if str_input == '':
+    if input == '':
         return 'NULL'
     else:
-        return str_input
-    
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()
-
-        
+        return input

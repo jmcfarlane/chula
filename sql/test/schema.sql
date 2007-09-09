@@ -1,13 +1,13 @@
-DROP DATABASE chulatest;
+DROP DATABASE chula_test;
 
-CREATE DATABASE chulatest WITH
+CREATE DATABASE chula_test WITH
     OWNER = postgres
     TEMPLATE = template0
     ENCODING = 'UTF-8';
 
 CREATE USER chula;
 
-\c chulatest
+\c chula_test
 
 -- Test table
 CREATE TABLE cars (

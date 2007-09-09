@@ -9,14 +9,14 @@ from types import *
 import string
 from chula import regex
 
-def chart_scale(num_input):
+def chart_scale(input):
     """
     Formats a numeric value to a clean rounded number usefull for
     drawing charts.  This can be used to generate the scale by which
     all data points in a graph represent a percentage of.
     
-    @param num_input: Data to be rounded to new value
-    @type num_input: Int, Long, Float
+    @param input: Data to be rounded to new value
+    @type input: Int, Long, Float
     @return: Long
     
         >>> print chart_scale(300)
@@ -24,59 +24,59 @@ def chart_scale(num_input):
     """
     import math
     try:
-        num_input = float(num_input)
+        input = float(input)
     except:
         raise ValueError, 'Value passed is not numeric'
     
-    return math.ceil((num_input * 1.1) / 10) * 10
+    return math.ceil((input * 1.1) / 10) * 10
 
-def commaify(str_input):
+def commaify(input):
     """
     Formats a string representation of a number so it looks nice.
     This is handy for presentation of currency for example.
     
-    @param str_input: Data to have commas added every third place.
-    @type str_input: String
+    @param input: Data to have commas added every third place.
+    @type input: String
     @return: String
     
         >>> print commaify('45000000000')
         45,000,000,000
     """
     
-    if not isstr(str_input):
+    if not isstr(input):
         raise ValueError, 'Value passed is not a string.'
     
     #TODO: learn from and improve this:
     #if num > 1000:  return '%s,%03d' % (commaify(num/1000), num % 1000)
     #else:           return str(num)
-    if str_input[0] == '-':
-        str_sign = '-'
-        str_input = str_input[1:]
+    if input[0] == '-':
+        sign = '-'
+        input = input[1:]
     else:
-        str_sign = ''
+        sign = ''
         
-    list_input = str_input.split('.')
-    str_whole = list_input[0]
-    if len(str_whole) > 3:
-        #str_whole = commaify(str_whole[:-3]) + ',' + str_whole[:3]
-        #str_whole = str_whole[:-3] + ',' + str_whole[-3:]
-        str_whole = commaify(str_whole[:-3]) + ',' + str_whole[-3:]
-        #str_whole = commaify(str_whole[-3:]) + ',' + str_whole[:3]
+    input = input.split('.')
+    whole = input[0]
+    if len(whole) > 3:
+        #whole = commaify(whole[:-3]) + ',' + whole[:3]
+        #whole = whole[:-3] + ',' + whole[-3:]
+        whole = commaify(whole[:-3]) + ',' + whole[-3:]
+        #whole = commaify(whole[-3:]) + ',' + whole[:3]
     
-    if len(list_input) > 1:
-        str_input = str_whole + '.' + list_input[1]
+    if len(input) > 1:
+        input = whole + '.' + input[1]
         pass
     else:
-        str_input = str_whole
+        input = whole
         
-    return str_sign + str_input
+    return sign + input
 
-def csv2list(str_input):
+def csv2list(input):
     """
     Make it easy to loop over "CSV" files.
     
-    @param str_input: Data to be processed
-    @type str_input: String
+    @param input: Data to be processed
+    @type input: String
     @return: List of dictionaries
     
         >>> # Simulate the return of open('foo.csv').readlines()[:]
@@ -97,52 +97,52 @@ def csv2list(str_input):
     from operator import itemgetter
     
     # Get a list of the data
-    list_input = str_input.split('\n')
+    input = input.split('\n')
     
     # Determine the most likely delimiter
-    dict_delim = {'\t':list_input[0].count('\t'),
-                  ',':list_input[0].count(','),
-                  ';':list_input[0].count(';')}
-    delim = sorted(dict_delim.items(), key=itemgetter(1), reverse=True)[0][0]
+    delim = {'\t':input[0].count('\t'),
+             ',':input[0].count(','),
+             ';':input[0].count(';')}
+    delim = sorted(delim.items(), key=itemgetter(1), reverse=True)[0][0]
 
     # Begin to generate the list of dictionaries
     irow = 0
-    list_output = []
+    output = []
     LIST_COLS = []
-    for row in list_input:
-        list_cols = row.split(delim)
+    for row in input:
+        cols = row.split(delim)
         if irow == 0:
             icol = 0
-            for col in list_cols:
+            for col in cols:
                 if col is None or col == '':
                     col = 'column-%s' % icol
                 LIST_COLS.append(col)
                 icol += 1
         else:
-            dict_row = {}
+            row = {}
             icol = 0
-            for col in list_cols:
+            for col in cols:
                 try:
-                    dict_row[LIST_COLS[icol]] = col
+                    row[LIST_COLS[icol]] = col
                 except IndexError:
                     #print "column[%s] missing head: %s" % (icol, col)
                     pass
                 icol += 1
-            list_output.append(dict_row)
+            output.append(row)
         irow += 1
     
-    return list_output
+    return output
 
-def date_add(str_unit, int_delta, obj_date):
+def date_add(unit, delta, date):
     """
     Add or subtract from the date passed.
     
-    @param str_unit: Unit of measure (B{s}econds/B{m}inutes/B{h}ours/B{d}ays/B{w}eeks).
-    @type str_unit: String
-    @param int_delta: Offset, amount to adjust the date by.
-    @type int_delta: Integer
-    @param obj_date: Date to be added/subtracted to/from
-    @type obj_date: datetime.datetime
+    @param unit: Unit of measure (B{s}econds/B{m}inutes/B{h}ours/B{d}ays/B{w}eeks).
+    @type unit: String
+    @param delta: Offset, amount to adjust the date by.
+    @type delta: Integer
+    @param date: Date to be added/subtracted to/from
+    @type date: datetime.datetime
     @return: datetime.datetime object
     
         >>> start = str2datetime('1/1/2005 11:35')
@@ -151,33 +151,33 @@ def date_add(str_unit, int_delta, obj_date):
     
     """
     
-    date_initial = obj_date
-    if str_unit == 'seconds' or str_unit == 's':
-        obj_delta = datetime.timedelta(seconds=int_delta)
-    elif str_unit == 'minutes' or str_unit == 'm':
-        obj_delta = datetime.timedelta(minutes=int_delta)
-    elif str_unit == 'hours' or str_unit == 'h':
-        obj_delta = datetime.timedelta(hours=int_delta)
-    elif str_unit == 'days' or str_unit == 'd':
-        obj_delta = datetime.timedelta(days=int_delta)
-    elif str_unit == 'weeks' or str_unit == 'w':
-        obj_delta = datetime.timedelta(months=int_delta)
+    initial = date
+    if unit == 'seconds' or unit == 's':
+        delta = datetime.timedelta(seconds=delta)
+    elif unit == 'minutes' or unit == 'm':
+        delta = datetime.timedelta(minutes=delta)
+    elif unit == 'hours' or unit == 'h':
+        delta = datetime.timedelta(hours=delta)
+    elif unit == 'days' or unit == 'd':
+        delta = datetime.timedelta(days=delta)
+    elif unit == 'weeks' or unit == 'w':
+        delta = datetime.timedelta(months=delta)
     else:
         return False
         
-    return date_initial + obj_delta
+    return initial + delta
 
-def datetime_diff(obj_start, obj_stop, str_unit='seconds'):
+def datetime_diff(start, stop, unit='seconds'):
     """
     Calculates the difference between two dates.
     
-    @param obj_start: Start time
-    @type obj_start: datetime.datetime
-    @param obj_stop: Stop time
-    @type obj_stop: datetime.datetime
-    @param str_unit: Unit of measure (B{s}econds/B{m}inutes/B{h}ours/B{d}ays/B{w}eeks).
-    @type str_unit: String
-    @return: Integer (defaults to seconds, if str_unit not passed)
+    @param start: Start time
+    @type start: datetime.datetime
+    @param stop: Stop time
+    @type stop: datetime.datetime
+    @param unit: Unit of measure B{s}econds/B{m}inutes/B{h}ours/B{d}ays/B{w}eeks
+    @type unit: String
+    @return: Integer (defaults to seconds, if unit not passed)
     
         >>> start = str2datetime('1/1/2005')
         >>> stop = str2datetime('1/5/2005')
@@ -188,15 +188,15 @@ def datetime_diff(obj_start, obj_stop, str_unit='seconds'):
 
     """
     
-    if obj_start > obj_stop:
-        obj_start, obj_stop = obj_stop, obj_start
-        bool_sign = -1
+    if start > stop:
+        start, stop = stop, start
+        issign = -1
     else:
-        bool_sign = 1
+        issign = 1
     
-    obj_diff = obj_stop - obj_start
-    days = obj_diff.days
-    minutes, seconds = divmod(obj_diff.seconds, 60)
+    diff = stop - start
+    days = diff.days
+    minutes, seconds = divmod(diff.seconds, 60)
     hours, minutes = divmod(minutes, 60)
     
     seconds += round((days * 86400) + (hours * 3600) + (minutes * 60))
@@ -205,18 +205,18 @@ def datetime_diff(obj_start, obj_stop, str_unit='seconds'):
     days = round(days)
     weeks = round(days * 7)
     
-    if str_unit == 'minutes' or str_unit == 'm':
-        return minutes * bool_sign 
-    elif str_unit == 'hours' or str_unit == 'h':
-        return hours * bool_sign 
-    elif str_unit == 'days' or str_unit == 'd':
-        return days * bool_sign
-    elif str_unit == 'weeks' or str_unit == 'w':
-        return weeks * bool_sign
+    if unit == 'minutes' or unit == 'm':
+        return minutes * issign 
+    elif unit == 'hours' or unit == 'h':
+        return hours * issign 
+    elif unit == 'days' or unit == 'd':
+        return days * issign
+    elif unit == 'weeks' or unit == 'w':
+        return weeks * issign
     else:
-        return seconds * bool_sign
+        return seconds * issign
 
-def datetime_within_range(str_time, int_offset, time_now=False):
+def datetime_within_range(time, offset, now=False):
     """
     The idea is to provide shorthand for "is foobar time within 02:00 + 30 min".
     This can be usefull for things that look for time periods when different
@@ -224,12 +224,12 @@ def datetime_within_range(str_time, int_offset, time_now=False):
     to be slow, as backups are taking place. Anything in the past is considered
     out of range.
     
-    @param str_time: Representation of hours:minutes
-    @type str_time: String representation of time
-    @param int_offset: The size of the range or window
-    @type int_offset: Integer
-    @param time_now: I{Optional} argument to specify time range/window start.
-    @type time_now: datetime.datetime
+    @param time: Representation of hours:minutes
+    @type time: String representation of time
+    @param offset: The size of the range or window
+    @type offset: Integer
+    @param now: I{Optional} argument to specify time range/window start.
+    @type now: datetime.datetime
     @return: Boolean
     
         >>> print datetime_within_range('11:00', 30, str2datetime('1/1/2005 11:25'))
@@ -239,37 +239,37 @@ def datetime_within_range(str_time, int_offset, time_now=False):
     
     """
     
-    arrTime = str_time.split(':')
-    if not time_now:
-        time_now = datetime.datetime.now()
+    arrTime = time.split(':')
+    if not now:
+        now = datetime.datetime.now()
     
     # Calculate the begin time based on today
-    time_begin = datetime.datetime(time_now.year,
-                                   time_now.month,
-                                   time_now.day,
+    begin = datetime.datetime(now.year,
+                                   now.month,
+                                   now.day,
                                    int(arrTime[0]),
                                    int(arrTime[1])
                                   )
-    time_diff = time_now - time_begin
-    #print time_begin, time_now, '(' + str(int_offset) + ')', ' -->', time_diff.seconds / 60
+    diff = now - begin
+    #print begin, now, '(' + str(offset) + ')', ' -->', diff.seconds / 60
     
     # Determine if now() is beyond the begin time (positive number of days)
-    if time_diff.days >= 0:
-        int_minutes = time_diff.seconds / 60
-        if int_minutes <= int_offset:
+    if diff.days >= 0:
+        minutes = diff.seconds / 60
+        if minutes <= offset:
             return True
         else:
             return False
     else:
         return False
 
-def fmt_phone(str_input):
+def fmt_phone(input):
     """
     Format a string into a properly formatted telephone number.  Accepts a few
     common styles of input.
     
-    @param str_input: Telephone number to format
-    @type str_input: String
+    @param input: Telephone number to format
+    @type input: String
     @return: String formatted as: (area) exchange.number
     
         >>> print fmt_phone('555-123-1234')
@@ -277,32 +277,32 @@ def fmt_phone(str_input):
     
     """
     
-    if str_input is None or str_input == '':
-        return str_input
+    if input is None or input == '':
+        return input
     else:
-        str_input = str(str_input)
-        x = len(str_input)
+        input = str(input)
+        x = len(input)
         if x == 12:
-            b = '(%s) %s.%s' % (str_input[0:3], 
-                                str_input[4:7], 
-                                str_input[8:12])
+            b = '(%s) %s.%s' % (input[0:3], 
+                                input[4:7], 
+                                input[8:12])
         elif x == 10:
-            b = '(%s) %s.%s' % (str_input[0:3], 
-                                str_input[3:6], 
-                                str_input[6:10])
+            b = '(%s) %s.%s' % (input[0:3], 
+                                input[3:6], 
+                                input[6:10])
         elif x == 7:
-            b = '%s.%s' % (str_input[0:3], 
-                           str_input[3:7])
+            b = '%s.%s' % (input[0:3], 
+                           input[3:7])
         else:
-            b = str_input #TODO: need to raise error here
+            b = input #TODO: need to raise error here
         return b
 
-def fmt_money(flt_currency):
+def fmt_money(currency):
     """
     Format U.S. currency (two decimal paces)
     
-    @param flt_currency: Currency
-    @type flt_currency: Float
+    @param currency: Currency
+    @type currency: Float
     @return: String
     
         >>> print fmt_money(15000)
@@ -310,15 +310,15 @@ def fmt_money(flt_currency):
     
     
     """
-    if not isint(flt_currency, bool_strict=False):
+    if not isint(currency, isstrict=False):
         raise Exception, "Sorry, the value passed cannot be converted to currency"
         return
-    if flt_currency == -0:
-        flt_currency = 0
-    flt_currency = '%.2f' % (flt_currency)
-    return commaify(flt_currency)
+    if currency == -0:
+        currency = 0
+    currency = '%.2f' % (currency)
+    return commaify(currency)
 
-def isarray(str_input):
+def isarray(input):
     """
     B{NOTE:} This function is depricated and will raise an exception if used.
     Determines if the value passed is an array.  An array is considered one of
@@ -327,8 +327,8 @@ def isarray(str_input):
         2. List
         3. Dict
         
-    @param str_input: Value to evaluate
-    @type str_input: Anything
+    @param input: Value to evaluate
+    @type input: Anything
     @return: True/False
     
     """
@@ -339,47 +339,47 @@ def isarray(str_input):
             2. islist()
             3. isdict()
         """)
-    if istuple(str_input) or islist(str_input) or isdict(str_input):
+    if istuple(input) or islist(input) or isdict(input):
         return True
     else:
         return False
 
-def isboolean(str_input, bool_strict=True):
+def isboolean(input, isstrict=True):
     """
     Determines if the value passes is a boolean.
 
-    @param str_input: Value to evaluate
-    @type str_input: Anything
+    @param input: Value to evaluate
+    @type input: Anything
     @return: True/False
 
         >>> isboolean(True)
         True
-        >>> isboolean('true', bool_strict=False)
+        >>> isboolean('true', isstrict=False)
         True
     """
 
-    list_strict = [True, False]
-    list_loose = [0, 1, 'true', 'false', 'yes', 'no', 'on', 'off']
+    strict = [True, False]
+    loose = [0, 1, 'true', 'false', 'yes', 'no', 'on', 'off']
     
     
-    if str_input in list_strict:
+    if input in strict:
         return True
     else:
-        if not bool_strict:
-            if isstr(str_input): str_input = str_input.lower()
-            if str_input in list_loose:
+        if not isstrict:
+            if isstr(input): input = input.lower()
+            if input in loose:
                 return True
             else:
                 return False
         else:
             return False
 
-def isdate(str_input):
+def isdate(input):
     """
     Determines if the value passed is a date.
             
-    @param str_input: Value to evaluate
-    @type str_input: Anything
+    @param input: Value to evaluate
+    @type input: Anything
     @return: True/False
     
         >>> print isdate('1/1/2005')
@@ -389,17 +389,17 @@ def isdate(str_input):
     
     """
     try:
-        str2datetime(str_input)
+        str2datetime(input)
         return True
     except ValueError:
         return False
 
-def isdict(str_input):
+def isdict(input):
     """
     Determines if the value passed is a dictionary.
             
-    @param str_input: Value to evaluate
-    @type str_input: Anything
+    @param input: Value to evaluate
+    @type input: Anything
     @return: True/False
     
         >>> print isdict({'key':'value'})
@@ -409,48 +409,48 @@ def isdict(str_input):
     
     """
     
-    a = type(str_input).__name__
+    a = type(input).__name__
     if a == 'dict':
         return True
     else:
         return False
     
-def isint(str_input, bool_strict=True):
+def isint(input, isstrict=True):
     """
     Determines if the value passed is an integer.
             
-    @param str_input: Value to evaluate
-    @type str_input: Anything
-    @param bool_strict: Return True if can safely convert to integer
-    @type bool_strict: Boolean
+    @param input: Value to evaluate
+    @type input: Anything
+    @param isstrict: Return True if can safely convert to integer
+    @type isstrict: Boolean
     @return: True/False
     
         >>> print isint(1)
         True
         >>> print isint('1')
         False
-        >>> print isint('1', bool_strict=False)
+        >>> print isint('1', isstrict=False)
         True
     
     """
     
-    if type(str_input) == IntType:
+    if type(input) == IntType:
         return True
     else:
-        if not bool_strict:
+        if not isstrict:
             try:
-                return isint(int(str_input))
+                return isint(int(input))
             except:
                 return False
         else:
             return False
 
-def islist(str_input):
+def islist(input):
     """
     Determines if the value passed is a list.
             
-    @param str_input: Value to evaluate
-    @type str_input: Anything
+    @param input: Value to evaluate
+    @type input: Anything
     @return: True/False
     
         >>> print islist([1, 2])
@@ -462,18 +462,18 @@ def islist(str_input):
     
     """
     
-    a = type(str_input).__name__
+    a = type(input).__name__
     if a == 'list':
         return True
     else:
         return False
 
-def istag(str_input):
+def istag(input):
     """
     Determines if the value passed is a tag.
             
-    @param str_input: Value to evaluate
-    @type str_input: Anything
+    @param input: Value to evaluate
+    @type input: Anything
     @return: True/False
     
         >>> print istag(('foo'))
@@ -484,22 +484,22 @@ def istag(str_input):
     """
     
     import re
-    if isstr(str_input) is False:
+    if isstr(input) is False:
         return False
     
-    if not re.search(regex.TAG, str_input) is None:
+    if not re.search(regex.TAG, input) is None:
         return True
     else:
         return False
 
-def isstr(str_input, bool_strict=True):
+def isstr(input, isstrict=True):
     """
     Determines if the value passed is a string.
             
-    @param str_input: Value to evaluate
-    @type str_input: Anything
-    @param bool_strict: Return True if can safely convert to string
-    @type bool_strict: Boolean
+    @param input: Value to evaluate
+    @type input: Anything
+    @param isstrict: Return True if can safely convert to string
+    @type isstrict: Boolean
     @return: True/False
     
         >>> print isstr('1')
@@ -508,32 +508,32 @@ def isstr(str_input, bool_strict=True):
         False
     
     """
-    if str_input is None: return False
+    if input is None: return False
     
-    obj_type = type(str_input)
-    if obj_type == StringType:
+    otype = type(input)
+    if otype == StringType:
         return True
     # check for mod_python.util.StringField
-    elif obj_type.__name__ == 'StringField':
+    elif otype.__name__ == 'StringField':
         return True
-    elif obj_type == unicode:
+    elif otype == unicode:
         return True
     else:
-        if bool_strict is False:
+        if isstrict is False:
             try:
-                str_input = str(str_input)
+                input = str(input)
                 return True
             except:
                 pass
             
         return False
    
-def istuple(str_input):
+def istuple(input):
     """
     Determines if the value passed is a tuple.
             
-    @param str_input: Value to evaluate
-    @type str_input: Anything
+    @param input: Value to evaluate
+    @type input: Anything
     @return: True/False
     
         >>> print istuple((1,))
@@ -543,27 +543,27 @@ def istuple(str_input):
     
     """
     
-    a = type(str_input).__name__
+    a = type(input).__name__
     if a == 'tuple':
         return True
     else:
         return False
 
-def list2unique(list_input):
+def list2unique(input):
     """
     Returns the list passed, with duplicates removed
     
-    @param list_input: List to be evaluated
-    @type list_input: List
+    @param input: List to be evaluated
+    @type input: List
     @return: List, only containing nique values
     """
-    list_unique = {}
-    for value in list_input:
-        list_unique[value] = 1
+    unique = {}
+    for value in input:
+        unique[value] = 1
         
-    list_input = list_unique.keys()
-    list_input.sort()
-    return list_input
+    input = unique.keys()
+    input.sort()
+    return input
     
 def none2empty(input):
     """
@@ -583,13 +583,13 @@ def none2empty(input):
     if input is None: input = ''
     return input
 
-def replace_all(dict_subs, str_input):
+def replace_all(subs, input):
     """
     Simple text replacement, using an input dictionary against a string.
     
-    @param dict_subs: Dictionary of find/replace values.
-    @type dict_subs: Dictionary
-    @param str_input: String to update
+    @param subs: Dictionary of find/replace values.
+    @type subs: Dictionary
+    @param input: String to update
     @return: Return string with replacements made per the passed dictionary.
     
         >>> print replace_all({'l':'1', 'o':'0'}, "Hello world")
@@ -597,15 +597,15 @@ def replace_all(dict_subs, str_input):
     
     """ 
     
-    if not str_input is None and str_input != '':
+    if not input is None and input != '':
         # Create a regular expression  from the dictionary keys
         regex = re.compile("(%s)" % "|".join(map(re.escape,
-                                                 dict_subs.keys())))
+                                                 subs.keys())))
         # Recursively for each match, look-up corresponding value in dictionary
-        return regex.sub(lambda mo: dict_subs[mo.string[mo.start():mo.end()]],
-                         str_input)
+        return regex.sub(lambda mo: subs[mo.string[mo.start():mo.end()]],
+                         input)
     else:
-        return str_input
+        return input
 
 def str2datetime(x):
     """
@@ -617,6 +617,7 @@ def str2datetime(x):
     
         >>> print str2datetime("10/4/2005 21:45")
         2005-10-04 21:45:00
+
     """
     
     #TODO: Woah this function needs some lovin, really!!
@@ -624,8 +625,9 @@ def str2datetime(x):
         pass
     else:
         if x is None or isint(x) or len(x) < 6:
-            raise ValueError, "Value passed cannot be converted to a date/datetime."
-    
+            msg = "Value passed cannot be converted to a date/datetime."
+            raise ValueError, msg
+
         t = {}
         x = x.replace('-', '/')
 
@@ -671,24 +673,24 @@ def str2datetime(x):
             raise ValueError, "Value passed is not formatted properly."
 
     if len(t) == 6:
-        datetime_tmp = datetime.datetime(int(t['year']), 
-                                         int(t['month']), 
-                                         int(t['day']), 
-                                         int(t['hour']), 
-                                         int(t['minute']), 
-                                         int(t['second']))
+        date = datetime.datetime(int(t['year']), 
+                                 int(t['month']), 
+                                 int(t['day']), 
+                                 int(t['hour']), 
+                                 int(t['minute']), 
+                                 int(t['second']))
     else:
-        datetime_tmp = datetime.datetime(int(t['year']), 
-                                         int(t['month']), 
-                                         int(t['day']))
-    return datetime_tmp
+        date = datetime.datetime(int(t['year']), 
+                                 int(t['month']), 
+                                 int(t['day']))
+    return date
 
-def str2tags(str_input):
+def str2tags(input):
     """
     Convert a string of tags into a sorted list of tags.
     
-    @param str_input: String
-    @type str_input: String
+    @param input: String
+    @type input: String
     @return: List
     
         >>> print str2tags('linux good ms annoying')
@@ -697,134 +699,80 @@ def str2tags(str_input):
     """
     
     import re
-    str_error = "Value passed must be alpha numeric only"
-    if isstr(str_input) is False:
-        raise ValueError, str_error + ': ' + str(str_input)
+    error = "Value passed must be alpha numeric only"
+    if isstr(input) is False:
+        raise ValueError, error + ': ' + str(input)
     else:
         # Replace commas with spaces, and remove extra spaces
-        str_input = re.sub(r'[ ,+]+', ' ', str_input)
+        input = re.sub(r'[ ,+]+', ' ', input)
     
-    if str_input == '':
+    if input == '':
         return []
     
-    if not re.search(regex.TAGS, str_input) is None:
-        str_input = str_input.lower()
-        list_tags = list2unique(str_input.split(' '))
+    if not re.search(regex.TAGS, input) is None:
+        input = input.lower()
+        tags = list2unique(input.split(' '))
         
-        return list_tags
+        return tags
     else:
-        raise ValueError, str_error + ': ' + str(str_input)
+        raise ValueError, error + ': ' + str(input)
 
-def str_wrap(str_input, str_wrap_with):
+def wrap(input, wrap):
     """
     Wrap a string with something.
     
-    @param str_input: String to wrap
-    @type str_input: String
-    @param str_wrap_with: String to wrap with
-    @type str_wrap_with: String
+    @param input: String to wrap
+    @type input: String
+    @param wrap: String to wrap with
+    @type wrap: String
     @return: String wrapped by value passed
     
-        >>> print str_wrap('sql', "'")
+        >>> print wrap('sql', "'")
         'sql'
     
     """
     
-    return str_wrap_with + str_input + str_wrap_with
+    return wrap + input + wrap
 
-def tags2str(list_input):
+def tags2str(input):
     """
     Convert a list of tags into a tsearch2 compliant string. Note that this
     string is not single quote padded for use with an sql insert statement.
-    For that, pass the returened value to:  db.clean_tags()
+    For that, pass the returened value to:  db.ctags()
     
-    @param list_input: List of valid tags
-    @type list_input: List
+    @param input: List of valid tags
+    @type input: List
     @return: List
     
         >>> print tags2str(['annoying', 'good', 'linux', 'ms'])
         annoying good linux ms
     
     """
-    if islist(list_input) is False:
-        str_error = "The list of tags passed is not a list"
-        raise ValueError, str_error + ': ' + str(list_input)
+
+    if islist(input) is False:
+        error = "The list of tags passed is not a list"
+        raise ValueError, error + ': ' + str(input)
     
-    for tag in list_input:
+    for tag in input:
         if istag(tag) is False:
-            str_error = "Value is not a tag, according to data.istag()"
-            raise ValueError, str_error + ': ' + str(tag)
+            error = "Value is not a tag, according to data.istag()"
+            raise ValueError, error + ': ' + str(tag)
     
-    list_input.sort()
-    return ' '.join(list_input)
+    input.sort()
+    return ' '.join(input)
 
 def txt2js_string(text, replace=string.replace):
     """
-    Convert text that includes lines breaks and quotes into a save JavaScript
+    Convert text that includes lines breaks and quotes into a safe JavaScript
     string. I{Uses string.replace to be fast as possible}
     
     @param text: Text to be converted
     @type: text: String
     @return: String
-    
     """
+
     #TODO: unit test and docstring test this
     text = replace(text, "'", r"\'")
     text = replace(text, '"', r'\"')
     text = replace(text, "\r\n", ' ')
     return text
-   
-def uid(int_len):
-    """
-    Generate a random string. This function is partially based on current time
-    and thus cannot be 100% reliable.
-    
-    B{Note:} I{int_len must be >= 15}
-    
-    @param int_len: Length of the desired string
-    @type int_len: Integer
-    @return: String
-    
-        >>> if uid(35) != uid(35): print True
-        True
-    
-    """
-    
-    from random import randrange
-    objDate = datetime.datetime.now()
-    str_uid = objDate.strftime("%Y%m%d%H%M%S")
-    for i in xrange(int_len - len(str_uid)):
-        # 65=A 91=Z  97=a 122=z
-        str_uid += chr(randrange(65, 91))
-    if len(str_uid) <= 14:
-        raise Exception, 'Length must be >= 15'
-    elif len(str_uid) != int_len:
-        print len(str_uid)
-        raise TFBug
-    return str_uid
-
-
-    
-def zerofront(input, int_length):
-    """
-    Pad the front of a string to a specified length.
-    
-    B{Note:} I{This function has been depricated and will throw an exception.
-    There is no reason to have this function, as zfill() should be used.}
-    
-    @param input: String to pad
-    @type input: String
-    @param int_length: Length of string
-    @type int_length: Integer
-    @return: String padded to length
-    
-    """
-    raise Exception, 'This function is depricated, rather use:  "a".zfill(x)'
-    #return str(input).zfill(int_length)
-    
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()

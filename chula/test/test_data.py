@@ -117,17 +117,17 @@ class Test_data(unittest.TestCase):
         d = datetime.datetime
         fmt = '%H:%M'
         # Now is always 30 minutes from now()
-        str_now = d.now().strftime(fmt)
-        self.assertEqual(data.datetime_within_range(str_now, 30), True)
+        now = d.now().strftime(fmt)
+        self.assertEqual(data.datetime_within_range(now, 30), True)
         # 20 minutes is within range of 30
-        str_now = d(2005, 10, 4, 21, 35, 45).strftime(fmt)
-        self.assertEqual(data.datetime_within_range(str_now, 30, d(2005, 10, 4, 21, 55, 45)), True)
+        now = d(2005, 10, 4, 21, 35, 45).strftime(fmt)
+        self.assertEqual(data.datetime_within_range(now, 30, d(2005, 10, 4, 21, 55, 45)), True)
         # 31 minutes is NOT within range of 30
-        str_now = d(2005, 10, 4, 21, 35, 45).strftime(fmt)
-        self.assertEqual(data.datetime_within_range(str_now, 30, d(2005, 10, 4, 22, 6, 45)), False)
+        now = d(2005, 10, 4, 21, 35, 45).strftime(fmt)
+        self.assertEqual(data.datetime_within_range(now, 30, d(2005, 10, 4, 22, 6, 45)), False)
         # Anything in the past cannot be in range
-        str_now = d(2005, 10, 4, 21, 35, 45).strftime(fmt)
-        self.assertEqual(data.datetime_within_range(str_now, 30, d(2005, 10, 4, 21, 34, 45)), False)
+        now = d(2005, 10, 4, 21, 35, 45).strftime(fmt)
+        self.assertEqual(data.datetime_within_range(now, 30, d(2005, 10, 4, 21, 34, 45)), False)
 
     def test_fmt_phone(self):
         self.assertEqual(data.fmt_phone("+44-(0)1224-XXXX-XXXX"), "+44-(0)1224-XXXX-XXXX")
@@ -172,11 +172,11 @@ class Test_data(unittest.TestCase):
     def test_isboolean(self):
         self.assertEqual(data.isboolean(True), True)
         self.assertEqual(data.isboolean('true'), False)
-        self.assertEqual(data.isboolean('true', bool_strict=False), True)
-        self.assertEqual(data.isboolean(1, bool_strict=False), True)
-        self.assertEqual(data.isboolean('on', bool_strict=False), True)
-        self.assertEqual(data.isboolean('True', bool_strict=False), True)
-        self.assertEqual(data.isboolean('TRUE', bool_strict=False), True)
+        self.assertEqual(data.isboolean('true', isstrict=False), True)
+        self.assertEqual(data.isboolean(1, isstrict=False), True)
+        self.assertEqual(data.isboolean('on', isstrict=False), True)
+        self.assertEqual(data.isboolean('True', isstrict=False), True)
+        self.assertEqual(data.isboolean('TRUE', isstrict=False), True)
            
     def test_isdict(self):
         self.assertEqual(data.isdict(()), False) # Empty tuple
@@ -192,7 +192,7 @@ class Test_data(unittest.TestCase):
         self.assertEqual(data.isint(12), True)
         self.assertEqual(data.isint(-1), True)
         self.assertEqual(data.isint('1'), False)
-        self.assertEqual(data.isint('1', bool_strict=False), True)
+        self.assertEqual(data.isint('1', isstrict=False), True)
         self.assertEqual(data.isint(None), False)
         self.assertEqual(data.isint([]), False)
     
@@ -211,15 +211,15 @@ class Test_data(unittest.TestCase):
         self.assertEqual(data.isstr(None), False)
         self.assertEqual(data.isstr(' '), True)
         self.assertEqual(data.isstr(True), False)
-        self.assertEqual(data.isstr(True, bool_strict=False), True)
-        self.assertEqual(data.isstr('45', bool_strict=False), True)
+        self.assertEqual(data.isstr(True, isstrict=False), True)
+        self.assertEqual(data.isstr('45', isstrict=False), True)
         
         class Foo(object):
             def __str__(self):
                 raise Exception('str() not supported')
-        obj_no_str = Foo()
+        obj = Foo()
         
-        self.assertEqual(data.isstr(obj_no_str, bool_strict=False), False)
+        self.assertEqual(data.isstr(obj, isstrict=False), False)
 
     def test_istag(self):
         self.assertEqual(data.istag("'"), False)
@@ -301,11 +301,6 @@ class Test_data(unittest.TestCase):
         self.assertRaises(ValueError, data.tags2str, ('a','b'))
         self.assertRaises(ValueError, data.tags2str, ['a','!'])
         self.assertRaises(ValueError, data.tags2str, ['-','*'])
-    
-    def test_uid(self):
-        self.assertEqual(len(data.uid(35)), 35)
-        self.assertEqual(len(data.uid(15)), 15)
-        self.assertRaises(Exception, data.uid, 14)
     
 def run_unittest():
     # Never change this, leave as is
