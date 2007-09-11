@@ -3,7 +3,7 @@ Chula custom exceptions
 """
 
 class BaseException(Exception):
-    def __init__(self, msg=None, append=''):
+    def __init__(self, msg=None, append=None):
         """
         Create custom exception
         @param msg: Default exception message
@@ -19,21 +19,13 @@ class BaseException(Exception):
         if self.message is None:
             self.message = self.msg()
 
-        if self.append != '':
-            self.append = ': %s' % self.append
-
-        return repr(self.message + self.append)
+        if self.append is None:
+            return repr(self.message)
+        else:
+            return repr(self.message + ': ' + self.append)
 
     def msg(self):
         return 'Generic chula exception'
-
-class UnauthorizedOperationError(BaseException):
-    def msg(self):
-        return 'Unauthorized operation. See sub-exception for specific error.'
-
-class IllegalOperationError(BaseException):
-    def msg(self):
-        return "Yeah... it doesn't really work like that."
 
 class MalformedPasswordError(BaseException):
     def msg(self):
@@ -43,6 +35,6 @@ class UnsupportedUsageError(BaseException):
     def msg(self):
         return 'Invalid use of this object'
 
-class UnsupportedSettingError(BaseException):
+class UnsupportedConfigError(BaseException):
     def msg(self):
-        return 'The specified attribute is unsupported'
+        return 'The specified configuration attribute is unsupported'

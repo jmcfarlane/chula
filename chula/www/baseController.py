@@ -31,7 +31,7 @@ class BaseController(object):
         self.content_type = 'text/html'
         self.getRequest(req)
 
-        # Get user settings
+        # Get user configuration
         self.config = config
 
         # Expose user session (persisted by the apacheHandler)
