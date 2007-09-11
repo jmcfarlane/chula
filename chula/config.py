@@ -5,10 +5,13 @@ Mange the Chula configuration
 from chula.chulaException import *
 
 class Config(object):
-    supported = ['session_db',
+    UNSET = 'THIS ATTRIBUTE NEEDS TO BE SET BY YOU'
+    supported = ['classpath',
+                 'session_db',
                  'session_cache_hosts']
 
     def __init__(self):
+        self.classpath = self.UNSET
         self.session_db = 'localhost'
         self.session_cache_hosts = ('localhost:11211', 1)
 

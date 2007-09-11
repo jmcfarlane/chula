@@ -3,6 +3,7 @@ Chula apache handler
 """
 
 from mod_python import apache
+from chula import config as CONFIG, chulaException
 
 def handler(req, config):
     # The controller is the first word after the host:port
@@ -20,15 +21,21 @@ def handler(req, config):
         # If there is no action requested, then assume the default method is 
         # being called
         if methodName == "":
-            methodName = "default"
+            methodName = "index"
         
     else:
         controllerName = 'home' + suffix
         className = 'Home' + suffix
-        methodName = 'default'
+        methodName = 'index'
 
     # Import the controller module
-    module =  __import__('rockfloat.controllers.' + controllerName,
+    if config.classpath == CONFIG.Config.UNSET:
+        msg = ('[cfg.classpath] must be specified in your apacheHandler. '
+               'See documentation for help on how to set this.')
+        raise chulaException.UnsupportedConfigError(msg)
+
+    classpath = '%s.' % config.classpath
+    module =  __import__(classpath + controllerName,
                          globals(),
                          locals(),
                          [className])
