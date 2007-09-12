@@ -3,14 +3,16 @@ Mange the Chula configuration
 """
 
 from chula.chulaException import *
+from chula import collection
 
-class Config(object):
+class Config(collection.Collection):
     UNSET = 'THIS ATTRIBUTE NEEDS TO BE SET BY YOU'
     supported = ['classpath',
                  'session_db',
                  'session_cache_hosts']
 
     def __init__(self):
+        super(Config, self).__init__()
         self.classpath = self.UNSET
         self.session_db = 'localhost'
         self.session_cache_hosts = ('localhost:11211', 1)
@@ -26,7 +28,3 @@ class Config(object):
             self.__dict__[key] = value
         else:
             raise UnsupportedConfigError(append=key)
-
-    # Also allow dictionary style access
-    __getitem__ = __getattr__
-    __setitem__ = __setattr__

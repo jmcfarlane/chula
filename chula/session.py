@@ -40,19 +40,14 @@ class Session(object):
         # Retrieve session
         self.retrieve()
 
-    def gc(self):
+    def clear(self):
         """
-        Clean up anything related to a user's session, which includes
-        database connections B{(might wanna move this elsewhere)}
+        Clears the session data in the session object
+        Justs sets values to an empty dictionary
         """
+
+        self.values = {}
         
-        try:
-            self.conn.close()
-        except:
-            pass
-        finally:
-            self.conn = None
-    
     def destroy(self):
         """
         Expire a user's session now.  This does persist to the database
@@ -78,14 +73,26 @@ class Session(object):
         if not self.mc is None:
             self.mc.delete(self.mkey())
 
-    def clear(self):
-        """
-        Clears the session data in the session object
-        Justs sets values to an empty dictionary
-        """
+    def fetch(self):
+        # Ensure that the session dict is of type dict
+        if not isinstance(self.values, dict):
+            msg = "session.values is not of type dict: %s"
+            raise TypeError, msg % self.session.values
+        return self.values
 
-        self.values = {}
+    def gc(self):
+        """
+        Clean up anything related to a user's session, which includes
+        database connections B{(might wanna move this elsewhere)}
+        """
         
+        try:
+            self.conn.close()
+        except:
+            pass
+        finally:
+            self.conn = None
+
     def get_db(self):
         """
         Fetch a user's session from the database.
@@ -243,9 +250,3 @@ class Session(object):
         if sessionData is None:
             self.clear()
 
-    def fetch(self):
-        # Ensure that the session dict is of type dict
-        if not isinstance(self.values, dict):
-            msg = "session.values is not of type dict: %s"
-            raise TypeError, msg % self.session.values
-        return self.values
