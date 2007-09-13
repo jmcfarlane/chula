@@ -3,8 +3,8 @@ import doctest
 from chula import collection
 
 class Test_collection(unittest.TestCase):
-    def _set(self, key, value):
-        self.collection[key] = value 
+    def _get(self, key):
+        return self.col[key]
 
     def setUp(self):
         self.col = collection.Collection()
@@ -12,23 +12,16 @@ class Test_collection(unittest.TestCase):
         self.col.location = 'bar'
         self.col.age = 25
 
-    def test_dict_or_attr_access(self):
-        test = 'bar'
-        self.col.foo = test
-        self.assertEquals(self.col['foo'], test)
+    def test_access_by_get(self):
+        self.assertEquals(self.col.get('name'), 'foo')
 
-    def test_valid_key_set(self):
-        self.col.foo = ('')
+    def test_access_by_attribute(self):
+        self.assertEquals(self.col.name, 'foo')
 
-    def test_valid_key_del_by_attr(self):
-        self.col.foo = None
-        del self.col.foo
+    def test_access_by_dict(self):
+        self.assertEquals(self.col['name'], 'foo')
 
-    def test_valid_key_del_by_dict(self):
-        del self.col['name']
-        self.col.remove('age')
-
-    def test_is_iterable_by_iteritems(self):
+    def test_access_by_iteritems(self):
         data = []
         for key, value in self.col.iteritems():
             data.append(key + ':' + str(value))
@@ -62,6 +55,27 @@ class Test_collection(unittest.TestCase):
             elif i == 2:
                 self.assertEquals(thing, 'foo')
             i += 1
+
+    def test_set_by_attr(self):
+        self.col.foo = None
+
+    def test_set_by_dict(self):
+        self.col['foo'] = None
+
+    def test_missing_key_raises_key_error(self):
+        self.assertRaises(KeyError, self._get, 'missing')
+
+    def test_can_delete_by_attr(self):
+        self.col.foo = None
+        del self.col.foo
+
+    def test_can_delete_by_dict(self):
+        del self.col['name']
+        self.assertRaises(KeyError, self._get, 'name')
+
+    def test_can_delete_by_remove_method(self):
+        self.col.remove('name')
+        self.assertRaises(KeyError, self._get, 'name')
 
 def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())

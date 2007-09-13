@@ -17,10 +17,10 @@ class Test_config(unittest.TestCase):
         self.config.session_cache_hosts = ('')
         self.config['classpath'] = 'foo'
 
-    def test_invalid_key_set_by_dictionary(self):
+    def test_invalid_key_set_by_dict(self):
         self.assertRaises(UnsupportedConfigError, self.d_set, 'foo', 'bar')
 
-    def test_invalid_key_set_by_attribute(self):
+    def test_invalid_key_set_by_attr(self):
         self.assertRaises(UnsupportedConfigError, self.a_set, 'foo', 'bar')
 
 def run_unittest():
