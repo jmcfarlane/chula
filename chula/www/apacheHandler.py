@@ -67,7 +67,7 @@ def handler(req, config):
     req.write(str(method()))
 
     # Persist session
-    controller.userSession.persist()
+    controller.session.persist()
 
     # If we got here, all is well
     return apache.OK

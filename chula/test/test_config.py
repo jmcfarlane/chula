@@ -14,7 +14,7 @@ class Test_config(unittest.TestCase):
         self.config = config.Config()
 
     def test_valid_key_set(self):
-        self.config.session_cache_hosts = ('')
+        self.config.session_memcache = ('')
         self.config['classpath'] = 'foo'
 
     def test_invalid_key_set_by_dict(self):

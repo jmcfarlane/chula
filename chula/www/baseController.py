@@ -35,8 +35,8 @@ class BaseController(object):
         self.config = config
 
         # Expose user session (persisted by the apacheHandler)
-        cookie = self.getCookie()
-        self.getSession(cookie.value())
+        guid = cookie.Cookie(self.req, 'DEFAULT').value()
+        self.session = session.Session(config, guid)
 
     def getRequest(self, req):
         """
@@ -53,21 +53,6 @@ class BaseController(object):
                 return
         except Exception:
             self.req.form = util.FieldStorage(req, keep_blank_values=1)
-
-    def getSession(self, guid):
-        """
-        Get session data based on guid
-        """
-
-        self.userSession = session.Session(guid)
-        self.session = self.userSession.fetch()
-
-    def getCookie(self):
-        """
-        Pulls the cookie out of the request object
-        """
-
-        return cookie.Cookie(self.req, 'DEFAULT')
 
     def redirect(self, destination, type='TEMPORARY'):
         """
