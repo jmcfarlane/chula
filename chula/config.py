@@ -11,14 +11,20 @@ class Config(collection.Collection):
                  'session_db',
                  'session_host',
                  'session_port',
-                 'session_memcache']
+                 'session_name',
+                 'session_memcache',
+                 'session_timeout',
+                 'session_encryption_key',]
 
     def __init__(self):
         self.classpath = self.UNSET
         self.session_db = 'chula_session'
         self.session_host = 'localhost'
         self.session_port = 5432
+        self.session_name = 'chula-session'
         self.session_memcache = [('localhost:11211', 1)]
+        self.session_timeout = 30
+        self.session_encryption_key = self.UNSET
 
     def __getitem__(self, key):
         if key in self.supported:

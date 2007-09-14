@@ -34,8 +34,14 @@ class BaseController(object):
         # Get user configuration
         self.config = config
 
-        # Expose user session (persisted by the apacheHandler)
-        guid = cookie.Cookie(self.req, 'DEFAULT').value()
+        # Fetch the user's cookie
+        ck = cookie.Cookie(self.req,
+                           config.session_name,
+                           config.session_encryption_key,
+                           config.session_timeout)
+
+        # Start up session using the cookie's guid
+        guid = ck.value()
         self.session = session.Session(config, guid)
 
     def getRequest(self, req):

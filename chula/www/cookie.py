@@ -3,32 +3,25 @@ Cookie reads and writes cookies
 """
 
 from mod_python import Cookie as Apache
-import time
 from chula import guid
+import time
 
 class Cookie(object):
-    def __init__(self, req, name='DEFAULT'):
+    def __init__(self, req, name, encryption_key, timeout):
         """
         @param req: Apache request object
         @type raq: mod_python.request
         """
 
         self.req = req
-        self.HMAC = 'dg3683hdfd94ha2-kvd25zxzsrtyy'
-
-        # Set the cookie name, setting the default value if needed
-        if name == 'DEFAULT':
-            self.name = 'tnk.cookie'
-        else:
-            self.name = name
-
+        self.name = name
+        self.HMAC = encryption_key
+        self.timeout = timeout
         self.cookies = Apache.get_cookies(self.req,
                                           Apache.MarshalCookie,
                                           secret=self.HMAC)
 
-        # Create the reqeuested cookie if it doesn't exist.  Usually this
-        # will be a DEFAULT cookie, meaning it will be named whatever is
-        # in the if condition above: if name == 'DEFAULT'
+        # Create the reqeuested cookie if it doesn't exist
         if self.name not in self.cookies:
             self.persist(guid.guid())
 
@@ -63,7 +56,8 @@ class Cookie(object):
             raise ValueError, "Please pass the value to be persisted"
 
         c = Apache.MarshalCookie(self.name, value, self.HMAC)
-        c.expires = time.time() + 60 * 45
+        if self.timeout > 0:
+            c.expires = time.time() + 60 * self.timeout
         c.path = path # /foo/bar would restrict the cookie to a directory
         Apache.add_cookie(self.req, c)
         self.cookies[self.name] = c

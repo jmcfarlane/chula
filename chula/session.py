@@ -10,10 +10,6 @@ class Session(dict):
     The Session class keeps track of user session.
     """
     
-    #TODO: The id and HMAC should really be moved
-    id = 'chula-session'
-    HMAC = 'edf2ccb5711297ebc19cc2f094e2ffc6'
-    
     def __init__(self, config, _guid=None):
         """
         @param existing_guid: Used to attach to an existing user's session
@@ -22,9 +18,10 @@ class Session(dict):
         @type host: FQDN
         """
         
+        self._persistImmediately = False
         self._config = config
         self._cache = self._config.session_memcache
-        self._persistImmediately = False
+        self._timeout = self._config.session_timeout
 
         if _guid is None:
             self._guid = guid.guid()
@@ -32,8 +29,8 @@ class Session(dict):
             self._guid = _guid
 
         # Initialize memache client
+        #TODO: Add type checking here
         if not self._cache is None:
-            #TODO: Add type checking here
             self._cache = memcache.Client(self._cache, debug=0)
         
         # Retrieve session
@@ -48,42 +45,7 @@ class Session(dict):
         else:
             self[key] = value
 
-    def destroy(self):
-        """
-        Expire a user's session now.  This does persist to the database
-        and cache immediately.
-        """
-        
-        sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(self._guid)
-        self.get_dbConnection()
-        try:
-            self._cursor.execute(sql)
-            self._conn.commit()
-
-        except db.ProgrammingError:
-            self._conn.rollback()
-            raise
-
-        # Delete from cache
-        if not self._cache is None:
-            self._cache.delete(self.mkey())
-
-    def populate(self):
-        """
-        Fetch session data from cache first, then fall back to the database
-        if needed.
-        """
-        
-        if not self._cache is None:
-            data = self.get_cache()
-
-        if data is None:
-            data = self.get_db()
-
-        if not data is None:
-            self.update(data)
-
-    def gc(self):
+    def _gc(self):
         """
         Clean up anything related to a user's session, which includes
         database connections B{(maybe move this elsewhere)}.
@@ -96,7 +58,48 @@ class Session(dict):
         finally:
             self._conn = None
 
-    def get_cache(self):
+    def destroy(self):
+        """
+        Expire a user's session now.  This does persist to the database
+        and cache immediately.
+        """
+        
+        sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(self._guid)
+        self.connect_db()
+        try:
+            self._cursor.execute(sql)
+            self._conn.commit()
+
+        except db.ProgrammingError:
+            self._conn.rollback()
+            raise
+        finally:
+            self._gc()
+
+        # Delete from cache
+        if not self._cache is None:
+            self._cache.delete(self.mkey())
+
+    def populate(self):
+        """
+        Fetch session data from cache first, then fall back to the database
+        if needed.
+        """
+        
+        data = None
+        if not self._cache is None:
+            data = self.fetch_from_cache()
+
+        # If the cache is unavailable fetch from the db and be sure to
+        # persist to the database as we can't trust the cache currently
+        if data is None:
+            data = self.fetch_from_db()
+            self._persistImmediately = True
+
+        if not data is None:
+            self.update(data)
+
+    def fetch_from_cache(self):
         """
         Fetch a user's session from cache.  If the session isn't found,
         this method will return None
@@ -110,7 +113,7 @@ class Session(dict):
         else:
             return json.decode(values)
 
-    def get_db(self):
+    def fetch_from_db(self):
         """
         Fetch a user's session from the database.
 
@@ -122,7 +125,7 @@ class Session(dict):
         WHERE guid = %s AND active = TRUE;
         """ % (db.cstr(self._guid))
         
-        self.get_dbConnection()
+        self.connect_db()
         self._cursor.execute(sql)
         self._record = self._cursor.fetchone()
         if self._record is None:
@@ -133,7 +136,7 @@ class Session(dict):
             except ValueError, ex:
                 raise "Unable to json.decode session", ex
     
-    def get_dbConnection(self):
+    def connect_db(self):
         """
         Obtain a datbase connection.
         """
@@ -186,14 +189,14 @@ class Session(dict):
     def persist_db(self):
         """
         Persist the session state to the database.  This method will call
-        gc() to garbage collect the session specific database connection
+        _gc() to garbage collect the session specific database connection
         if it exists.
         """
         
         sql = "SELECT session_set(%s, %s, TRUE);"
         sql = sql % (db.cstr(self._guid), db.cstr(json.encode(self)))
 
-        self.get_dbConnection()
+        self.connect_db()
         try:
             self._cursor.execute(sql)
             self._conn.commit()
@@ -206,14 +209,18 @@ class Session(dict):
             # Because persistance is always at the end of the process flow
             # (actually called by the apacheHandler even) we can safely
             # close the database connection now :)
-            self.gc()
+            self._gc()
 
     def persist_cache(self):
         """
         Persist the session state to cache.
         """
 
-        timeout = 60 * 30
-        timeout = 30 #TODO: Remove this line once we enter production
-        self._cache.set(self.mkey(), json.encode(self), timeout)
+        if self._timeout > 0:
+            timeout = self._timeout
+        else:
+            # Set a reasonable default for cookies lacking an expiration
+            timeout = 30
+
+        self._cache.set(self.mkey(), json.encode(self), timeout * 60)
 
