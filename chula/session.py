@@ -22,19 +22,19 @@ class Session(dict):
         @type host: FQDN
         """
         
-        self.config = config
-        self.cache = self.config.session_memcache
-        self.persistImmediately = False
+        self._config = config
+        self._cache = self._config.session_memcache
+        self._persistImmediately = False
 
         if _guid is None:
-            self.guid = guid.guid()
+            self._guid = guid.guid()
         else:
-            self.guid = _guid
+            self._guid = _guid
 
         # Initialize memache client
-        if not self.cache is None:
+        if not self._cache is None:
             #TODO: Add type checking here
-            self.cache = memcache.Client(self.cache, debug=0)
+            self._cache = memcache.Client(self._cache, debug=0)
         
         # Retrieve session
         self.populate()
@@ -43,7 +43,10 @@ class Session(dict):
         return self.get(key, None)
 
     def __setattr__(self, key, value):
-        self.__dict__[key] = value
+        if key.startswith('_'):
+            self.__dict__[key] = value
+        else:
+            self[key] = value
 
     def destroy(self):
         """
@@ -51,27 +54,27 @@ class Session(dict):
         and cache immediately.
         """
         
-        sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(self.guid)
+        sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(self._guid)
         self.get_dbConnection()
         try:
-            self.cursor.execute(sql)
-            self.conn.commit()
+            self._cursor.execute(sql)
+            self._conn.commit()
 
-        except db.ProgrammingError, ex:
-            self.conn.rollback()
+        except db.ProgrammingError:
+            self._conn.rollback()
             raise
 
         # Delete from cache
-        if not self.cache is None:
-            self.cache.delete(self.mkey())
+        if not self._cache is None:
+            self._cache.delete(self.mkey())
 
     def populate(self):
         """
-        Fetch session data from cache first, then fall back to the datbase
+        Fetch session data from cache first, then fall back to the database
         if needed.
         """
         
-        if not self.cache is None:
+        if not self._cache is None:
             data = self.get_cache()
 
         if data is None:
@@ -87,11 +90,11 @@ class Session(dict):
         """
         
         try:
-            self.conn.close()
+            self._conn.close()
         except:
             pass
         finally:
-            self.conn = None
+            self._conn = None
 
     def get_cache(self):
         """
@@ -101,7 +104,7 @@ class Session(dict):
         @return: Native Python object, or None if not found
         """
 
-        values = self.cache.get(self.mkey())
+        values = self._cache.get(self.mkey())
         if values is None:
             return None
         else:
@@ -117,16 +120,16 @@ class Session(dict):
         """
         SELECT values FROM session
         WHERE guid = %s AND active = TRUE;
-        """ % (db.cstr(self.guid))
+        """ % (db.cstr(self._guid))
         
         self.get_dbConnection()
-        self.cursor.execute(sql)
-        self.record = self.cursor.fetchone()
-        if self.record is None:
+        self._cursor.execute(sql)
+        self._record = self._cursor.fetchone()
+        if self._record is None:
             return {}
         else:
             try:
-                return json.decode(self.record['values'])
+                return json.decode(self._record['values'])
             except ValueError, ex:
                 raise "Unable to json.decode session", ex
     
@@ -138,11 +141,11 @@ class Session(dict):
         if getattr(self, 'conn', None) is None:
             #TODO: Fix Collection() to support '%(foo)s'
             config = {}
-            config['session_host'] = self.config.session_host
-            config['session_db'] = self.config.session_db
+            config['session_host'] = self._config.session_host
+            config['session_db'] = self._config.session_db
             uri = 'pg:chula@%(session_host)s/%(session_db)s' % config
-            self.conn = db.Datastore(uri)
-            self.cursor = self.conn.cursor()
+            self._conn = db.Datastore(uri)
+            self._cursor = self._conn.cursor()
 
     def mkey(self):
         """
@@ -152,7 +155,7 @@ class Session(dict):
         @return: SHA1 hash
         """
         
-        mc_key = 'session:%s' % self.guid
+        mc_key = 'session:%s' % self._guid
         return hashlib.sha1(mc_key).hexdigest()
     
     def persist(self):
@@ -170,14 +173,14 @@ class Session(dict):
         # now. 
         if self[ageKey] == 0 or self[ageKey] > 10:
             self[ageKey] = 0
-            self.persistImmediately = True
+            self._persistImmediately = True
         
         # Forces a write to the database on the next go
-        if self.persistImmediately is True:
+        if self._persistImmediately is True:
             self.persist_db()
 
         # Always persist to cache
-        if not self.cache is None:
+        if not self._cache is None:
             self.persist_cache()
 
     def persist_db(self):
@@ -188,15 +191,15 @@ class Session(dict):
         """
         
         sql = "SELECT session_set(%s, %s, TRUE);"
-        sql = sql % (db.cstr(self.guid), db.cstr(json.encode(self)))
+        sql = sql % (db.cstr(self._guid), db.cstr(json.encode(self)))
 
         self.get_dbConnection()
         try:
-            self.cursor.execute(sql)
-            self.conn.commit()
+            self._cursor.execute(sql)
+            self._conn.commit()
 
-        except db.ProgrammingError, ex:
-            self.conn.rollback()
+        except db.ProgrammingError:
+            self._conn.rollback()
             raise
 
         finally:
@@ -212,5 +215,5 @@ class Session(dict):
 
         timeout = 60 * 30
         timeout = 30 #TODO: Remove this line once we enter production
-        self.cache.set(self.mkey(), json.encode(self), timeout)
+        self._cache.set(self.mkey(), json.encode(self), timeout)
 
