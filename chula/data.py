@@ -9,129 +9,26 @@ from types import *
 import string
 from chula import regex
 
-def chart_scale(input):
-    """
-    Formats a numeric value to a clean rounded number usefull for
-    drawing charts.  This can be used to generate the scale by which
-    all data points in a graph represent a percentage of.
-    
-    @param input: Data to be rounded to new value
-    @type input: Int, Long, Float
-    @return: Long
-    
-        >>> print chart_scale(300)
-        330.0
-    """
-    import math
-    try:
-        input = float(input)
-    except:
-        raise ValueError, 'Value passed is not numeric'
-    
-    return math.ceil((input * 1.1) / 10) * 10
-
 def commaify(input):
     """
-    Formats a string representation of a number so it looks nice.
-    This is handy for presentation of currency for example.
+    Generate a number with commas for pretty printing
     
-    @param input: Data to have commas added every third place.
-    @type input: String
+    @param input: Data to be commaified
+    @type input: Number or string
     @return: String
     
-        >>> print commaify('45000000000')
-        45,000,000,000
+    >>> print commaify('45000000000')
+    45,000,000,000
     """
     
-    if not isstr(input):
-        raise ValueError, 'Value passed is not a string.'
-    
-    #TODO: learn from and improve this:
-    #if num > 1000:  return '%s,%03d' % (commaify(num/1000), num % 1000)
-    #else:           return str(num)
-    if input[0] == '-':
-        sign = '-'
-        input = input[1:]
-    else:
-        sign = ''
-        
-    input = input.split('.')
-    whole = input[0]
-    if len(whole) > 3:
-        #whole = commaify(whole[:-3]) + ',' + whole[:3]
-        #whole = whole[:-3] + ',' + whole[-3:]
-        whole = commaify(whole[:-3]) + ',' + whole[-3:]
-        #whole = commaify(whole[-3:]) + ',' + whole[:3]
-    
-    if len(input) > 1:
-        input = whole + '.' + input[1]
-        pass
-    else:
-        input = whole
-        
-    return sign + input
+    parts = str(input).split('.')
+    formatted = re.sub(r'(\d{3})', r'\1,', parts[0][::-1])
+    try:
+        output = formatted[::-1] + '.' + parts[1]
+    except:
+        output = formatted[::-1]
 
-def csv2list(input):
-    """
-    Make it easy to loop over "CSV" files.
-    
-    @param input: Data to be processed
-    @type input: String
-    @return: List of dictionaries
-    
-        >>> # Simulate the return of open('foo.csv').readlines()[:]
-        >>> csv = []
-        >>> csv.append('name;age;sex')
-        >>> csv.append('Sam;45;Male')
-        >>> csv.append('Nancy;27;Female')
-        >>> csv.append('Kirby;13;Female')
-        >>> csv = '\\n'.join(csv)
-        >>> for record in csv2list(csv):
-        ...     print record['name'], record['age']
-        ...
-        Sam 45
-        Nancy 27
-        Kirby 13
-
-    """
-    from operator import itemgetter
-    
-    # Get a list of the data
-    input = input.split('\n')
-    
-    # Determine the most likely delimiter
-    delim = {'\t':input[0].count('\t'),
-             ',':input[0].count(','),
-             ';':input[0].count(';')}
-    delim = sorted(delim.items(), key=itemgetter(1), reverse=True)[0][0]
-
-    # Begin to generate the list of dictionaries
-    irow = 0
-    output = []
-    LIST_COLS = []
-    for row in input:
-        cols = row.split(delim)
-        if irow == 0:
-            icol = 0
-            for col in cols:
-                if col is None or col == '':
-                    col = 'column-%s' % icol
-                LIST_COLS.append(col)
-                icol += 1
-        else:
-            row = {}
-            icol = 0
-            for col in cols:
-                try:
-                    row[LIST_COLS[icol]] = col
-                except IndexError:
-                    #print "column[%s] missing head: %s" % (icol, col)
-                    pass
-                icol += 1
-            output.append(row)
-        irow += 1
-    
-    return output
+    return output.replace('-,', '-')
 
 def date_add(unit, delta, date):
     """

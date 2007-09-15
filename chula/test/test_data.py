@@ -32,22 +32,19 @@ class Test_data(unittest.TestCase):
         self.int = 7
         self.str = "foobar"
         
-    def test_chart_scale(self):
-        self.assertEqual(data.chart_scale(300), 330.0)
-        self.assertEqual(data.chart_scale(150), 170.0)
-        self.assertEqual(data.chart_scale(2500), 2750.0)
-        self.assertEqual(data.chart_scale(5.5), 10.0)
-        self.assertEqual(data.chart_scale('5.5'), 10.0)
-        self.assertRaises(ValueError, data.chart_scale, 'abc')
- 
     def test_commaify(self):
-        #self.assertEqual(data.commaify(""), "") #FIX: handle empty string
+        self.assertEqual(data.commaify(""), "")
         self.assertEqual(data.commaify(" "), " ")
+        self.assertEqual(data.commaify("abcdef"), "abcdef")
         self.assertEqual(data.commaify("1"), "1")
+        self.assertEqual(data.commaify("10"), "10")
         self.assertEqual(data.commaify("1000"), "1,000")
         self.assertEqual(data.commaify("1000.45"), "1,000.45")
         self.assertEqual(data.commaify("1000.450"), "1,000.450")
         self.assertEqual(data.commaify("-1000.45"), "-1,000.45")
+        self.assertEqual(data.commaify("-10000.45"), "-10,000.45")
+        self.assertEqual(data.commaify("-100000.45"), "-100,000.45")
+        self.assertEqual(data.commaify("-1000000.45"), "-1,000,000.45")
     
     def test_date_add(self):
         t = datetime.datetime
