@@ -31,6 +31,12 @@ class MalformedPasswordError(BaseException):
     def msg(self):
         return 'Password does not adhere to: chula.regex.PASSWD'
 
+class TypeConversionError(BaseException):
+    def __init__(self, _value, _type, append=None):
+        self.message = 'Unable to convert value [%s] to type [%s]' \
+            % (str(_value), str(_type))
+        self.append = append
+
 class UnsupportedUsageError(BaseException):
     def msg(self):
         return 'Invalid use of this object'

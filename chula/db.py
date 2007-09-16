@@ -197,7 +197,7 @@ def cbool(input):
         msg = "Unable to determine boolean from " + type(input).__name__
         raise ValueError, msg
 
-def cdate(input, doquote=True, dodbfunction=False):
+def cdate(input, doquote=True, isfunction=False):
     """
     Returns a formatted string safe for use in SQL. If None or an empty
     string is passed, it will return 'NULL' so as to insert a NULL value
@@ -210,24 +210,27 @@ def cdate(input, doquote=True, dodbfunction=False):
     @type input: String
     @return: String, or 'NULL'
     
-        >>> print 'SET updated = %s;' % cdate('1/1/2005')
-        SET updated = '1/1/2005';
-        
-        >>> print 'SET updated = %s;' % cdate('now()', dodbfunction=True)
-        SET updated = now();
+    >>> print 'SET updated = %s;' % cdate('1/1/2005')
+    SET updated = '1/1/2005';
     
+    >>> print 'SET updated = %s;' % cdate('now()', isfunction=True)
+    SET updated = now();
     """
     
-    # Is the value NULL
-    if input is None or input == '':
+    if input in [None, '']:
         return 'NULL'
+
+    elif isfunction is True:
+        return input
+
     else:
-        if not dodbfunction and not data.isdate(input):
-            raise ValueError, 'Value passed is not a valid date.'
-        
-        if doquote and not dodbfunction:
-            input = data.wrap(input, "'")
-        
+        if data.isdate(input) is True:
+            if doquote is True:
+                input = data.wrap(input, "'")
+        else:
+            msg = 'Value not suitable as sql date: [%s]' % input
+            raise ValueError, msg
+
     return input
 
 def cfloat(input):
@@ -331,7 +334,7 @@ def cstr(input, doquote=True, doescape=True):
     except:
         pass
     
-    if not data.isstr(input):
+    if isinstance(input, str) is False:
         print 'Invalid string:', input
         raise ValueError, "Value is not a string."
     

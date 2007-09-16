@@ -25,6 +25,7 @@ import unittest
 import doctest
 import datetime
 from chula import db
+from chula.chulaException import *
 
 class Test_db(unittest.TestCase):
     """A test class for the db module"""
@@ -56,11 +57,13 @@ class Test_db(unittest.TestCase):
         self.assertEqual(db.cdate(None), 'NULL')
         self.assertEqual(db.cdate(''), 'NULL')
         self.assertEqual(db.cdate('1/1/2005'), "'1/1/2005'")
-        self.assertEqual(db.cdate('now()', dodbfunction=True), 'now()')
+        self.assertEqual(db.cdate('now()', isfunction=True), 'now()')
+
         # Not leap year
         self.assertEqual(db.cdate('2/29/2008'), "'2/29/2008'")
         self.assertRaises(ValueError, db.cdate, 2)
         self.assertRaises(ValueError, db.cdate, '1/41/2005')
+
         # Leap year
         self.assertRaises(ValueError, db.cdate, '2/29/2006')
     
@@ -109,9 +112,9 @@ class Test_db(unittest.TestCase):
         self.assertEqual(db.ctags('abc'), "'abc'")
         self.assertEqual(db.ctags('Abc'), "'abc'")
         self.assertEqual(db.ctags('a b c'), "'a b c'")
-        self.assertRaises(ValueError, db.ctags, 'abc!')
-        self.assertRaises(ValueError, db.ctags, None)
-        self.assertRaises(ValueError, db.ctags, 4)
+        self.assertRaises(TypeConversionError, db.ctags, 'abc!')
+        self.assertRaises(TypeConversionError, db.ctags, None)
+        self.assertRaises(TypeConversionError, db.ctags, 4)
     
     def test_empty2null(self):
         self.assertEqual(db.empty2null(''), 'NULL')
