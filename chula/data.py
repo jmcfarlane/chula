@@ -376,7 +376,7 @@ def str2date(input):
     ptime['M'] = '00'
     ptime['S'] = '00'
 
-    parts = {'Y':r'(?P<Y>[1-2]\d\d\d)',
+    parts = {'Y':r'(?P<Y>(18|19|20|21)\d\d)',
              'm':r'(?P<m>(1[0-2]|0?[1-9]))',
              'd':r'(?P<d>([0-2]?[1-9]|[123][01]))',
              'I':r'(?P<I>([0-5]?[0-9]|60))',
@@ -385,6 +385,11 @@ def str2date(input):
 
     # mdY 
     m = re.match('^%(m)s\D%(d)s\D%(Y)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
+
+    # mdY (munged)
+    m = re.match('^%(m)s%(d)s%(Y)s$' % parts, input)
     if not m is None:
         ptime.update(m.groupdict())
 
