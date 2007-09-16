@@ -42,7 +42,7 @@ def date_add(unit, delta, date):
     @type date: datetime.datetime
     @return: datetime.datetime
     
-    >>> start = str2datetime('1/1/2005 11:35')
+    >>> start = str2date('1/1/2005 11:35')
     >>> print date_add('days', -5, start)
     2004-12-27 11:35:00
     """
@@ -75,8 +75,8 @@ def date_diff(start, stop, unit='seconds'):
     @type unit: String
     @return: Integer (defaults to seconds, if unit not passed)
     
-    >>> start = str2datetime('1/1/2005')
-    >>> stop = str2datetime('1/5/2005')
+    >>> start = str2date('1/1/2005')
+    >>> stop = str2date('1/5/2005')
     >>> print date_diff(start, stop)
     345600.0
     >>> print date_diff(start, stop, 'd')
@@ -127,9 +127,9 @@ def date_within_range(time, offset, now=None):
     @type now: datetime.datetime
     @return: Boolean
     
-    >>> print date_within_range('11:00', 30, str2datetime('1/1/2005 11:25'))
+    >>> print date_within_range('11:00', 30, str2date('1/1/2005 11:25'))
     True
-    >>> print date_within_range('11:00', 30, str2datetime('1/1/2005 11:35'))
+    >>> print date_within_range('11:00', 30, str2date('1/1/2005 11:35'))
     False
     """
     
@@ -221,7 +221,7 @@ def isdate(input):
     False
     """
     try:
-        str2datetime(input)
+        str2date(input)
         return True
     except:
         return False
@@ -354,82 +354,65 @@ def str2bool(input):
     else:
         raise chulaException.TypeConversionError(input, 'boolean')
 
-def str2datetime(x):
+def str2date(input):
     """
     Conversion from string to datetime object.
     
-    @param x: Datetime in string format
-    @type x: String
+    @param input: Datetime in string format
+    @type input: String
     @return: datetime.datetime
     
-        >>> print str2datetime("10/4/2005 21:45")
-        2005-10-04 21:45:00
-
+    >>> print str2date("10/4/2005 21:45")
+    2005-10-04 21:45:00
     """
     
-    if isinstance(x, tuple):
-        pass
-    else:
-        if x is None or isinstance(x, int) or len(x) < 6:
-            msg = "Value passed cannot be converted to a date/datetime."
-            raise ValueError, msg
+    if isinstance(input, str) is False:
+        msg = 'Value passed must be of type string.'
+        raise chulaException.TypeConversionError(input, 'datetime', append=msg)
 
-        t = {}
-        x = x.replace('-', '/')
+    from time import strptime
+    ptime = {}
+    ptime['I'] = '00'
+    ptime['M'] = '00'
+    ptime['S'] = '00'
 
-        if x.find(' ') > 0:
-            try:
-                time = x.split(' ')[1].split(':')
-                if len(time) >= 2:
-                    t['hour'] = time[0]
-                    t['minute'] = time[1]
-                if len(time) >= 3:
-                    t['second'] = time[2]
-                    if t['second'].find('.') > 0:
-                        t['second'] = t['second'].split('.')[0]
-                else:
-                    t['second'] = 0
-                
-                x = x.split(' ')[0]
-            except:
-                raise ValueError, "Value passed is not formatted properly."
+    parts = {'Y':r'(?P<Y>[1-2]\d\d\d)',
+             'm':r'(?P<m>(1[0-2]|0?[1-9]))',
+             'd':r'(?P<d>([0-2]?[1-9]|[123][01]))',
+             'I':r'(?P<I>([0-5]?[0-9]|60))',
+             'M':r'(?P<M>([0-5]?[0-9]|60))',
+             'S':r'(?P<S>([0-5]?[0-9]|60))'}
 
-        try:
-            x = x.split('/')
-            x.extend(time)
-        except:
-            pass
+    # mdY 
+    m = re.match('^%(m)s\D%(d)s\D%(Y)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
 
-        try:
-            # Support for yyyymmdd
-            if len(x[0]) == 8:
-                t['year'] = x[0][0:4]
-                t['month'] = x[0][4:6]
-                t['day'] = x[0][6:8]
-            elif len(x[0]) == 4:
-                t['year'] = x[0]
-                t['month'] = x[1]
-                t['day'] = x[2]
-            else:
-                t['year'] = x[2]
-                t['month'] = x[0]
-                t['day'] = x[1]
-                
-        except:
-            raise ValueError, "Value passed is not formatted properly."
+    # Ymd 
+    m = re.match('^%(Y)s\D%(m)s\D%(d)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
 
-    if len(t) == 6:
-        date = datetime.datetime(int(t['year']), 
-                                 int(t['month']), 
-                                 int(t['day']), 
-                                 int(t['hour']), 
-                                 int(t['minute']), 
-                                 int(t['second']))
-    else:
-        date = datetime.datetime(int(t['year']), 
-                                 int(t['month']), 
-                                 int(t['day']))
-    return date
+    # Ymd (munged)
+    m = re.match('^%(Y)s%(m)s%(d)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
+
+    # mdY I:M 
+    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
+
+    # mdY I:M:S 
+    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s\D%(S)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
+
+    if len(ptime.keys()) == 3:
+        raise chulaException.TypeConversionError(input, 'datetime')
+
+    fixed = '%(Y)s-%(m)s-%(d)sT%(I)s:%(M)s:%(S)s' % ptime
+    return datetime.datetime(*strptime(fixed, "%Y-%m-%dT%H:%M:%S")[0:6])
 
 def str2tags(input):
     """

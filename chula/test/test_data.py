@@ -50,18 +50,18 @@ class Test_data(unittest.TestCase):
     def test_date_add(self):
         t = datetime.datetime
         self.assertEqual(data.date_add("s", 5,
-                         data.str2datetime("1/1/2005 1:00")),
+                         data.str2date("1/1/2005 1:00")),
                          t(2005, 1, 1, 1, 0, 5))
         self.assertEqual(data.date_add("m", 5,
-                         data.str2datetime("1/1/2005 1:00")),
+                         data.str2date("1/1/2005 1:00")),
                          t(2005, 1, 1, 1, 5, 0))
         self.assertEqual(data.date_add("s", 5,
-                         data.str2datetime("1/1/2005 1:00:05")),
+                         data.str2date("1/1/2005 1:00:05")),
                          t(2005, 1, 1, 1, 0, 10))
 
         # A few negative tests:
         self.assertEqual(data.date_add("m", -5,
-                         data.str2datetime("1/1/2005 1:05")),
+                         data.str2date("1/1/2005 1:05")),
                          t(2005, 1, 1, 1, 0, 0))
      
     def test_date_diff(self):
@@ -224,19 +224,20 @@ class Test_data(unittest.TestCase):
         self.assertEqual(data.str2bool(0), False)
         self.assertRaises(TypeConversionError, data.str2bool, 'abc')
            
-    def test_str2datetime(self):
+    def test_str2date(self):
         d = datetime.datetime
-        self.assertEqual(data.str2datetime("10/4/2005"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(data.str2datetime("10-4-2005"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(data.str2datetime("2005-10-4"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(data.str2datetime("2005-10-04"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(data.str2datetime("10/4/2005 21:35"), d(2005, 10, 4, 21, 35))
-        self.assertEqual(data.str2datetime("10/4/2005 21:35:45"), d(2005, 10, 4, 21, 35, 45))
-        self.assertEqual(data.str2datetime("10/4/2005 21:35:00"), d(2005, 10, 4, 21, 35, 00))
-        self.assertEqual(data.str2datetime("10/4/2005 21:01:00"), d(2005, 10, 4, 21, 01, 00))
-        self.assertEqual(data.str2datetime("20051004"), d(2005, 10, 4, 0, 00, 00))
-        self.assertEqual(data.str2datetime("20051004"), d(2005, 10, 4, 0, 00, 00))
-        self.assertRaises(ValueError, data.str2datetime, 'abc')
+        cv = data.str2date
+        self.assertEqual(cv("10/4/2005"), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv("10-4-2005"), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv("2005-10-4"), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv("2005-10-04"), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv("10/4/2005 21:35"), d(2005, 10, 4, 21, 35))
+        self.assertEqual(cv("10/4/2005 21:35:45"), d(2005, 10, 4, 21, 35, 45))
+        self.assertEqual(cv("10/4/2005 21:35:00"), d(2005, 10, 4, 21, 35, 00))
+        self.assertEqual(cv("10/4/2005 21:01:00"), d(2005, 10, 4, 21, 01, 00))
+        self.assertEqual(cv("20051004"), d(2005, 10, 4, 0, 00, 00))
+        self.assertEqual(cv("20051004"), d(2005, 10, 4, 0, 00, 00))
+        self.assertRaises(TypeConversionError, cv, 'abc')
 
     def test_str2tags(self):
         self.assertEqual(data.str2tags(''), [])
