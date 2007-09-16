@@ -388,6 +388,16 @@ def str2date(input):
     if not m is None:
         ptime.update(m.groupdict())
 
+    # mdY I:M 
+    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
+
+    # mdY I:M:S 
+    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s\D%(S)s$' % parts, input)
+    if not m is None:
+        ptime.update(m.groupdict())
+
     # Ymd 
     m = re.match('^%(Y)s\D%(m)s\D%(d)s$' % parts, input)
     if not m is None:
@@ -398,13 +408,13 @@ def str2date(input):
     if not m is None:
         ptime.update(m.groupdict())
 
-    # mdY I:M 
-    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s$' % parts, input)
+    # Ymd I:M 
+    m = re.match('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s$' % parts, input)
     if not m is None:
         ptime.update(m.groupdict())
 
-    # mdY I:M:S 
-    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s\D%(S)s$' % parts, input)
+    # Ymd I:M:S 
+    m = re.match('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s$' % parts, input)
     if not m is None:
         ptime.update(m.groupdict())
 

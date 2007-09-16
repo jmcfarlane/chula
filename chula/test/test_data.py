@@ -235,8 +235,13 @@ class Test_data(unittest.TestCase):
         self.assertEqual(cv("10/4/2005 21:35:45"), d(2005, 10, 4, 21, 35, 45))
         self.assertEqual(cv("10/4/2005 21:35:00"), d(2005, 10, 4, 21, 35, 00))
         self.assertEqual(cv("10/4/2005 21:01:00"), d(2005, 10, 4, 21, 01, 00))
+        self.assertEqual(cv("2005-10-4 21:01"), d(2005, 10, 4, 21, 01, 00))
+        self.assertEqual(cv("2005-10-4 21:01:00"), d(2005, 10, 4, 21, 01, 00))
         self.assertEqual(cv("20051004"), d(2005, 10, 4, 0, 00, 00))
         self.assertEqual(cv("20051004"), d(2005, 10, 4, 0, 00, 00))
+        #self.assertRaises(TypeConversionError, cv, '2005/21/5')
+        #self.assertRaises(TypeConversionError, cv, '2005/10/40')
+        #self.assertRaises(TypeConversionError, cv, '1005/10/21')
         self.assertRaises(TypeConversionError, cv, 'abc')
 
     def test_str2tags(self):
