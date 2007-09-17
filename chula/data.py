@@ -368,14 +368,12 @@ def str2date(input):
     
     if isinstance(input, str) is False:
         msg = 'Value passed must be of type string.'
-        raise chulaException.TypeConversionError(input, 'datetime', append=msg)
+        raise chulaException.TypeConversionError(input,
+                                                 'datetime.datetime',
+                                                 append=msg)
 
     from time import strptime
-    ptime = {}
-    ptime['I'] = '00'
-    ptime['M'] = '00'
-    ptime['S'] = '00'
-
+    ptime = {'I':'00', 'M':'00', 'S':'00'}
     parts = {'Y':r'(?P<Y>(18|19|20|21)\d\d)',
              'm':r'(?P<m>(1[0-2]|0?[1-9]))',
              'd':r'(?P<d>([0-2]?[1-9]|[123][01]))',
@@ -383,45 +381,21 @@ def str2date(input):
              'M':r'(?P<M>([0-5]?[0-9]|60))',
              'S':r'(?P<S>([0-5]?[0-9]|60))'}
 
-    # mdY 
-    m = re.match('^%(m)s\D%(d)s\D%(Y)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
+    regexes = []
+    regexes.append('^%(m)s\D%(d)s\D%(Y)s$')
+    regexes.append('^%(m)s%(d)s%(Y)s$') 
+    regexes.append('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s$') 
+    regexes.append('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s\D%(S)s$') 
+    regexes.append('^%(Y)s\D%(m)s\D%(d)s$') 
+    regexes.append('^%(Y)s%(m)s%(d)s$') 
+    regexes.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s$') 
+    regexes.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s$') 
 
-    # mdY (munged)
-    m = re.match('^%(m)s%(d)s%(Y)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
-
-    # mdY I:M 
-    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
-
-    # mdY I:M:S 
-    m = re.match('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s\D%(S)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
-
-    # Ymd 
-    m = re.match('^%(Y)s\D%(m)s\D%(d)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
-
-    # Ymd (munged)
-    m = re.match('^%(Y)s%(m)s%(d)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
-
-    # Ymd I:M 
-    m = re.match('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
-
-    # Ymd I:M:S 
-    m = re.match('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s$' % parts, input)
-    if not m is None:
-        ptime.update(m.groupdict())
+    for regexp in regexes:
+        match = re.match(regexp % parts, input)
+        if not match is None:
+            ptime.update(match.groupdict())
+            break
 
     if len(ptime.keys()) == 3:
         raise chulaException.TypeConversionError(input, 'datetime')
