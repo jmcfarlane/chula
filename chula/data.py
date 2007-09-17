@@ -2,12 +2,11 @@
 Functions to make working with data easier.
 """
 
+from chula import chulaException, regex
 import datetime
+import string
 import time
 import re
-from types import *
-import string
-from chula import chulaException, regex
 
 def commaify(input):
     """
@@ -59,7 +58,8 @@ def date_add(unit, delta, date):
     elif unit == 'weeks' or unit == 'w':
         delta = datetime.timedelta(months=delta)
     else:
-        return False
+        msg = 'Invalid unit, please use: s, m, h, d, or w'
+        raise chulaException.UnsupportedUsageError(msg)
         
     return initial + delta
 
