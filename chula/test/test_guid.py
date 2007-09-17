@@ -23,6 +23,9 @@ class Test_guid(unittest.TestCase):
         self.max = 0.0005 # Unit of measure is second per guid generation
         self.uv = 'Unique violation: guid() generated a non unique guid!'
 
+    def test_guid_length_is_64_characters(self):
+        self.assertEquals(len(guid.guid()), 64)
+
     def test_500(self):
         self.tests = 500
         self.assertEqual(self.tests, self.unique(self.tests), self.uv)

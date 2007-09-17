@@ -10,14 +10,12 @@ def guid():
     @return: String
     """
     
-    parts = []
-    now = _now()
-    # Save cost of function lookup
-    append = parts.append
+    def builder():
+        now = '%16f-' % _now()
+        max = 64 - len(now)
+        yield now
+        for i in xrange(max):
+            # 65=A 91=Z  97=a 122=z
+            yield chr(randrange(65, 91))
 
-    parts.append('%016x' % now)
-    for i in xrange(64 - len(parts[0])):
-        # 65=A 91=Z  97=a 122=z
-        append(chr(randrange(65, 91)))
-
-    return ''.join(parts)
+    return ''.join(builder())
