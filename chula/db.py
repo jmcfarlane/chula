@@ -2,21 +2,17 @@
 Functions to make working with databases easier. I{Currently only PostgreSQL}
 """
 
-from chula import data   
+import re
+from chula import chulaException, data   
 try:
     import psycopg2
-    import psycopg2.extensions
-    import psycopg2.extras
+    from psycopg2 import extensions, extras
 except:
-    class psycopg2:
-        class extensions:
-            class cursor:
-                def fetchall(self): pass
-                def fetchmany(self): pass
+    raise chulaException.MissingDependancyError('psycopg2')
 
 # Expose the psycopg2 exceptions
 IntegrityError = psycopg2.IntegrityError
-DatabaseError = psycopg2.DatabaseError
+Databaserror = psycopg2.DatabaseError
 DataError = psycopg2.DataError
 Error = psycopg2.Error
 InterfaceError = psycopg2.InterfaceError
@@ -49,19 +45,38 @@ class Datastore(object):
         @type passwd: String
         @return: Instance
         
-            >>> conn = Datastore('pg:chula@localhost/chula_test', 'passwd')
-            
+        >>> conn = Datastore('pg:chula@localhost/chula_test', 'passwd')
+        >>> cursor = conn.cursor()
+        >>> cursor.execute('SELECT * FROM cars LIMIT 1;')
+        >>> data = cursor.fetchone()
+        >>> print data
+        [1, 'Honda', 'Civic']
+        >>> print data['make']
+        Honda
+        >>> print dict(data)
+        {'model': 'Civic', 'make': 'Honda', 'uid': 1}
+        >>>
+        >>> cursor = conn.cursor(type='tuple')
+        >>> cursor.execute('SELECT * FROM cars LIMIT 1;')
+        >>> print cursor.fetchone()
+        (1, 'Honda', 'Civic')
+        >>>
+        >>> conn.close()
         """
         
-        # TODO: Add regex check on the connection string
-        dbinfo = (conn[conn.find('@')+1:conn.find('/')],
-                  conn[conn.find('/')+1:],
-                  conn[conn.find(':')+1:conn.find('@')],
-                  passwd)
-        
-        self.conn = psycopg2.connect(
-            ('host=%s dbname=%s user=%s password=%s') % (dbinfo)
-        )
+        m = re.match(r'^(?P<type>pg):'
+                     r'(?P<user>[-a-zA-Z0-9]+)@'
+                     r'(?P<host>[-a-zA-Z0-9]+)/'
+                     r'(?P<db>[-a-zA-Z0-9_]+)$', conn)
+
+        if m is None:
+            raise chulaException.MalformedConnectionStringError
+
+        parts = m.groupdict()
+        parts['pass'] = passwd
+
+        conn = 'host=%(host)s dbname=%(db)s user=%(user)s password=%(pass)s'
+        self.conn = psycopg2.connect(conn % parts)
         
     def set_isolation(self, level=1):
         """
@@ -106,96 +121,74 @@ class Datastore(object):
         @type type: string, I{dict} or I{tuple}
         @return: Instance
         """
-        if type == 'tuple':
-            return self.conn.cursor(cursor_factory=Cursor)
-        else:
-            return self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    
-    def execute(self, sql):
-        """
-        Execute I{sql} statement.
-        
-        @param sql: sql statement to execute
-        @type sql: String
-        @return: Cursor
-        
-            >>> conn = Datastore('pg:chula@localhost/chula_test', 'password')
-            >>> rs = conn.cursor()
-            >>> rs.execute("SELECT * FROM cars;")
-            >>> sql = "INSERT INTO cars(make, model) VALUES('Honda', 'Civic');"
-            >>> rs.execute(sql)
-            >>> conn.commit()
-            
-        """
-        
-        #TODO: I think this function needs to be depricated?
-        temp = sql.upper()
-        print temp.find('DELETE')
-        if temp.find('UPDATE') >= 0 or temp.find('DELETE') >= 0:
-            if temp.find('WHERE') <= 0:
-                raise Exception, 'Dummy, please try adding a WHERE clause!'
-            
-        return self.cursor().execute(sql)
 
-class Cursor(psycopg2.extensions.cursor):
-    """
-    Custom cursor class to customize things a bit.
-    """
-    def fetchone(self):
-        """
-        Fetches the first record in a recordset.  It returns an object
-        that is a pseudo dictionary, meaning you can loop thru it just
-        as you would a normal python dictionary, but it's immutable and
-        doesn't support all of the CPython dictionary methods.  Typically
-        you will convert to a CPython dictionary in the event you would
-        need this functionality using the dict() python function.
-        
-        B{Note:} If the recordset doesn't contain any data, fetchone() will
-        return I{None}, not an empty dictionary.
-        
-        @return: Psuedo dictionary
-        """
-        return psycopg2._psycopg.cursor.fetchone(self)
-        
-    def fetchall(self):
-        d = psycopg2.extensions.cursor.fetchall(self)
-        return d
+        if type == 'tuple':
+            return self.conn.cursor(cursor_factory=SafetyCursor)
+
+        elif type == 'dict':
+            return self.conn.cursor(cursor_factory=SafetyDictCursor)
+
+        else:
+            msg = 'Invalid cursor type, use either tuple or dict'
+            raise chulaException.UnsupportedUsageError(append=msg)
     
-    def fetchmany(self):
-        d = psycopg2.extensions.cursor.fetchmany(self)
-        return d
-    
+class SafetyCursor(psycopg2.extensions.cursor):
+    def execute(self, sql, args=None):
+        """
+        Simple factory to check that an update or delete statement aren't
+        being ran without a where clause.
+        """
+        sql = _checkForDanger(sql)
+        return super(SafetyCursor, self).execute(sql, args)
+
+class SafetyDictCursor(psycopg2.extras.DictCursor):
+    def execute(self, sql, args=None):
+        """
+        Simple factory to check that an update or delete statement aren't
+        being ran without a where clause.
+        """
+        sql = _checkForDanger(sql)
+        return super(SafetyDictCursor, self).execute(sql, args)
+ 
+def _checkForDanger(sql):
+    """
+    Check that the passed sql statement has a where clause if it contains
+    either an update or delete statement.
+    """
+
+    danger = sql.upper()
+    if danger.find('UPDATE') >= 0 or danger.find('DELETE') >= 0:
+        if danger.find('WHERE') < 0:
+            msg = 'Please add a valid WHERE clause (use 1=1 to force)'
+            raise chulaException.ExtremeDangerError(append=msg)
+
+    return sql
+
 def cbool(input):
     """
-    Returns a formatted string safe for use in SQL. If None is passed, it will
-    return 'NULL' so as to insert a NULL value into the database.
+    Returns a formatted string safe for use in SQL. If None is passed, it
+    will return 'NULL' so as to insert a NULL value into the database.
     
     @param input: String to be cleaned
     @type input: String
     @return: String I{TRUE/FALSE}, or 'NULL'
     
-        >>> print 'SET active = %s;' % cbool(True)
-        SET active = TRUE;
-    
+    >>> print 'SET active = %s;' % cbool(True)
+    SET active = TRUE;
     """
     
-    if input is None or input == '': return 'NULL'
+    if input in [None, '']:
+        return 'NULL'
     
-    if isinstance(input, str):
-        true = [1, 'on', 't', 'true', 'y', 'yes', '1']
-        false = [0, 'off', 'f', 'false', 'n', 'no', '0']
-        input = input.lower()
-    else:
-        true = [True]
-        false = [False]
-        
-    if input in true:
+    input = str(input).lower()
+    if input in data.TRUE:
         return 'TRUE'
-    elif input in false:
+
+    elif input in data.FALSE:
         return 'FALSE'
+
     else:
-        msg = "Unable to determine boolean from " + type(input).__name__
-        raise ValueError, msg
+        raise chulaException.TypeConversionError(input, 'sql boolean')
 
 def cdate(input, doquote=True, isfunction=False):
     """
@@ -228,87 +221,65 @@ def cdate(input, doquote=True, isfunction=False):
             if doquote is True:
                 input = data.wrap(input, "'")
         else:
-            msg = 'Value not suitable as sql date: [%s]' % input
-            raise ValueError, msg
+            raise chulaException.TypeConversionError(input, 'sql date')
 
     return input
 
 def cfloat(input):
     """
-    Returns a formatted string safe for use in SQL. If None is
-    passed, it will return 'NULL' so as to insert a NULL value
-    into the database.
+    Returns a formatted string safe for use in SQL. If None is passed, it
+    will return 'NULL' so as to insert a NULL value into the database.
     
-    B{Todo:}
-    I{If True/False is passed should these be
-    converted to 1/0 respectively?}
-        
     @param input: Float to be cleaned
     @type input: Anything
     @return: Float, or 'NULL'
     
-        >>> print 'WHERE field = %s;' % cfloat("45")
-        WHERE field = 45.0;
-    
+    >>> print 'WHERE field = %s;' % cfloat("45")
+    WHERE field = 45.0;
     """
     
-    # Check if the data passed is really NULL
-    if input is None: return 'NULL'
-    if input is True or input is False:
-        raise ValueError, 'True/False is not valid integer. Convert to 0/1?'
-    try:
-        if input.upper() == 'NULL' or input == '': return 'NULL'
-    except:
-        pass
-    
+    # Check if the data passed is a NULL value
+    if input is None or str(input).lower() == 'null' or input == '':
+        return 'NULL'
+
+    elif isinstance(input, float) is True:
+        return input
+
     try:
         return float(input)
     except:
-        raise ValueError, 'Value passed cannot be safely stored as float'
+        raise chulaException.TypeConversionError(input, 'sql float')
 
 def cint(input):
     """
-    Returns a formatted string safe for use in SQL. If None is
-    passed, it will return 'NULL' so as to insert a NULL value
-    into the database.
+    Returns a formatted string safe for use in SQL. If None is passed, it
+    will return 'NULL' so as to insert a NULL value into the database.
     
-    B{Todo:}
-    I{If True/False is passed should these be
-    converted to 1/0 respectively?}  
-      
     @param input: Integer to be cleaned
     @type input: Anything
     @return: Integer, or 'NULL'
     
-        >>> print 'WHERE field = %s;' % cint("45")
-        WHERE field = 45;
-    
+    >>> print 'WHERE field = %s;' % cint("45")
+    WHERE field = 45;
     """
     
-    # Check if the data passed is really NULL
-    if input is None: return 'NULL'
-    if input is True or input is False:
-        raise ValueError, 'True/False is not valid integer. Convert to 0/1?'
-    try:
-        if input.upper() == 'NULL' or input == '': return 'NULL'
-    except:
-        pass
-    
+    # Check if the data passed is a NULL value
+    if input is None or str(input).lower() == 'null' or input == '':
+        return 'NULL'
+
+    elif isinstance(input, int) is True:
+        return input
+
     try:
         return int(input)
     except:
-        msg = 'Value passed cannot be safely stored as int: ' + str(input)
-        raise ValueError, msg
+        raise chulaException.TypeConversionError(input, 'sql float')
 
 def cstr(input, doquote=True, doescape=True):
     """
-    Returns a formatted string safe for use in SQL. If None is passed, it will
-    return 'NULL' so as to insert a NULL value into the database. Single
-    quotes will be escaped.
-    
-    B{Todo:}
-    I{This function needs to support mssql's annoying single quote padding
-    style too.}
+    Returns a formatted string safe for use in SQL. If None is passed, it
+    will return 'NULL' so as to insert a NULL value into the database.
+    Single quotes will be escaped.
     
     @param input: String to be cleaned
     @type input: String
@@ -318,37 +289,24 @@ def cstr(input, doquote=True, doescape=True):
     @type doescape: Boolean
     @return: String, or 'NULL'
     
-        >>> print 'SET description = %s;' % cstr("I don't")
-        SET description = 'I don''t';
-        >>> print 'SET now = %s;' % cstr("CURRENT_TIME", doquote=False)
-        SET now = CURRENT_TIME;
-    
+    >>> print 'SET description = %s;' % cstr("I don't")
+    SET description = 'I don''t';
+    >>> print 'SET now = %s;' % cstr("CURRENT_TIME", doquote=False)
+    SET now = CURRENT_TIME;
     """
     
-    # Is the value NULL
-    if input is None: return 'NULL'
+    if input is None:
+        return 'NULL'
     
-    try:
-        input = str(input)
-        if input.upper() == 'NULL': return 'NULL'
-    except:
-        pass
-    
-    if isinstance(input, str) is False:
-        print 'Invalid string:', input
-        raise ValueError, "Value is not a string."
-    
-    # Is the value an empty string
-    if input == '':
-        return "''"
-    
+    input = str(input) 
     if doescape:
         escape = {"'":"''", "\\":"\\\\"}
         input = data.replace_all(escape, input)
 
     if doquote:
-        input = data.wrap(input, "'")
-    return input
+        return data.wrap(input, "'")
+    else:
+        return input
 
 def ctags(input):
     """
@@ -357,27 +315,35 @@ def ctags(input):
     @type input: Anything
     @return: 'NULL', or input string
     
-        >>> print ctags('')
-        NULL
+    >>> print ctags('')
+    NULL
+    >>> print ctags('linux git foo')
+    'foo git linux'
     """
-    if input == '':
+
+    if input in [None, '']:
         return 'NULL'
     
-    tags = data.str2tags(input)
-    tags = data.tags2str(tags)
+    if isinstance(input, list) is True:
+        input = ' '.join(input)
+
+    tags = data.tags2str(data.str2tags(input))
     return "'%s'" % tags.lower()
 
 def empty2null(input):
     """
-    Returns NULL if an empty string is passed, else returns the input string.
+    Returns NULL if an empty string or None is passed, else returns the
+    input string.
     @param: input
     @type input: Anything
     @return: 'NULL', or input string
     
-        >>> print empty2null('')
-        NULL
+    >>> print empty2null('')
+    NULL
     """
-    if input == '':
+
+    if input in [None, '']:
         return 'NULL'
     else:
         return input
+

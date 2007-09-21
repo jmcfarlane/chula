@@ -27,6 +27,14 @@ class BaseException(Exception):
     def msg(self):
         return 'Generic chula exception'
 
+class ExtremeDangerError(BaseException):
+    def msg(self):
+        return 'Chula is not willing to perform the requested task'
+
+class MalformedConnectionStringError(BaseException):
+    def msg(self):
+        return 'Invalid database connection string'
+
 class MalformedPasswordError(BaseException):
     def msg(self):
         return 'Password does not adhere to: chula.regex.PASSWD'
@@ -44,3 +52,8 @@ class UnsupportedUsageError(BaseException):
 class UnsupportedConfigError(BaseException):
     def msg(self):
         return 'The specified configuration attribute is unsupported'
+
+class MissingDependancyError(BaseException):
+    def __init__(self, _pkg, append=None):
+        self.message = 'Please install: %s' % _pkg
+        self.append = append

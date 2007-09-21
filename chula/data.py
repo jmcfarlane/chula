@@ -8,6 +8,9 @@ import string
 import time
 import re
 
+TRUE = ['1', 't', 'true', 'yes', 'y', 'on']
+FALSE = ['0', 'f', 'false', 'no', 'n', 'off']
+
 def commaify(input):
     """
     Generate a number with commas for pretty printing
@@ -205,7 +208,7 @@ def format_money(amount):
         msg = 'The money passed must be castable as float'
         raise chulaException.TypeConversionError(amount, 'float', append=msg)
 
-    return commaify('%.2f' % (amount))
+    return commaify('%.2f' % amount)
 
 def isdate(input):
     """
@@ -340,16 +343,14 @@ def str2bool(input):
     True
     """
 
-    true = ['1', 'true', 'yes', 'y', 'on']
-    false = ['0', 'false', 'no', 'n', 'off']
     
     if input in [True, False]:
         return input
 
     input = str(input).lower()
-    if input in true:
+    if input in TRUE:
         return True
-    elif input in false:
+    elif input in FALSE:
         return False
     else:
         raise chulaException.TypeConversionError(input, 'boolean')
