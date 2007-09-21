@@ -29,12 +29,11 @@ class Session(dict):
             self._guid = _guid
 
         # Initialize memache client
-        #TODO: Add type checking here
-        if not self._cache is None:
+        if isinstance(self._cache, memcache.Client) is False:
             self._cache = memcache.Client(self._cache, debug=0)
         
         # Retrieve session
-        self.populate()
+        self.load()
 
     def __getattr__(self, key):
         return self.get(key, None)
@@ -65,11 +64,10 @@ class Session(dict):
         """
         
         sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(self._guid)
-        self.connect_db()
         try:
+            self.connect_db()
             self._cursor.execute(sql)
             self._conn.commit()
-
         except db.ProgrammingError:
             self._conn.rollback()
             raise
@@ -79,25 +77,6 @@ class Session(dict):
         # Delete from cache
         if not self._cache is None:
             self._cache.delete(self.mkey())
-
-    def populate(self):
-        """
-        Fetch session data from cache first, then fall back to the database
-        if needed.
-        """
-        
-        data = None
-        if not self._cache is None:
-            data = self.fetch_from_cache()
-
-        # If the cache is unavailable fetch from the db and be sure to
-        # persist to the database as we can't trust the cache currently
-        if data is None:
-            data = self.fetch_from_db()
-            self._persistImmediately = True
-
-        if not data is None:
-            self.update(data)
 
     def fetch_from_cache(self):
         """
@@ -125,9 +104,13 @@ class Session(dict):
         WHERE guid = %s AND active = TRUE;
         """ % (db.cstr(self._guid))
         
-        self.connect_db()
-        self._cursor.execute(sql)
-        self._record = self._cursor.fetchone()
+        try:
+            self.connect_db()
+            self._cursor.execute(sql)
+            self._record = self._cursor.fetchone()
+        except db.OperationalError, ex:
+            return {'SESSION-ERROR':'DATABASE UNAVAILABLE!'}
+
         if self._record is None:
             return {}
         else:
@@ -135,7 +118,10 @@ class Session(dict):
                 return json.decode(self._record['values'])
             except ValueError, ex:
                 raise "Unable to json.decode session", ex
-    
+   
+    def flushNextPersist(self):
+        self._persistImmediately = True
+
     def connect_db(self):
         """
         Obtain a datbase connection.
@@ -149,6 +135,25 @@ class Session(dict):
             uri = 'pg:chula@%(session_host)s/%(session_db)s' % config
             self._conn = db.Datastore(uri)
             self._cursor = self._conn.cursor()
+
+    def load(self):
+        """
+        Fetch session data from cache first, then fall back to the database
+        if needed.
+        """
+        
+        data = None
+        if not self._cache is None:
+            data = self.fetch_from_cache()
+
+        # If the cache is unavailable fetch from the db and be sure to
+        # persist to the database as we can't trust the cache currently
+        if data is None:
+            data = self.fetch_from_db()
+            self.flushNextPersist()
+
+        if not data is None:
+            self.update(data)
 
     def mkey(self):
         """
@@ -176,40 +181,15 @@ class Session(dict):
         # now. 
         if self[ageKey] == 0 or self[ageKey] > 10:
             self[ageKey] = 0
-            self._persistImmediately = True
+            self.flushNextPersist()
         
         # Forces a write to the database on the next go
         if self._persistImmediately is True:
             self.persist_db()
 
         # Always persist to cache
-        if not self._cache is None:
+        if isinstance(self._cache, memcache.Client) is True:
             self.persist_cache()
-
-    def persist_db(self):
-        """
-        Persist the session state to the database.  This method will call
-        _gc() to garbage collect the session specific database connection
-        if it exists.
-        """
-        
-        sql = "SELECT session_set(%s, %s, TRUE);"
-        sql = sql % (db.cstr(self._guid), db.cstr(json.encode(self)))
-
-        self.connect_db()
-        try:
-            self._cursor.execute(sql)
-            self._conn.commit()
-
-        except db.ProgrammingError:
-            self._conn.rollback()
-            raise
-
-        finally:
-            # Because persistance is always at the end of the process flow
-            # (actually called by the apacheHandler even) we can safely
-            # close the database connection now :)
-            self._gc()
 
     def persist_cache(self):
         """
@@ -223,4 +203,32 @@ class Session(dict):
             timeout = 30
 
         self._cache.set(self.mkey(), json.encode(self), timeout * 60)
+
+    def persist_db(self):
+        """
+        Persist the session state to the database.  This method will call
+        _gc() to garbage collect the session specific database connection
+        if it exists.
+        """
+        
+        sql = "SELECT session_set(%s, %s, TRUE);"
+        sql = sql % (db.cstr(self._guid), db.cstr(json.encode(self)))
+
+        try:
+            self.connect_db()
+            self._cursor.execute(sql)
+            self._conn.commit()
+        except db.OperationalError, ex:
+            if isinstance(self._cache, memcache.Client) is True:
+                self.flushNextPersist()
+            else:
+                raise
+        except db.ProgrammingError:
+            self._conn.rollback()
+            raise
+        finally:
+            # Because persistance is always at the end of the process flow
+            # (actually called by the apacheHandler even) we can safely
+            # close the database connection now :)
+            self._gc()
 

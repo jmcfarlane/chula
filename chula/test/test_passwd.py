@@ -3,18 +3,13 @@ import doctest
 from chula import passwd
 from chula.chulaException import *
 
-password = 'cookiemonster'
-salt = 'ai'
-sha1 = 'ai0ea9191b374fad28b17c18e1f45a3140868ba402'
-crypted = 'aiLgRTdyZEqEw'
+password = 'gitisbetterthancvs'
+salt = 'git'
+sha1 = 'gitf03b4c228b5bcecfd3fb3421b6fe83afb104d06e'
 
 class Test_passwd(unittest.TestCase):
     def test_new_password_with_known_hash(self):
         self.assertEquals(sha1, passwd.hash(password, salt=salt))
-
-    def test_old_password_with_known_hash(self):
-        hash = passwd.hash(password, salt='ai', format='CRYPT')
-        self.assertEquals(crypted, hash)
 
     def test_similar_passwords_are_unique_with_salt(self):
         self.assertNotEqual(passwd.hash(password, salt=salt),
@@ -33,14 +28,7 @@ class Test_passwd(unittest.TestCase):
     def test_new_matches_without_positive_match(self):
         self.assertFalse(passwd.matches('badpasswd', sha1))
 
-    def test_old_matches_with_positive_match(self):
-        self.assertTrue(passwd.matches(password, crypted))
-    
-    def test_old_matches_without_positive_match(self):
-        self.assertFalse(passwd.matches('badpasswd', crypted))
-
 def run_unittest():
-    # Never change this, leave as is
     unittest.TextTestRunner(verbosity=2).run(get_tests())
 
 def get_tests():
@@ -49,5 +37,4 @@ def get_tests():
     return tests
 
 if __name__ == '__main__':
-    # Never change this, leave as is
     run_unittest()
