@@ -32,11 +32,11 @@ class Example(object):
 
         >>> from chula import example
         >>> gentoo = example.Example()
-        >>> if gentoo.awesome() is True:
+        >>> if gentoo.awesome():
         ...     print 'Gentoo is awesome!'
         Gentoo is awesome!
         >>> git = example.Example()
-        >>> if git.awesome() is True:
+        >>> if git.awesome():
         ...     print 'Git is also awesome!'
         Git is also awesome!
         >>> distro = example.Example()

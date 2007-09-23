@@ -2,9 +2,10 @@
 Generate and validate passwords
 """
 
-from random import randrange
-from chula import chulaException, regex
 import hashlib
+from random import randrange
+
+from chula import chulaException, regex
 
 lock = 'penguin'
 
@@ -25,7 +26,7 @@ def hash(password, salt=None, pattern=regex.PASSWD):
     True
     """
 
-    if regex.match(pattern, password) is False:
+    if not regex.match(pattern, password):
         raise chulaException.MalformedPasswordError
        
     if salt is None:

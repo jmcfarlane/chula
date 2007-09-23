@@ -6,7 +6,7 @@ Runs all unit tests in a directory tree, sequentially
 import os
 import sys
 
-def getTests(path):
+def get_tests(path):
     """
     Creates and returns a list of all tests in a directory tree
     List items are tuples of the form (Path, Filename)
@@ -21,7 +21,7 @@ def getTests(path):
                         tests.append((directory[0] + "/", file))
     return tests
 
-def runUnitTests(tests):
+def run_tests(tests):
     """
     Runs all unittests in tests
     tests is a list where each item is a tuple of the form:
@@ -58,6 +58,6 @@ if __name__ == "__main__":
     except IndexError, ex:
         path = os.getcwd()
         
-    tests = getTests(path)
-    runUnitTests(tests)
+    tests = get_tests(path)
+    run_tests(tests)
 

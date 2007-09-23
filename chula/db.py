@@ -3,18 +3,20 @@ Functions to make working with databases easier. I{Currently only PostgreSQL}
 """
 
 import re
-from chula import chulaException, data   
+
 try:
     import psycopg2
     from psycopg2 import extensions, extras
 except:
     raise chulaException.MissingDependancyError('psycopg2')
 
+from chula import chulaException, data   
+
 # Expose the psycopg2 exceptions
-IntegrityError = psycopg2.IntegrityError
-Databaserror = psycopg2.DatabaseError
 DataError = psycopg2.DataError
+Databaserror = psycopg2.DatabaseError
 Error = psycopg2.Error
+IntegrityError = psycopg2.IntegrityError
 InterfaceError = psycopg2.InterfaceError
 InternalError = psycopg2.InternalError
 NotSupportedError = psycopg2.NotSupportedError
@@ -164,33 +166,33 @@ def _checkForDanger(sql):
 
     return sql
 
-def cbool(input):
+def cbool(input_):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it
     will return 'NULL' so as to insert a NULL value into the database.
     
-    @param input: String to be cleaned
-    @type input: String
+    @param input_: String to be cleaned
+    @type input_: String
     @return: String I{TRUE/FALSE}, or 'NULL'
     
     >>> print 'SET active = %s;' % cbool(True)
     SET active = TRUE;
     """
     
-    if input in [None, '']:
+    if input_ in [None, '']:
         return 'NULL'
     
-    input = str(input).lower()
-    if input in data.TRUE:
+    input_ = str(input_).lower()
+    if input_ in data.TRUE:
         return 'TRUE'
 
-    elif input in data.FALSE:
+    elif input_ in data.FALSE:
         return 'FALSE'
 
     else:
-        raise chulaException.TypeConversionError(input, 'sql boolean')
+        raise chulaException.TypeConversionError(input_, 'sql boolean')
 
-def cdate(input, doquote=True, isfunction=False):
+def cdate(input_, doquote=True, isfunction=False):
     """
     Returns a formatted string safe for use in SQL. If None or an empty
     string is passed, it will return 'NULL' so as to insert a NULL value
@@ -199,8 +201,8 @@ def cdate(input, doquote=True, isfunction=False):
     B{Todo:}
     I{This function needs to be able to receive datetime.datetime types too.}
     
-    @param input: Date to be cleaned
-    @type input: String
+    @param input_: Date to be cleaned
+    @type input_: String
     @return: String, or 'NULL'
     
     >>> print 'SET updated = %s;' % cdate('1/1/2005')
@@ -210,28 +212,28 @@ def cdate(input, doquote=True, isfunction=False):
     SET updated = now();
     """
     
-    if input in [None, '']:
+    if input_ in [None, '']:
         return 'NULL'
 
-    elif isfunction is True:
-        return input
+    elif isfunction:
+        return input_
 
     else:
-        if data.isdate(input) is True:
-            if doquote is True:
-                input = data.wrap(input, "'")
+        if data.isdate(input_):
+            if doquote:
+                input_ = data.wrap(input_, "'")
         else:
-            raise chulaException.TypeConversionError(input, 'sql date')
+            raise chulaException.TypeConversionError(input_, 'sql date')
 
-    return input
+    return input_
 
-def cfloat(input):
+def cfloat(input_):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it
     will return 'NULL' so as to insert a NULL value into the database.
     
-    @param input: Float to be cleaned
-    @type input: Anything
+    @param input_: Float to be cleaned
+    @type input_: Anything
     @return: Float, or 'NULL'
     
     >>> print 'WHERE field = %s;' % cfloat("45")
@@ -239,24 +241,24 @@ def cfloat(input):
     """
     
     # Check if the data passed is a NULL value
-    if input is None or str(input).lower() == 'null' or input == '':
+    if input_ is None or str(input_).lower() == 'null' or input_ == '':
         return 'NULL'
 
-    elif isinstance(input, float) is True:
-        return input
+    elif isinstance(input_, float):
+        return input_
 
     try:
-        return float(input)
+        return float(input_)
     except:
-        raise chulaException.TypeConversionError(input, 'sql float')
+        raise chulaException.TypeConversionError(input_, 'sql float')
 
-def cint(input):
+def cint(input_):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it
     will return 'NULL' so as to insert a NULL value into the database.
     
-    @param input: Integer to be cleaned
-    @type input: Anything
+    @param input_: Integer to be cleaned
+    @type input_: Anything
     @return: Integer, or 'NULL'
     
     >>> print 'WHERE field = %s;' % cint("45")
@@ -264,25 +266,25 @@ def cint(input):
     """
     
     # Check if the data passed is a NULL value
-    if input is None or str(input).lower() == 'null' or input == '':
+    if input_ is None or str(input_).lower() == 'null' or input_ == '':
         return 'NULL'
 
-    elif isinstance(input, int) is True:
-        return input
+    elif isinstance(input_, int):
+        return input_
 
     try:
-        return int(input)
+        return int(input_)
     except:
-        raise chulaException.TypeConversionError(input, 'sql float')
+        raise chulaException.TypeConversionError(input_, 'sql float')
 
-def cstr(input, doquote=True, doescape=True):
+def cstr(input_, doquote=True, doescape=True):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it
     will return 'NULL' so as to insert a NULL value into the database.
     Single quotes will be escaped.
     
-    @param input: String to be cleaned
-    @type input: String
+    @param input_: String to be cleaned
+    @type input_: String
     @param doquote: I{OPTIONAL}: Wrapped in single quotes, defaults to B{True}
     @type doquote: Boolean
     @param doescape: I{OPTIONAL}: Escape single quotes, defaults to B{True}
@@ -295,25 +297,25 @@ def cstr(input, doquote=True, doescape=True):
     SET now = CURRENT_TIME;
     """
     
-    if input is None:
+    if input_ is None:
         return 'NULL'
     
-    input = str(input) 
+    input_ = str(input_) 
     if doescape:
         escape = {"'":"''", "\\":"\\\\"}
-        input = data.replace_all(escape, input)
+        input_ = data.replace_all(escape, input_)
 
     if doquote:
-        return data.wrap(input, "'")
+        return data.wrap(input_, "'")
     else:
-        return input
+        return input_
 
-def ctags(input):
+def ctags(input_):
     """
     Returns a string safe for use in a sql statement
-    @param: input
-    @type input: Anything
-    @return: 'NULL', or input string
+    @param: input_
+    @type input_: Anything
+    @return: 'NULL', or input_ string
     
     >>> print ctags('')
     NULL
@@ -321,29 +323,29 @@ def ctags(input):
     'foo git linux'
     """
 
-    if input in [None, '']:
+    if input_ in [None, '']:
         return 'NULL'
     
-    if isinstance(input, list) is True:
-        input = ' '.join(input)
+    if isinstance(input_, list):
+        input_ = ' '.join(input_)
 
-    tags = data.tags2str(data.str2tags(input))
+    tags = data.tags2str(data.str2tags(input_))
     return "'%s'" % tags.lower()
 
-def empty2null(input):
+def empty2null(input_):
     """
     Returns NULL if an empty string or None is passed, else returns the
-    input string.
-    @param: input
-    @type input: Anything
-    @return: 'NULL', or input string
+    input_ string.
+    @param: input_
+    @type input_: Anything
+    @return: 'NULL', or input_ string
     
     >>> print empty2null('')
     NULL
     """
 
-    if input in [None, '']:
+    if input_ in [None, '']:
         return 'NULL'
     else:
-        return input
+        return input_
 

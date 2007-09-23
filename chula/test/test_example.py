@@ -19,7 +19,7 @@ class Test_example(unittest.TestCase):
         self.assertRaises(TypeError, self.example.sum, (1, '2'))
 
     def test_awesome(self):
-        self.failIf(self.example.awesome() is False)
+        self.failIf(not self.example.awesome())
 
 def run_unittest():
     # Never change this, leave as is

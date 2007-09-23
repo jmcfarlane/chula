@@ -13,7 +13,7 @@ except ImportError:
     print "NOTICE: Unable to access mod_python"
     print "NOTICE: Creating FakeRequest object(s) and continuing anyway..."
 
-class BaseController(object):
+class Controller(object):
     """
     The BaseController class helps manage all web requests.  This is done
     by all requests being either of this type, or of a descendant type.
@@ -29,7 +29,7 @@ class BaseController(object):
         """
         
         self.content_type = 'text/html'
-        self.getRequest(req)
+        self.load_http_vars(req)
 
         # Get user configuration
         self.config = config
@@ -44,7 +44,7 @@ class BaseController(object):
         guid = ck.value()
         self.session = session.Session(config, guid)
 
-    def getRequest(self, req):
+    def load_http_vars(self, req):
         """
         Takes the request object and fills self.* values based on it
         """
@@ -55,7 +55,7 @@ class BaseController(object):
         # it's contents and move on, else set it (currently to the same
         # value that mod_python publisher would set it).
         try:
-            if isinstance(self.req.form, util.FieldStorage) is True:
+            if isinstance(self.req.form, util.FieldStorage):
                 return
         except Exception:
             self.req.form = util.FieldStorage(req, keep_blank_values=1)

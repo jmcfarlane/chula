@@ -18,12 +18,12 @@ class Pager(list):
 
         >>> from chula import pager
         >>> p = pager.Pager(0, 50)
-        >>> p[0]['selected']
+        >>> p[0]['isselected']
         True
         >>> p[0]['offset']
         0
         >>> p = pager.Pager(30, 100, 5, 11)
-        >>> p[0]['selected']
+        >>> p[0]['isselected']
         False
         >>> p[0]['offset']
         5
@@ -67,6 +67,6 @@ class Pager(list):
 
         for page in xrange(firstvisible, lastvisible + 1):
             self.append({'offset':page * limit,
-                         'selected':(page == currentpage)})
+                         'isselected':(page == currentpage)})
 
 

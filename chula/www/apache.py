@@ -2,10 +2,11 @@
 Chula apache handler
 """
 
-from mod_python import apache
-from chula import config as CONFIG, chulaException
+from mod_python import apache as APACHE
 
-def handler(req, config):
+from chula import chulaException, config as CONFIG
+
+def _handler(req, config):
     # The controller is the first word after the host:port
     # Here uri will hold search/results where the first part is used to
     # derive the module and class, the second is used to dervie the method
@@ -70,12 +71,12 @@ def handler(req, config):
     controller.session.persist()
 
     # If we got here, all is well
-    return apache.OK
+    return APACHE.OK
 
-def apacheHandler(fcn):
-    def wrappedHandler(req):
+def handler(fcn):
+    def wrapper(req):
         config = fcn()
-        return handler(req, config)
+        return _handler(req, config)
 
-    return wrappedHandler
+    return wrapper
 

@@ -29,7 +29,7 @@ class Session(dict):
             self._guid = _guid
 
         # Initialize memache client
-        if isinstance(self._cache, memcache.Client) is False:
+        if not isinstance(self._cache, memcache.Client):
             self._cache = memcache.Client(self._cache, debug=0)
         
         # Retrieve session
@@ -119,7 +119,7 @@ class Session(dict):
             except ValueError, ex:
                 raise "Unable to json.decode session", ex
    
-    def flushNextPersist(self):
+    def flush_next_persist(self):
         self._persistImmediately = True
 
     def connect_db(self):
@@ -150,7 +150,7 @@ class Session(dict):
         # persist to the database as we can't trust the cache currently
         if data is None:
             data = self.fetch_from_db()
-            self.flushNextPersist()
+            self.flush_next_persist()
 
         if not data is None:
             self.update(data)
@@ -181,14 +181,14 @@ class Session(dict):
         # now. 
         if self[ageKey] == 0 or self[ageKey] > 10:
             self[ageKey] = 0
-            self.flushNextPersist()
+            self.flush_next_persist()
         
         # Forces a write to the database on the next go
-        if self._persistImmediately is True:
+        if self._persistImmediately:
             self.persist_db()
 
         # Always persist to cache
-        if isinstance(self._cache, memcache.Client) is True:
+        if isinstance(self._cache, memcache.Client):
             self.persist_cache()
 
     def persist_cache(self):
@@ -219,8 +219,8 @@ class Session(dict):
             self._cursor.execute(sql)
             self._conn.commit()
         except db.OperationalError, ex:
-            if isinstance(self._cache, memcache.Client) is True:
-                self.flushNextPersist()
+            if isinstance(self._cache, memcache.Client):
+                self.flush_next_persist()
             else:
                 raise
         except db.ProgrammingError:

@@ -2,28 +2,29 @@
 Functions to make working with data easier.
 """
 
-from chula import chulaException, regex
 import datetime
+import re
 import string
 import time
-import re
+
+from chula import chulaException, regex
 
 TRUE = ['1', 't', 'true', 'yes', 'y', 'on']
 FALSE = ['0', 'f', 'false', 'no', 'n', 'off']
 
-def commaify(input):
+def commaify(input_):
     """
     Generate a number with commas for pretty printing
     
-    @param input: Data to be commaified
-    @type input: Number or string
+    @param input_: Data to be commaified
+    @type input_: Number or string
     @return: String
     
     >>> print commaify('45000000000')
     45,000,000,000
     """
     
-    parts = str(input).split('.')
+    parts = str(input_).split('.')
     formatted = re.sub(r'(\d{3})', r'\1,', parts[0][::-1])
     try:
         output = formatted[::-1] + '.' + parts[1]
@@ -158,13 +159,13 @@ def date_within_range(time, offset, now=None):
     else:
         return False
 
-def format_phone(input):
+def format_phone(input_):
     """
     Format a string into a properly formatted telephone number.  Accepts a
-    few common styles of input.
+    few common styles of input_.
     
-    @param input: Telephone number to format
-    @type input: String
+    @param input_: Telephone number to format
+    @type input_: String
     @return: String formatted as: (area) exchange-number
     
     >>> print format_phone('555-123-1234')
@@ -175,7 +176,7 @@ def format_phone(input):
                  r'(\D)*'
                  r'(?P<exchange>\d{3})'
                  r'(\D)*'
-                 r'(?P<number>\d{4})', input)
+                 r'(?P<number>\d{4})', input_)
 
     if not m is None:
         area = m.group('area')
@@ -186,7 +187,7 @@ def format_phone(input):
         phone = '%s-%s' % (m.group('exchange'), m.group('number'))
         return area + phone
     else:
-        return input
+        return input_
 
 def format_money(amount):
     """
@@ -210,12 +211,12 @@ def format_money(amount):
 
     return commaify('%.2f' % amount)
 
-def isdate(input):
+def isdate(input_):
     """
     Determines if the value passed is a date.
             
-    @param input: Value to evaluate
-    @type input: Anything
+    @param input_: Value to evaluate
+    @type input_: Anything
     @return: Boolean
     
     >>> print isdate('1/1/2005')
@@ -224,17 +225,17 @@ def isdate(input):
     False
     """
     try:
-        str2date(input)
+        str2date(input_)
         return True
     except:
         return False
 
-def istag(input, regexp=None):
+def istag(input_, regexp=None):
     """
     Determines if the value passed is a tag.
             
-    @param input: Value to evaluate
-    @type input: Anything
+    @param input_: Value to evaluate
+    @type input_: Anything
     @param regexp: Alternate regex to chula.regex.TAG
     @type regexp: Valid regular expression (string)
     @return: Boolean
@@ -245,23 +246,23 @@ def istag(input, regexp=None):
     False
     """
     
-    if isinstance(input, str) is False:
+    if not isinstance(input_, str):
         return False
 
     if regexp is None:
         regexp = regex.TAG
     
-    if re.search(regexp, input) is None:
+    if re.search(regexp, input_) is None:
         return False
     else:
         return True
 
-def istags(input, regexp=None):
+def istags(input_, regexp=None):
     """
     Determines if the value passed is a collection of tag.
             
-    @param input: Value to evaluate
-    @type input: Anything
+    @param input_: Value to evaluate
+    @type input_: Anything
     @param regexp: Alternate regex to chula.regex.TAGS
     @type regexp: Valid regular expression (string)
     @return: Boolean
@@ -274,23 +275,23 @@ def istags(input, regexp=None):
     False
     """
     
-    if isinstance(input, str) is False:
+    if not isinstance(input_, str):
         return False
 
     if regexp is None:
         regexp = regex.TAGS
 
-    if re.search(regexp, input) is None:
+    if re.search(regexp, input_) is None:
         return False
     else:
         return True
 
-def none2empty(input):
+def none2empty(input_):
     """
     Convert none to an empty string.
             
-    @param input: Value to evaluate
-    @type input: Anything
+    @param input_: Value to evaluate
+    @type input_: Anything
     @return: Empty string ('') or value passed
     
     >>> print none2empty([1])
@@ -300,41 +301,41 @@ def none2empty(input):
     True
     """
     
-    if input is None:
+    if input_ is None:
         return ''
     else:
-        return input
+        return input_
 
-def replace_all(subs, input):
+def replace_all(subs, input_):
     """
-    Simple text replacement, using an input dictionary against a string.
+    Simple text replacement, using an input_ dictionary against a string.
     
     @param subs: Dictionary of find/replace values
     @type subs: Dictionary
-    @param input: String to update
-    @type input: String
+    @param input_: String to update
+    @type input_: String
     @return: String
     
     >>> print replace_all({'l':'1', 'o':'0'}, "Hello world")
     He110 w0r1d
     """ 
     
-    if not input is None and input != '':
+    if not input_ is None and input_ != '':
         # Generate a regular expression using the dictionary keys
         regex = re.compile("(%s)" % "|".join(map(re.escape, subs.keys())))
 
         # Recursively for each match, look-up corresponding value in dictionary
         return regex.sub(lambda mo: subs[mo.string[mo.start():mo.end()]],
-                         input)
+                         input_)
     else:
-        return input
+        return input_
 
-def str2bool(input):
+def str2bool(input_):
     """
     Determine if the string passed is either True or False
 
-    @param input: Value to evaluate
-    @type input: Anything
+    @param input_: Value to evaluate
+    @type input_: Anything
     @return: Boolean
 
     >>> str2bool(True)
@@ -344,32 +345,32 @@ def str2bool(input):
     """
 
     
-    if input in [True, False]:
-        return input
+    if input_ in [True, False]:
+        return input_
 
-    input = str(input).lower()
-    if input in TRUE:
+    input_ = str(input_).lower()
+    if input_ in TRUE:
         return True
-    elif input in FALSE:
+    elif input_ in FALSE:
         return False
     else:
-        raise chulaException.TypeConversionError(input, 'boolean')
+        raise chulaException.TypeConversionError(input_, 'boolean')
 
-def str2date(input):
+def str2date(input_):
     """
     Conversion from string to datetime object.
     
-    @param input: Datetime in string format
-    @type input: String
+    @param input_: Datetime in string format
+    @type input_: String
     @return: datetime.datetime
     
     >>> print str2date("10/4/2005 21:45")
     2005-10-04 21:45:00
     """
     
-    if isinstance(input, str) is False:
+    if not isinstance(input_, str):
         msg = 'Value passed must be of type string.'
-        raise chulaException.TypeConversionError(input,
+        raise chulaException.TypeConversionError(input_,
                                                  'datetime.datetime',
                                                  append=msg)
 
@@ -393,49 +394,49 @@ def str2date(input):
     regexes.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s$') 
 
     for regexp in regexes:
-        match = re.match(regexp % parts, input)
+        match = re.match(regexp % parts, input_)
         if not match is None:
             ptime.update(match.groupdict())
             break
 
     if len(ptime.keys()) == 3:
-        raise chulaException.TypeConversionError(input, 'datetime')
+        raise chulaException.TypeConversionError(input_, 'datetime')
 
     fixed = '%(Y)s-%(m)s-%(d)sT%(I)s:%(M)s:%(S)s' % ptime
     return datetime.datetime(*strptime(fixed, "%Y-%m-%dT%H:%M:%S")[0:6])
 
-def str2tags(input):
+def str2tags(input_):
     """
     Convert a string of tags into a sorted list of tags.
     
-    @param input: String
-    @type input: String
+    @param input_: String
+    @type input_: String
     @return: List
     
     >>> print str2tags('linux good ms annoying linux good')
     ['annoying', 'good', 'linux', 'ms']
     """
     
-    if istags(input) is True:
-        input = input.lower()
-        input = input.replace(',', ' ')
-        tags = list(frozenset(input.split()))
+    if istags(input_):
+        input_ = input_.lower()
+        input_ = input_.replace(',', ' ')
+        tags = list(frozenset(input_.split()))
         if '' in tags:
             tags.remove('')
         tags.sort()
         return tags
 
-    elif input == '':
+    elif input_ == '':
         return []
     
-    raise chulaException.TypeConversionError(input, 'list of tags')
+    raise chulaException.TypeConversionError(input_, 'list of tags')
 
-def wrap(input, wrap):
+def wrap(input_, wrap):
     """
     Wrap a string with something.
     
-    @param input: String to wrap
-    @type input: String
+    @param input_: String to wrap
+    @type input_: String
     @param wrap: String to wrap with
     @type wrap: String
     @return: String
@@ -444,7 +445,7 @@ def wrap(input, wrap):
     'sql'
     """
     
-    return '%s%s%s' % (wrap, input, wrap)
+    return '%s%s%s' % (wrap, input_, wrap)
 
 def tags2str(tags):
     """
@@ -460,12 +461,12 @@ def tags2str(tags):
     annoying good linux ms
     """
 
-    if isinstance(tags, list) is False:
+    if not isinstance(tags, list):
         msg = "The list of tags passed is not a list"
         raise ValueError, msg 
 
     for tag in tags:
-        if istag(tag) is False:
+        if not istag(tag):
             raise chulaException.TypeConversionError(tag, 'tag')
     
     tags.sort()

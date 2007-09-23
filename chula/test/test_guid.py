@@ -9,7 +9,7 @@ class Test_guid(unittest.TestCase):
         return msg % (round(self.speed / self.tests, 5),
                       self.max)
 
-    def fastEnough(self):
+    def fast_enough(self):
         return self.speed / self.tests < self.max
 
     def unique(self, max=50):
@@ -30,13 +30,13 @@ class Test_guid(unittest.TestCase):
         self.tests = 500
         self.assertEqual(self.tests, self.unique(self.tests), self.uv)
         self.speed = time.time() - self.start
-        self.assertTrue(self.fastEnough(), self.msg())
+        self.assertTrue(self.fast_enough(), self.msg())
 
     def test_5000(self):
         self.tests = 5000
         self.assertEqual(self.tests, self.unique(self.tests), self.uv)        
         self.speed = time.time() - self.start
-        self.assertTrue(self.fastEnough(), self.msg())
+        self.assertTrue(self.fast_enough(), self.msg())
 
 def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())
