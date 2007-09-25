@@ -6,6 +6,7 @@ class Pager(list):
     def __init__(self, offset, recordcount, limit=8, visiblepages=19):
         """
         Create a new pager
+
         @param offset: 0 based representation of what to offset/skip by
         @type offset: Integer
         @param recordcount: 1 based representation of records available
@@ -68,5 +69,4 @@ class Pager(list):
         for page in xrange(firstvisible, lastvisible + 1):
             self.append({'offset':page * limit,
                          'isselected':(page == currentpage)})
-
 

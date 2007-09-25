@@ -1,12 +1,13 @@
-import time
 from random import randrange
+import time
 
 # Save cost of the function lookup
 _now = time.time
 
 def guid():
     """
-    Generate a random guid 64 characters in length.
+    Generate a random guid 64 characters in length
+
     @return: String
     """
     

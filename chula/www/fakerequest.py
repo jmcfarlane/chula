@@ -3,30 +3,33 @@ Classes to aid in unit testing or anything that needs to simulate a valid
 Apache/Mod_python request object.
 """
 
-import os, sys
-
+import os
+import sys
 
 class FakeFieldStorage(dict):
     """
     Fake FieldStorage object.
     """
+
     def __init__(self, *args, **kwargs):
         """
-        Simulates the mod_python FieldStorage object, really just to provide
-        the list object.
+        Simulates the mod_python FieldStorage object, really just to
+        provide the list object.
         
         @return: Pseudo mod_python FieldStorage object
         """
+
         super(FakeFieldStorage, self).__init__() 
         self.list = self
     
 class FakeRequest(object):
     """
-    Fake request object.
+    Fake request object
     """
+
     def __init__(self):
         """
-        Simulates the req object common to mod_python development.
+        Simulates the req object common to mod_python development
     
         @return: Pseudo mod_python req object
         """
@@ -100,3 +103,4 @@ class FakeServer(object):
 # Make it easier to use these classes as drop in replacements for the real
 # thing(s):
 FieldStorage = FakeFieldStorage
+

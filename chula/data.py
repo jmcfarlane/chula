@@ -15,7 +15,7 @@ FALSE = ['0', 'f', 'false', 'no', 'n', 'off']
 def commaify(input_):
     """
     Generate a number with commas for pretty printing
-    
+
     @param input_: Data to be commaified
     @type input_: Number or string
     @return: String
@@ -35,8 +35,8 @@ def commaify(input_):
 
 def date_add(unit, delta, date):
     """
-    Add or subtract from the date passed.
-    
+    Add or subtract from the date passed
+
     @param unit: Unit of measure (B{S}ec/B{M}in/B{H}r/B{d}ays/B{w}eeks)
     @type unit: String
     @param delta: Offset, amount to adjust the date by
@@ -70,7 +70,7 @@ def date_add(unit, delta, date):
 def date_diff(start, stop, unit='seconds'):
     """
     Calculates the difference between two dates.
-    
+
     @param start: Start time
     @type start: datetime.datetime
     @param stop: Stop time
@@ -118,10 +118,12 @@ def date_diff(start, stop, unit='seconds'):
 def date_within_range(time, offset, now=None):
     """
     The idea is to provide shorthand for "is foobar time within 02:00 + 30
-    min".  This can be usefull for things that look for time periods when
+    min".  This can be useful for things that look for time periods when
     different logic applies, like from 2am and the next 30 minutes expect
     the network to be slow, as backups are taking place. Anything in the
     past is considered out of range.
+
+    B{Uncertain if this method should stay or be removed}
     
     @param time: Representation of hours:minutes
     @type time: String representation of time
@@ -162,8 +164,8 @@ def date_within_range(time, offset, now=None):
 def format_phone(input_):
     """
     Format a string into a properly formatted telephone number.  Accepts a
-    few common styles of input_.
-    
+    few common patterns.
+
     @param input_: Telephone number to format
     @type input_: String
     @return: String formatted as: (area) exchange-number
@@ -192,7 +194,7 @@ def format_phone(input_):
 def format_money(amount):
     """
     Format a numeric value into commaified dollars and cents (two digits)
-    
+
     @param amount: Money to be converted
     @type currency: Float
     @return: String
@@ -214,7 +216,7 @@ def format_money(amount):
 def isdate(input_):
     """
     Determines if the value passed is a date.
-            
+
     @param input_: Value to evaluate
     @type input_: Anything
     @return: Boolean
@@ -232,8 +234,8 @@ def isdate(input_):
 
 def istag(input_, regexp=None):
     """
-    Determines if the value passed is a tag.
-            
+    Determines if the value passed is a tag
+
     @param input_: Value to evaluate
     @type input_: Anything
     @param regexp: Alternate regex to chula.regex.TAG
@@ -260,7 +262,7 @@ def istag(input_, regexp=None):
 def istags(input_, regexp=None):
     """
     Determines if the value passed is a collection of tag.
-            
+
     @param input_: Value to evaluate
     @type input_: Anything
     @param regexp: Alternate regex to chula.regex.TAGS
@@ -289,7 +291,7 @@ def istags(input_, regexp=None):
 def none2empty(input_):
     """
     Convert none to an empty string.
-            
+
     @param input_: Value to evaluate
     @type input_: Anything
     @return: Empty string ('') or value passed
@@ -309,7 +311,7 @@ def none2empty(input_):
 def replace_all(subs, input_):
     """
     Simple text replacement, using an input_ dictionary against a string.
-    
+
     @param subs: Dictionary of find/replace values
     @type subs: Dictionary
     @param input_: String to update
@@ -332,10 +334,10 @@ def replace_all(subs, input_):
 
 def str2bool(input_):
     """
-    Determine if the string passed is either True or False
+    Determine if the data passed is either True or False
 
     @param input_: Value to evaluate
-    @type input_: Anything
+    @type input_: String
     @return: Boolean
 
     >>> str2bool(True)
@@ -343,7 +345,6 @@ def str2bool(input_):
     >>> str2bool('on')
     True
     """
-
     
     if input_ in [True, False]:
         return input_
@@ -358,9 +359,10 @@ def str2bool(input_):
 
 def str2date(input_):
     """
-    Conversion from string to datetime object.
-    
-    @param input_: Datetime in string format
+    Conversion from string to datetime object.  Most of the commin
+    patterns are currently supported.
+
+    @param input_: Date time (of supported pattern)
     @type input_: String
     @return: datetime.datetime
     
@@ -407,8 +409,7 @@ def str2date(input_):
 
 def str2tags(input_):
     """
-    Convert a string of tags into a sorted list of tags.
-    
+    Convert a string of tags into a sorted list of tags
     @param input_: String
     @type input_: String
     @return: List
@@ -433,8 +434,8 @@ def str2tags(input_):
 
 def wrap(input_, wrap):
     """
-    Wrap a string with something.
-    
+    Wrap a string with something
+
     @param input_: String to wrap
     @type input_: String
     @param wrap: String to wrap with
@@ -472,3 +473,4 @@ def tags2str(tags):
     tags.sort()
 
     return ' '.join(tags)
+

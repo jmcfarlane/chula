@@ -5,7 +5,7 @@ from chula.chulaException import *
 
 password = 'gitisbetterthancvs'
 salt = 'git'
-sha1 = 'gitf03b4c228b5bcecfd3fb3421b6fe83afb104d06e'
+sha1 = 'gitda2250b53614f05ad5ec31a95ee1e0080ae22288'
 
 class Test_passwd(unittest.TestCase):
     def test_new_password_with_known_hash(self):

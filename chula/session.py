@@ -2,31 +2,34 @@
 Class to manage user session.  It is designed to be generic in nature.
 """
 
-from chula import db, guid, json, memcache
 import hashlib
+
+from chula import db, guid, json, memcache
 
 class Session(dict):
     """
     The Session class keeps track of user session.
     """
     
-    def __init__(self, config, _guid=None):
+    def __init__(self, config, existing_guid=None):
         """
+        Create a user session object
+
+        @param config: Application configuration
+        @type config: Instance of chula.config object
         @param existing_guid: Used to attach to an existing user's session
         @type existing_guid: chula.guid.guid()
-        @param host: Specified database hose to use for persistance
-        @type host: FQDN
         """
         
-        self._persistImmediately = False
+        self._persist_immediately = False
         self._config = config
         self._cache = self._config.session_memcache
         self._timeout = self._config.session_timeout
 
-        if _guid is None:
+        if existing_guid is None:
             self._guid = guid.guid()
         else:
-            self._guid = _guid
+            self._guid = existing_guid
 
         # Initialize memache client
         if not isinstance(self._cache, memcache.Client):
@@ -98,6 +101,7 @@ class Session(dict):
 
         @return: Native Python object, or None if none found
         """
+
         sql = \
         """
         SELECT values FROM session
@@ -120,11 +124,18 @@ class Session(dict):
                 raise "Unable to json.decode session", ex
    
     def flush_next_persist(self):
-        self._persistImmediately = True
+        """
+        Persisting to the database does not occur on every request.
+        Calling this method forces the very next persist() to force a
+        write to the database.  Use this when important session data
+        changes and you don't want to risk it being lost.
+        """
+
+        self._persist_immediately = True
 
     def connect_db(self):
         """
-        Obtain a datbase connection.
+        Obtain a datbase connection
         """
 
         if getattr(self, 'conn', None) is None:
@@ -158,20 +169,22 @@ class Session(dict):
     def mkey(self):
         """
         Hash the key to avoid character escaping and the >255 character
-        limitation of cache keys
+        limitation of cache keys.
 
         @return: SHA1 hash
         """
         
         mc_key = 'session:%s' % self._guid
+
         return hashlib.sha1(mc_key).hexdigest()
     
     def persist(self):
         """
-        Stores session data for later retrieval
-        Makes decisions on whether to store long-term or short-term
-        Currently long-term is a postgres db, short-term is cache
+        Stores session data for later retrieval Makes decisions on
+        whether to store long-term or short-term Currently long-term
+        is a postgres db, short-term is cache.
         """
+
         stale_count = 'REQUESTS-BETWEEN-DB-PERSIST'
         self[stale_count] = self.get(stale_count, -1) + 1
 
@@ -184,7 +197,7 @@ class Session(dict):
             self.flush_next_persist()
         
         # Forces a write to the database on the next go
-        if self._persistImmediately:
+        if self._persist_immediately:
             self.persist_db()
 
         # Always persist to cache
@@ -193,7 +206,7 @@ class Session(dict):
 
     def persist_cache(self):
         """
-        Persist the session state to cache.
+        Persist the session state to cache
         """
 
         if self._timeout > 0:
@@ -206,9 +219,9 @@ class Session(dict):
 
     def persist_db(self):
         """
-        Persist the session state to the database.  This method will call
-        _gc() to garbage collect the session specific database connection
-        if it exists.
+        Persist the session state to the database.  This method will
+        call _gc() to garbage collect the session specific database
+        connection if it exists.
         """
         
         sql = "SELECT session_set(%s, %s, TRUE);"

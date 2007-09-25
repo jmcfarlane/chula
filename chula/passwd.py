@@ -7,7 +7,7 @@ from random import randrange
 
 from chula import chulaException, regex
 
-lock = 'penguin'
+lock = 'chula-salt'
 
 def hash(password, salt=None, pattern=regex.PASSWD):
     """
@@ -45,7 +45,7 @@ def matches(password, known_hash):
 
     >>> from chula import passwd
     >>> userinput = 'mypassword'
-    >>> passfromdb = 'abc09b160099a8cde4e422015f195d1b0b5655dabf2'
+    >>> passfromdb = 'abcb1b32c7848bac608f33c4464aab928a0bc1c2e57'
     >>> passwd.matches(userinput, passfromdb)
     True
 
@@ -54,4 +54,5 @@ def matches(password, known_hash):
     """
 
     salt = known_hash[:3]
-    return (hash(password, salt) == known_hash)
+
+    return hash(password, salt) == known_hash

@@ -103,22 +103,22 @@ class Datastore(object):
         
     def commit(self):
         """
-        Perform database commit.
+        Perform database commit
         """
         
         self.conn.commit()
         
     def rollback(self):
         """
-        Perform query rollback.
+        Perform query rollback
         """
         
         self.conn.rollback()
     
     def cursor(self, type='dict'):
         """
-        Create database cursor.
-        
+        Create database cursor
+
         @param type: Type of cursor to return
         @type type: string, I{dict} or I{tuple}
         @return: Instance
@@ -141,6 +141,7 @@ class SafetyCursor(psycopg2.extensions.cursor):
         being ran without a where clause.
         """
         sql = _checkForDanger(sql)
+
         return super(SafetyCursor, self).execute(sql, args)
 
 class SafetyDictCursor(psycopg2.extras.DictCursor):
@@ -170,7 +171,7 @@ def cbool(input_):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it
     will return 'NULL' so as to insert a NULL value into the database.
-    
+
     @param input_: String to be cleaned
     @type input_: String
     @return: String I{TRUE/FALSE}, or 'NULL'
@@ -336,6 +337,7 @@ def empty2null(input_):
     """
     Returns NULL if an empty string or None is passed, else returns the
     input_ string.
+
     @param: input_
     @type input_: Anything
     @return: 'NULL', or input_ string

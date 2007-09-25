@@ -1,9 +1,6 @@
 """
-Generic base controller used by all web requests.
+Generic base controller used by all web requests
 """
-
-from chula import session
-from chula.www import cookie
 
 try:
     from mod_python import apache, util
@@ -12,10 +9,14 @@ except ImportError:
     print "NOTICE: Unable to access mod_python"
     print "NOTICE: Creating FakeRequest object(s) and continuing anyway..."
 
+from chula import chulaException, session
+from chula.www import cookie
+
 class Controller(object):
     """
-    The BaseController class helps manage all web requests.  This is done
-    by all requests being either of this type, or of a descendant type.
+    The BaseController class helps manage all web requests.  This is
+    done by all requests being either of this type, or of a descendant
+    type.
     """
 
     def __init__(self, req, config):
@@ -24,7 +25,7 @@ class Controller(object):
         requests.
 
         @param req: Apache request object
-        @type req: req
+        @type req: req (mod_python request object)
         """
         
         self.content_type = 'text/html'
@@ -56,7 +57,7 @@ class Controller(object):
         try:
             if isinstance(self.req.form, util.FieldStorage):
                 return
-        except Exception:
+        except:
             self.req.form = util.FieldStorage(req, keep_blank_values=1)
 
     def redirect(self, destination, type='TEMPORARY'):
@@ -74,6 +75,8 @@ class Controller(object):
         elif type == 'PERMANENT':
             self.req.status = apache.HTTP_MOVED_PERMANENTLY
         else:
-            raise ValueError, 'Unkonwn redirection type: %s' % type
+            msg = 'Unkonwn redirection type: %s' % type
+            raise chulaException.UnsupportedUsageError(msg)
 
         return 'REDIRECTING...'
+

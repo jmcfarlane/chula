@@ -18,7 +18,8 @@ def _handler(req, config):
     if len(uri) > 1:
         controller_name = uri[0] + suffix
         class_name = uri[0][0].upper() + uri[0][1:] + suffix
-        method_name = uri[1].split("?")[0]       # Remove ? from method name
+        method_name = uri[1].split("?")[0]  # Remove ? from method name
+
         # If there is no action requested, then assume the default method is 
         # being called
         if method_name == "":
@@ -45,8 +46,7 @@ def _handler(req, config):
     controller = getattr(module, class_name, None)
     if controller is None:
         msg = """
-        Come on... the %s module needs to have a class named %s!
-        Clearly you deserve a good mocking.
+        The %s module needs to have a class named %s!
         """ % (controller_name, class_name)
         raise NameError, msg
 

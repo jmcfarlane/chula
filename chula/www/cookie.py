@@ -39,6 +39,8 @@ class Cookie(object):
     def destroy(self):
         """
         Destroy cookie by saving the expire date to the past
+
+        TODO: Refactor this into persist()
         """
         
         c = Apache.MarshalCookie(self.name, '', self.HMAC)
@@ -52,6 +54,7 @@ class Cookie(object):
         @param value: Data to be saved in the cookie
         @type value: Dictionary, list, integer, string
         """
+
         if value is None:
             raise ValueError, "Please pass the value to be persisted"
 
@@ -73,5 +76,5 @@ class Cookie(object):
             return value
         except KeyError, ex:
             msg = 'Requested cookie does not exist: %s' % self.name
-            raise KeyError, msg
+            raise KeyError(msg)
 
