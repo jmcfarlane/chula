@@ -1,6 +1,5 @@
 """
-Generic base controller used by all web requests.  Each web project should
-have a baseController that inherits from this.
+Generic base controller used by all web requests.
 """
 
 from chula import session

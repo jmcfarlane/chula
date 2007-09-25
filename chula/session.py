@@ -172,15 +172,15 @@ class Session(dict):
         Makes decisions on whether to store long-term or short-term
         Currently long-term is a postgres db, short-term is cache
         """
-        ageKey = 'REQUESTS-BETWEEN-DB-PERSIST'
-        self[ageKey] = self.get(ageKey, -1) + 1
+        stale_count = 'REQUESTS-BETWEEN-DB-PERSIST'
+        self[stale_count] = self.get(stale_count, -1) + 1
 
         # Persist to the session state to the database if this is a new
-        # session (the ageKey won't be set) or the age (requests between
+        # session (the stale_count won't be set) or the age (requests between
         # database persists) is greater than a constant value, 10 for
         # now. 
-        if self[ageKey] == 0 or self[ageKey] > 10:
-            self[ageKey] = 0
+        if self[stale_count] == 0 or self[stale_count] > 10:
+            self[stale_count] = 0
             self.flush_next_persist()
         
         # Forces a write to the database on the next go
@@ -227,8 +227,8 @@ class Session(dict):
             self._conn.rollback()
             raise
         finally:
-            # Because persistance is always at the end of the process flow
-            # (actually called by the apacheHandler even) we can safely
+            # Because persistance is always at the end of the process
+            # flow (actually called by apache.handler) we can safely
             # close the database connection now :)
             self._gc()
 

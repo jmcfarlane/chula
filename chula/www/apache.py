@@ -16,38 +16,38 @@ def _handler(req, config):
 
     # Determine if this is the homepage or not
     if len(uri) > 1:
-        controllerName = uri[0] + suffix
-        className = uri[0][0].upper() + uri[0][1:] + suffix
-        methodName = uri[1].split("?")[0]       # Remove ? from method name
+        controller_name = uri[0] + suffix
+        class_name = uri[0][0].upper() + uri[0][1:] + suffix
+        method_name = uri[1].split("?")[0]       # Remove ? from method name
         # If there is no action requested, then assume the default method is 
         # being called
-        if methodName == "":
-            methodName = "index"
+        if method_name == "":
+            method_name = "index"
         
     else:
-        controllerName = 'home' + suffix
-        className = 'Home' + suffix
-        methodName = 'index'
+        controller_name = 'home' + suffix
+        class_name = 'Home' + suffix
+        method_name = 'index'
 
     # Import the controller module
     if config.classpath == CONFIG.Config.UNSET:
-        msg = ('[cfg.classpath] must be specified in your apacheHandler. '
+        msg = ('[cfg.classpath] must be specified in your apache handler. '
                'See documentation for help on how to set this.')
         raise chulaException.UnsupportedConfigError(msg)
 
     classpath = '%s.' % config.classpath
-    module =  __import__(classpath + controllerName,
+    module =  __import__(classpath + controller_name,
                          globals(),
                          locals(),
-                         [className])
+                         [class_name])
 
     # Instantiate the controller class from the module
-    controller = getattr(module, className, None)
+    controller = getattr(module, class_name, None)
     if controller is None:
         msg = """
         Come on... the %s module needs to have a class named %s!
         Clearly you deserve a good mocking.
-        """ % (controllerName, className)
+        """ % (controller_name, class_name)
         raise NameError, msg
 
     controller = controller(req, config)
@@ -56,10 +56,10 @@ def _handler(req, config):
     req.content_type = controller.content_type
 
     # Lookup the requested method to make sure it exists
-    method = getattr(controller, methodName, None)
+    method = getattr(controller, method_name, None)
     if method is None:
-        msg = 'Malformed URL: method does not exist: %s.%s()' % (className,
-                                                                methodName)
+        msg = 'Malformed URL: method does not exist: %s.%s()' % (class_name,
+                                                                method_name)
         raise AttributeError, msg
 
     # Execute the method and write the returned string to request object.

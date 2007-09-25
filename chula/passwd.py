@@ -34,13 +34,13 @@ def hash(password, salt=None, pattern=regex.PASSWD):
 
     return salt + hashlib.sha1(salt + password + lock).hexdigest()
     
-def matches(password, knownHash):
+def matches(password, known_hash):
     """
     Checks password to see if it matches the actual password
     @param password: The user provided password I{(to be validated)}
     @type password: String
-    @param knownHash: Known good hash for the requested password
-    @type knownHash: String
+    @param known_hash: Known good hash for the requested password
+    @type known_hash: String
     @return: Boolean
 
     >>> from chula import passwd
@@ -53,5 +53,5 @@ def matches(password, knownHash):
     False
     """
 
-    salt = knownHash[:3]
-    return (hash(password, salt) == knownHash)
+    salt = known_hash[:3]
+    return (hash(password, salt) == known_hash)
