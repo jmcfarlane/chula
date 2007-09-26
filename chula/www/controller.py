@@ -14,9 +14,8 @@ from chula.www import cookie
 
 class Controller(object):
     """
-    The BaseController class helps manage all web requests.  This is
-    done by all requests being either of this type, or of a descendant
-    type.
+    The Controller class helps manage all web requests.  This is done
+    by all requests being either of this class or a subclass.
     """
 
     def __init__(self, req, config):
@@ -29,7 +28,7 @@ class Controller(object):
         """
         
         self.content_type = 'text/html'
-        self.load_http_vars(req)
+        self._load_http_vars(req)
 
         # Get user configuration
         self.config = config
@@ -44,7 +43,7 @@ class Controller(object):
         guid = ck.value()
         self.session = session.Session(config, guid)
 
-    def load_http_vars(self, req):
+    def _load_http_vars(self, req):
         """
         Takes the request object and fills self.* values based on it
         """

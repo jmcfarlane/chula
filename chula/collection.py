@@ -7,6 +7,7 @@ class Collection(dict):
     def __delattr__(self, key):
         """
         Allow attribute style deletion
+
         @param key: Key to be deleted
         @type key: String
         """
@@ -16,6 +17,7 @@ class Collection(dict):
     def __getattr__(self, key):
         """
         Allow attribute style get
+        
         @param key: Key to be accessed
         @type key: String
         @return: Attribute
@@ -26,6 +28,7 @@ class Collection(dict):
     def __setattr__(self, key, value):
         """
         Allow attribute style set
+        
         @param key: Key to be set
         @type key: String
         @param value: Value of key
@@ -37,6 +40,7 @@ class Collection(dict):
     def remove(self, key):
         """
         Allow list.remove() style attribute deletion
+
         @param key: Key/value pair to be removed
         @type key: String
         """

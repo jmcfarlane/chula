@@ -8,18 +8,18 @@ def get_version():
 
 __VERSION__ = get_version()
 
-__all__ = ['chulaException.py',
-           'collection.py',
-           'config.py',
-           'data.py',
-           'db.py',
-           'example.py',
-           'guid.py',
-           'json.py',
-           'memcache.py',
-           'pager.py',
-           'passwd.py',
-           'regex.py',
-           'session.py'
+__all__ = ['chulaException',
+           'collection',
+           'config',
+           'data',
+           'db',
+           'example',
+           'guid',
+           'json',
+           'memcache',
+           'pager',
+           'passwd',
+           'regex',
+           'session'
           ]
 

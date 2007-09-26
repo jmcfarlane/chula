@@ -42,6 +42,7 @@ class Config(collection.Collection):
     def __getitem__(self, key):
         """
         Allow restricted attribute access
+
         @param key: Key to be accessed
         @type key: String
         @return: Attribute
@@ -55,6 +56,7 @@ class Config(collection.Collection):
     def __setitem__(self, key, value):
         """
         Allow restricted attribute write access
+
         @param key: Key to be set
         @type key: String
         @param value: Value of key

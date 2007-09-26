@@ -11,6 +11,7 @@ class BaseException(Exception):
     def __init__(self, msg=None, append=None):
         """
         Create custom exception
+
         @param msg: Default exception message
         @type msg: String
         @param append: Message to be appended to the exception message
@@ -23,6 +24,7 @@ class BaseException(Exception):
     def __str__(self, append=None):
         """
         Return the message itself
+
         @param append: Additional info to be added to the message
         @type append: String
         @return: String

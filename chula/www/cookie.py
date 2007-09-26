@@ -2,15 +2,19 @@
 Cookie reads and writes cookies
 """
 
-from mod_python import Cookie as Apache
-from chula import guid
 import time
+
+from mod_python import Cookie as Apache
+
+from chula import guid
 
 class Cookie(object):
     def __init__(self, req, name, encryption_key, timeout):
         """
+        Create a cookie object
+
         @param req: Apache request object
-        @type raq: mod_python.request
+        @type req: mod_python.request
         """
 
         self.req = req
@@ -28,10 +32,11 @@ class Cookie(object):
     def exists(self):
         """
         Does the named cookie exist or not.
-        @return: True/False
+
+        @return: Boolean
         """
         
-        if self.cookies.has_key(self.name):
+        if self.name in self.cookies:
             return True
         else:
             return False
@@ -50,7 +55,8 @@ class Cookie(object):
 
     def persist(self, value=None, path='/'):
         """
-        Persist cookie to browser,
+        Persist cookie to browser
+
         @param value: Data to be saved in the cookie
         @type value: Dictionary, list, integer, string
         """
@@ -67,14 +73,15 @@ class Cookie(object):
 
     def value(self):
         """
-        Return the value of the named cookie.
+        Return the value of the named cookie
+
         @return: Dictionary, list, integer, string
         """
         
         try:
             value = self.cookies[self.name].value
             return value
-        except KeyError, ex:
+        except KeyError:
             msg = 'Requested cookie does not exist: %s' % self.name
             raise KeyError(msg)
 

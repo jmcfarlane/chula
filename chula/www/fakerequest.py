@@ -52,19 +52,21 @@ class FakeRequest(object):
         self.headers = ""
         self.read = sys.stdin.read
         self.server = FakeServer()
-        hin = {}
-        v = environ.get('HTTP_REFERER', '')
-        hin['Referer'] = v
-        hin['referer'] = v
-        if environ.has_key('HTTP_COOKIE'):
-            v = environ['HTTP_COOKIE']
-            hin['Cookie'] = v
-            hin['cookie'] = v
-        self.headers_in = hin
-        
+        self.headers_in = {'Referer':environ.get('HTTP_REFERER', ''),
+                           'Cookie':environ.get('HTTP_COOKIE', '')}
         self.get = FakeFieldStorage()
         self.form = FakeFieldStorage()
        
+    def _writeheaders(self):
+        self._headed = 1
+        sys.stdout.write('status: %s\n' % self.status)
+        sys.stdout.write('Content-Type: %s\n' % self.content_type)
+        if self.content_length >= 0:
+            sys.stdout.write('Content-Length: %s\n' % self.content_length)
+        sys.stdout.write(self.headers)
+        sys.stdout.write('\n')
+        self.write = sys.stdout.write
+
     def add(self, key, value):
         self.headers += '%s: %s\n' % (key, value)
 
@@ -76,16 +78,6 @@ class FakeRequest(object):
 
     def set_content_length(self, len):
         self.content_length = len
-
-    def _writeheaders(self):
-        self._headed = 1
-        sys.stdout.write('status: %s\n' % self.status)
-        sys.stdout.write('Content-Type: %s\n' % self.content_type)
-        if self.content_length >= 0:
-            sys.stdout.write('Content-Length: %s\n' % self.content_length)
-        sys.stdout.write(self.headers)
-        sys.stdout.write('\n')
-        self.write = sys.stdout.write
 
     def write(self, s):
         if not self._headed:
@@ -100,7 +92,6 @@ class FakeServer(object):
     def __init__(self):
         self.server_hostname = 'localhost'
 
-# Make it easier to use these classes as drop in replacements for the real
-# thing(s):
+# Expose drop in replacements for the real thing
 FieldStorage = FakeFieldStorage
 
