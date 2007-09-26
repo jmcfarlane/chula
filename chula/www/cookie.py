@@ -33,7 +33,7 @@ class Cookie(object):
         """
         Does the named cookie exist or not.
 
-        @return: Boolean
+        @return: bool
         """
         
         if self.name in self.cookies:
@@ -58,7 +58,7 @@ class Cookie(object):
         Persist cookie to browser
 
         @param value: Data to be saved in the cookie
-        @type value: Dictionary, list, integer, string
+        @type value: dict, list, int, str
         """
 
         if value is None:

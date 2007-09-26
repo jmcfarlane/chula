@@ -41,15 +41,15 @@ def matches(password, known_hash):
     @type password: String
     @param known_hash: Known good hash for the requested password
     @type known_hash: String
-    @return: Boolean
+    @return: bool
 
     >>> from chula import passwd
-    >>> userinput = 'mypassword'
-    >>> passfromdb = 'abcb1b32c7848bac608f33c4464aab928a0bc1c2e57'
-    >>> passwd.matches(userinput, passfromdb)
+    >>> user_input = 'mypassword'
+    >>> pass_from_db = 'abcb1b32c7848bac608f33c4464aab928a0bc1c2e57'
+    >>> passwd.matches(user_input, pass_from_db)
     True
 
-    >>> passwd.matches('guessing', passfromdb)
+    >>> passwd.matches('guessing', pass_from_db)
     False
     """
 

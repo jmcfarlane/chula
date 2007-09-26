@@ -287,9 +287,9 @@ def cstr(input_, doquote=True, doescape=True):
     @param input_: String to be cleaned
     @type input_: String
     @param doquote: I{OPTIONAL}: Wrapped in single quotes, defaults to B{True}
-    @type doquote: Boolean
+    @type doquote: bool
     @param doescape: I{OPTIONAL}: Escape single quotes, defaults to B{True}
-    @type doescape: Boolean
+    @type doescape: bool
     @return: String, or 'NULL'
     
     >>> print 'SET description = %s;' % cstr("I don't")

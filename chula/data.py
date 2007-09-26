@@ -131,7 +131,7 @@ def date_within_range(time, offset, now=None):
     @type offset: Integer
     @param now: I{Optional} argument to specify time range/window start.
     @type now: datetime.datetime
-    @return: Boolean
+    @return: bool
     
     >>> print date_within_range('11:00', 30, str2date('1/1/2005 11:25'))
     True
@@ -219,7 +219,7 @@ def isdate(input_):
 
     @param input_: Value to evaluate
     @type input_: Anything
-    @return: Boolean
+    @return: bool
     
     >>> print isdate('1/1/2005')
     True
@@ -240,7 +240,7 @@ def istag(input_, regexp=None):
     @type input_: Anything
     @param regexp: Alternate regex to chula.regex.TAG
     @type regexp: Valid regular expression (string)
-    @return: Boolean
+    @return: bool
     
     >>> print istag('foo')
     True
@@ -267,7 +267,7 @@ def istags(input_, regexp=None):
     @type input_: Anything
     @param regexp: Alternate regex to chula.regex.TAGS
     @type regexp: Valid regular expression (string)
-    @return: Boolean
+    @return: bool
     
     >>> print istags('foo bar')
     True
@@ -338,7 +338,7 @@ def str2bool(input_):
 
     @param input_: Value to evaluate
     @type input_: String
-    @return: Boolean
+    @return: bool
 
     >>> str2bool(True)
     True

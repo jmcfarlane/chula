@@ -57,7 +57,7 @@ class FakeRequest(object):
         self.get = FakeFieldStorage()
         self.form = FakeFieldStorage()
        
-    def _writeheaders(self):
+    def _write_headers(self):
         self._headed = 1
         sys.stdout.write('status: %s\n' % self.status)
         sys.stdout.write('Content-Type: %s\n' % self.content_type)
@@ -81,7 +81,7 @@ class FakeRequest(object):
 
     def write(self, s):
         if not self._headed:
-            self._writeheaders()
+            self._write_headers()
         sys.stdout.write(s)
            
 class FakeRequestConnection(object):
