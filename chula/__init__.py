@@ -8,7 +8,7 @@ def get_version():
 
 __VERSION__ = get_version()
 
-__all__ = ['chulaException',
+__all__ = ['error',
            'collection',
            'config',
            'data',

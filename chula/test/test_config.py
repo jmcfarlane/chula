@@ -1,7 +1,7 @@
 import unittest
 import doctest
 from chula import config
-from chula.chulaException import *
+from chula.error import *
 
 class Test_config(unittest.TestCase):
     def d_set(self, key, value):

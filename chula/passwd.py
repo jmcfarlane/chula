@@ -5,7 +5,7 @@ Generate and validate passwords
 import hashlib
 from random import randrange
 
-from chula import chulaException, regex
+from chula import error, regex
 
 lock = 'chula-salt'
 
@@ -27,7 +27,7 @@ def hash(password, salt=None, pattern=regex.PASSWD):
     """
 
     if not regex.match(pattern, password):
-        raise chulaException.MalformedPasswordError
+        raise error.MalformedPasswordError
        
     if salt is None:
         salt = chr(randrange(65, 122)) + chr(randrange(65, 122))

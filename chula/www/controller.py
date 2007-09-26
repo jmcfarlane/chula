@@ -9,7 +9,7 @@ except ImportError:
     print "NOTICE: Unable to access mod_python"
     print "NOTICE: Creating FakeRequest object(s) and continuing anyway..."
 
-from chula import chulaException, session
+from chula import error, session
 from chula.www import cookie
 
 class Controller(object):
@@ -75,7 +75,7 @@ class Controller(object):
             self.req.status = apache.HTTP_MOVED_PERMANENTLY
         else:
             msg = 'Unkonwn redirection type: %s' % type
-            raise chulaException.UnsupportedUsageError(msg)
+            raise error.UnsupportedUsageError(msg)
 
         return 'REDIRECTING...'
 

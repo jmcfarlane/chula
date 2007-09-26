@@ -25,7 +25,7 @@ import unittest
 import doctest
 import datetime
 from chula import db
-from chula.chulaException import *
+from chula.error import *
 
 class Test_db(unittest.TestCase):
     """A test class for the db module"""

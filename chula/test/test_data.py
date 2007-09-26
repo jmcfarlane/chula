@@ -24,7 +24,7 @@ import unittest
 import doctest
 import datetime
 from chula import data
-from chula.chulaException import *
+from chula.error import *
 
 class Test_data(unittest.TestCase):
     """A test class for the data module"""

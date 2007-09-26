@@ -8,9 +8,9 @@ try:
     import psycopg2
     from psycopg2 import extensions, extras
 except:
-    raise chulaException.MissingDependancyError('psycopg2')
+    raise error.MissingDependancyError('psycopg2')
 
-from chula import chulaException, data   
+from chula import error, data   
 
 # Expose the psycopg2 exceptions
 DataError = psycopg2.DataError
@@ -72,7 +72,7 @@ class Datastore(object):
                      r'(?P<db>[-a-zA-Z0-9_]+)$', conn)
 
         if m is None:
-            raise chulaException.MalformedConnectionStringError
+            raise error.MalformedConnectionStringError
 
         parts = m.groupdict()
         parts['pass'] = passwd
@@ -132,7 +132,7 @@ class Datastore(object):
 
         else:
             msg = 'Invalid cursor type, use either tuple or dict'
-            raise chulaException.UnsupportedUsageError(append=msg)
+            raise error.UnsupportedUsageError(append=msg)
     
 class SafetyCursor(psycopg2.extensions.cursor):
     def execute(self, sql, args=None):
@@ -163,7 +163,7 @@ def _checkForDanger(sql):
     if danger.find('UPDATE') >= 0 or danger.find('DELETE') >= 0:
         if danger.find('WHERE') < 0:
             msg = 'Please add a valid WHERE clause (use 1=1 to force)'
-            raise chulaException.ExtremeDangerError(append=msg)
+            raise error.ExtremeDangerError(append=msg)
 
     return sql
 
@@ -191,7 +191,7 @@ def cbool(input_):
         return 'FALSE'
 
     else:
-        raise chulaException.TypeConversionError(input_, 'sql boolean')
+        raise error.TypeConversionError(input_, 'sql boolean')
 
 def cdate(input_, doquote=True, isfunction=False):
     """
@@ -224,7 +224,7 @@ def cdate(input_, doquote=True, isfunction=False):
             if doquote:
                 input_ = data.wrap(input_, "'")
         else:
-            raise chulaException.TypeConversionError(input_, 'sql date')
+            raise error.TypeConversionError(input_, 'sql date')
 
     return input_
 
@@ -251,7 +251,7 @@ def cfloat(input_):
     try:
         return float(input_)
     except:
-        raise chulaException.TypeConversionError(input_, 'sql float')
+        raise error.TypeConversionError(input_, 'sql float')
 
 def cint(input_):
     """
@@ -276,7 +276,7 @@ def cint(input_):
     try:
         return int(input_)
     except:
-        raise chulaException.TypeConversionError(input_, 'sql float')
+        raise error.TypeConversionError(input_, 'sql float')
 
 def cstr(input_, doquote=True, doescape=True):
     """

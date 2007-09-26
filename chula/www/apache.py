@@ -4,7 +4,7 @@ Chula apache handler
 
 from mod_python import apache as APACHE
 
-from chula import chulaException, config as CONFIG
+from chula import error, config as CONFIG
 
 def _handler(req, config):
     # The controller is the first word after the host:port
@@ -34,7 +34,7 @@ def _handler(req, config):
     if config.classpath == CONFIG.Config.UNSET:
         msg = ('[cfg.classpath] must be specified in your apache handler. '
                'See documentation for help on how to set this.')
-        raise chulaException.UnsupportedConfigError(msg)
+        raise error.UnsupportedConfigError(msg)
 
     classpath = '%s.' % config.classpath
     module =  __import__(classpath + controller_name,

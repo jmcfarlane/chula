@@ -2,7 +2,7 @@
 Chula configuration class (restricted collection class)
 """
 
-from chula import chulaException, collection
+from chula import error, collection
 
 class Config(collection.Collection):
     """
@@ -51,7 +51,7 @@ class Config(collection.Collection):
         if key in self.supported:
             return self.get(key)
         else:
-            raise chulaException.UnsupportedConfigError(append=key)
+            raise error.UnsupportedConfigError(append=key)
 
     def __setitem__(self, key, value):
         """
@@ -66,5 +66,5 @@ class Config(collection.Collection):
         if key in self.supported:
             self.__dict__[key] = value
         else:
-            raise chulaException.UnsupportedConfigError(append=key)
+            raise error.UnsupportedConfigError(append=key)
 

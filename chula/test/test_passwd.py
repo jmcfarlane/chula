@@ -1,7 +1,7 @@
 import unittest
 import doctest
 from chula import passwd
-from chula.chulaException import *
+from chula.error import *
 
 password = 'gitisbetterthancvs'
 salt = 'git'

@@ -7,7 +7,7 @@ import re
 import string
 import time
 
-from chula import chulaException, regex
+from chula import error, regex
 
 TRUE = ['1', 't', 'true', 'yes', 'y', 'on']
 FALSE = ['0', 'f', 'false', 'no', 'n', 'off']
@@ -63,7 +63,7 @@ def date_add(unit, delta, date):
         delta = datetime.timedelta(months=delta)
     else:
         msg = 'Invalid unit, please use: s, m, h, d, or w'
-        raise chulaException.UnsupportedUsageError(msg)
+        raise error.UnsupportedUsageError(msg)
         
     return initial + delta
 
@@ -209,7 +209,7 @@ def format_money(amount):
         amount = float(amount)
     except Exception:
         msg = 'The money passed must be castable as float'
-        raise chulaException.TypeConversionError(amount, 'float', append=msg)
+        raise error.TypeConversionError(amount, 'float', append=msg)
 
     return commaify('%.2f' % amount)
 
@@ -355,7 +355,7 @@ def str2bool(input_):
     elif input_ in FALSE:
         return False
     else:
-        raise chulaException.TypeConversionError(input_, 'boolean')
+        raise error.TypeConversionError(input_, 'boolean')
 
 def str2date(input_):
     """
@@ -372,7 +372,7 @@ def str2date(input_):
     
     if not isinstance(input_, str):
         msg = 'Value passed must be of type string.'
-        raise chulaException.TypeConversionError(input_,
+        raise error.TypeConversionError(input_,
                                                  'datetime.datetime',
                                                  append=msg)
 
@@ -402,7 +402,7 @@ def str2date(input_):
             break
 
     if len(ptime.keys()) == 3:
-        raise chulaException.TypeConversionError(input_, 'datetime')
+        raise error.TypeConversionError(input_, 'datetime')
 
     fixed = '%(Y)s-%(m)s-%(d)sT%(I)s:%(M)s:%(S)s' % ptime
     return datetime.datetime(*strptime(fixed, "%Y-%m-%dT%H:%M:%S")[0:6])
@@ -430,7 +430,7 @@ def str2tags(input_):
     elif input_ == '':
         return []
     
-    raise chulaException.TypeConversionError(input_, 'list of tags')
+    raise error.TypeConversionError(input_, 'list of tags')
 
 def wrap(input_, wrap):
     """
@@ -468,7 +468,7 @@ def tags2str(tags):
 
     for tag in tags:
         if not istag(tag):
-            raise chulaException.TypeConversionError(tag, 'tag')
+            raise error.TypeConversionError(tag, 'tag')
     
     tags.sort()
 
