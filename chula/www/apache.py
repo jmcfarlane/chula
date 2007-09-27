@@ -58,9 +58,8 @@ def _handler(req, config):
     # Lookup the requested method to make sure it exists
     method = getattr(controller, method_name, None)
     if method is None:
-        msg = 'Malformed URL: method does not exist: %s.%s()' % (class_name,
-                                                                method_name)
-        raise AttributeError, msg
+        msg = '%s.%s()' % (class_name, method_name)
+        raise error.ControllerMethodNotFoundError(msg)
 
     # Execute the method and write the returned string to request object.
     # We're manually casting the return as a string because Cheetah
