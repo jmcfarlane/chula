@@ -410,6 +410,7 @@ def str2date(input_):
 def str2tags(input_):
     """
     Convert a string of tags into a sorted list of tags
+
     @param input_: String
     @type input_: String
     @return: List

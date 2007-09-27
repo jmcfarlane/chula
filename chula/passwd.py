@@ -12,6 +12,7 @@ lock = 'chula-salt'
 def hash(password, salt=None, pattern=regex.PASSWD):
     """
     Generate a password hash
+
     @param password: User's password
     @type password: String
     @param salt: Salt for use with generating an existing hash
@@ -37,6 +38,7 @@ def hash(password, salt=None, pattern=regex.PASSWD):
 def matches(password, known_hash):
     """
     Checks password to see if it matches the actual password
+
     @param password: The user provided password I{(to be validated)}
     @type password: String
     @param known_hash: Known good hash for the requested password

@@ -140,6 +140,7 @@ class SafetyCursor(psycopg2.extensions.cursor):
         Simple factory to check that an update or delete statement aren't
         being ran without a where clause.
         """
+
         sql = _checkForDanger(sql)
 
         return super(SafetyCursor, self).execute(sql, args)
@@ -150,6 +151,7 @@ class SafetyDictCursor(psycopg2.extras.DictCursor):
         Simple factory to check that an update or delete statement aren't
         being ran without a where clause.
         """
+
         sql = _checkForDanger(sql)
         return super(SafetyDictCursor, self).execute(sql, args)
  
@@ -314,6 +316,7 @@ def cstr(input_, doquote=True, doescape=True):
 def ctags(input_):
     """
     Returns a string safe for use in a sql statement
+
     @param: input_
     @type input_: Anything
     @return: 'NULL', or input_ string

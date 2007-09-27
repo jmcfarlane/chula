@@ -28,7 +28,6 @@ class Pager(list):
         False
         >>> p[0]['offset']
         5
-
         """
 
         super(Pager, self).__init__()

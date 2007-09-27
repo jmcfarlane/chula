@@ -13,6 +13,7 @@ class Example(object):
     def sum(self, a, b):
         """
         Sum two values
+
         @param a: Value to be summed with b
         @type a: integer
         @param b: Vale to be summed with a
@@ -28,6 +29,7 @@ class Example(object):
     def awesome(self):
         """
         Describe the nature of all things related to Gentoo Linux
+
         @return: boolean
 
         >>> from chula import example
