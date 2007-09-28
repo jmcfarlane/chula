@@ -2,52 +2,53 @@
 Chula apache handler
 """
 
+import re
+
 from mod_python import apache as APACHE
 
-from chula import error, config as CONFIG
+from chula import error, collection, config as CONFIG
 
 def _handler(req, config):
-    # The controller is the first word after the host:port
-    # Here uri will hold search/results where the first part is used to
-    # derive the module and class, the second is used to dervie the method
-    # to call.
-    uri = req.unparsed_uri.split('/')[1:]
-    suffix = ''
+    regexp = (r'^/'
+              r'(?P<module>[_a-zA-Z]+)/'
+              r'(?P<method>[_a-zA-Z]+)(?:\.py)?'
+              r'(?:\?)?(?P<args>.*)')
 
-    # Determine if this is the homepage or not
-    if len(uri) > 1:
-        controller_name = uri[0] + suffix
-        class_name = uri[0][0].upper() + uri[0][1:] + suffix
-        method_name = uri[1].split("?")[0]  # Remove ? from method name
+    # Create the route which will map to a Python object
+    route = {'module':'home', 'method':'index'}
 
-        # If there is no action requested, then assume the default method is 
-        # being called
-        if method_name == "":
-            method_name = "index"
-        
-    else:
-        controller_name = 'home' + suffix
-        class_name = 'Home' + suffix
-        method_name = 'index'
+    # Update any parts we should use based on the url
+    parts = re.match(regexp, req.unparsed_uri)
+    if not parts is None:
+        route.update(parts.groupdict())
 
-    # Import the controller module
+    # The first letter of a class is always uppercase (PEP8)
+    route['class'] = route['module'].capitalize()
+
+    if False:
+        req.content_type = 'text/html'
+        req.write(str(route))
+        return APACHE.OK
+
+    # Check to make sure the config is available
     if config.classpath == CONFIG.Config.UNSET:
         msg = ('[cfg.classpath] must be specified in your apache handler. '
                'See documentation for help on how to set this.')
         raise error.UnsupportedConfigError(msg)
 
+    # Import the controller module
     classpath = '%s.' % config.classpath
-    module =  __import__(classpath + controller_name,
+    module =  __import__(classpath + route['module'],
                          globals(),
                          locals(),
-                         [class_name])
+                         [route['class']])
 
     # Instantiate the controller class from the module
-    controller = getattr(module, class_name, None)
+    controller = getattr(module, route['class'], None)
     if controller is None:
         msg = """
         The %s module needs to have a class named %s!
-        """ % (controller_name, class_name)
+        """ % (route['module'], route['class'])
         raise NameError, msg
 
     controller = controller(req, config)
@@ -56,9 +57,9 @@ def _handler(req, config):
     req.content_type = controller.content_type
 
     # Lookup the requested method to make sure it exists
-    method = getattr(controller, method_name, None)
+    method = getattr(controller, route['method'], None)
     if method is None:
-        msg = '%s.%s()' % (class_name, method_name)
+        msg = '%s.%s()' % (route['class'], route['method'])
         raise error.ControllerMethodNotFoundError(msg)
 
     # Execute the method and write the returned string to request object.
