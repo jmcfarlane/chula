@@ -46,13 +46,31 @@ class BaseException(Exception):
 
         return 'Generic chula exception'
 
+class ControllerClassNotFoundError(BaseException):
+    """
+    Exception indicating the requested controller class not found.
+    """
+
+    def __init__(self, _pkg, append=None):
+        self.message = 'Unable to find the following class: %s' % _pkg
+        self.append = append
+
 class ControllerMethodNotFoundError(BaseException):
     """
     Exception indicating the requested controller method not found.
     """
 
     def __init__(self, _pkg, append=None):
-        self.message = 'Please create a working %s method' % _pkg
+        self.message = 'Unable to find the following method: %s' % _pkg
+        self.append = append
+
+class ControllerModuleNotFoundError(BaseException):
+    """
+    Exception indicating the requested module method not found.
+    """
+
+    def __init__(self, _pkg, append=None):
+        self.message = 'Unable to find the following module: %s' % _pkg
         self.append = append
 
 class ExtremeDangerError(BaseException):

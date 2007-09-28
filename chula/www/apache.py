@@ -10,9 +10,9 @@ from chula import error, collection, config as CONFIG
 
 def _handler(req, config):
     regexp = (r'^/'
-              r'(?P<module>[_a-zA-Z]+)/'
-              r'(?P<method>[_a-zA-Z]+)(?:\.py)?'
-              r'(?:\?)?(?P<args>.*)')
+              r'(?P<module>[_a-zA-Z]+)'
+              r'(/(?P<method>[_a-zA-Z]+)+(?:\.py)?)?'
+              r'/?(?:\?)?(?P<args>.*)$')
 
     # Create the route which will map to a Python object
     route = {'module':'home', 'method':'index'}
@@ -20,7 +20,9 @@ def _handler(req, config):
     # Update any parts we should use based on the url
     parts = re.match(regexp, req.unparsed_uri)
     if not parts is None:
-        route.update(parts.groupdict())
+        for key, value in parts.groupdict().iteritems():
+            if not value is None:
+                route[key] = value
 
     # The first letter of a class is always uppercase (PEP8)
     route['class'] = route['module'].capitalize()
@@ -37,19 +39,22 @@ def _handler(req, config):
         raise error.UnsupportedConfigError(msg)
 
     # Import the controller module
-    classpath = '%s.' % config.classpath
-    module =  __import__(classpath + route['module'],
-                         globals(),
-                         locals(),
-                         [route['class']])
+    try:
+        module =  __import__(config.classpath + '.' + route['module'],
+                             globals(),
+                             locals(),
+                             [route['class']])
+    except ImportError:
+        msg = config.classpath + '.' + route['module']
+        raise error.ControllerModuleNotFoundError(msg)
+    except Exception:
+        raise
 
     # Instantiate the controller class from the module
     controller = getattr(module, route['class'], None)
     if controller is None:
-        msg = """
-        The %s module needs to have a class named %s!
-        """ % (route['module'], route['class'])
-        raise NameError, msg
+        msg = '%s.%s' % (route['module'], route['class'])
+        raise error.ControllerClassNotFoundError(msg)
 
     controller = controller(req, config)
 
