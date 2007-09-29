@@ -30,6 +30,9 @@ class Controller(object):
         self.content_type = 'text/html'
         self._load_http_vars(req)
 
+        # Populate get/post or both (form) variables
+        self.form = dict(self.req.form)
+
         # Get user configuration
         self.config = config
 
