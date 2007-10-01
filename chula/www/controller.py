@@ -67,6 +67,16 @@ class Controller(object):
         except:
             self.req.form = util.FieldStorage(req, keep_blank_values=1)
 
+    def gc(self):
+        """
+        Complete garbage collection.  The intended purpose is to allow
+        consolidated garbage collection specific to each project.
+        This method gets called in the apache handler just before
+        sending data to the browser.
+        """
+
+        pass
+
     def redirect(self, destination, type='TEMPORARY'):
         """
         Redirect the browser to another page.

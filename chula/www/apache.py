@@ -72,8 +72,9 @@ def _handler(req, config):
     # templates seem to require it.
     req.write(str(method()))
 
-    # Persist session
+    # Persist session and perform garbage collection
     controller.session.persist()
+    controller.gc()
 
     # If we got here, all is well
     return APACHE.OK
