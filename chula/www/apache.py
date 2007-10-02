@@ -9,13 +9,14 @@ from mod_python import apache as APACHE
 from chula import error, collection, config as CONFIG
 
 def _handler(req, config):
+    DEFAULT_METHOD = 'index'
     regexp = (r'^/'
-              r'(?P<module>[_a-zA-Z]+)'
-              r'(/(?P<method>[_a-zA-Z]+)+(?:\.py)?)?'
-              r'/?(?:\?)?(?P<args>.*)$')
+              r'(?P<module>[_a-zA-Z]+)/'
+              r'(?P<method>[_a-zA-Z]+/)?'
+              r'((\?(?P<args>.*))?)?$')
 
     # Create the route which will map to a Python object
-    route = {'module':'home', 'method':'index'}
+    route = {'module':'home', 'method':DEFAULT_METHOD}
 
     # Update any parts we should use based on the url
     parts = re.match(regexp, req.unparsed_uri)
@@ -58,11 +59,17 @@ def _handler(req, config):
 
     controller = controller(req, config)
 
-    # Set the Apache content type
+    # Set the Apache content type (specified by the controller)
     req.content_type = controller.content_type
 
     # Lookup the requested method to make sure it exists
     method = getattr(controller, route['method'], None)
+
+    # Fallback on the default method if the requested does not exist
+    if not config.strict_method_resolution and method is None:
+        method = getattr(controller, DEFAULT_METHOD, None)
+
+    # If we still don't have a method something is very wrong
     if method is None:
         msg = '%s.%s()' % (route['class'], route['method'])
         raise error.ControllerMethodNotFoundError(msg)

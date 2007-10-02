@@ -22,6 +22,7 @@ class Config(collection.Collection):
                  'session_memcache',
                  'session_timeout',
                  'session_encryption_key',
+                 'strict_method_resolution',
                 ]
 
     def __init__(self):
@@ -38,6 +39,7 @@ class Config(collection.Collection):
         self.session_memcache = [('localhost:11211', 1)]
         self.session_timeout = 30
         self.session_encryption_key = self.UNSET
+        self.strict_method_resolution = False
 
     def __getitem__(self, key):
         """
