@@ -4,8 +4,8 @@ from chula import passwd
 from chula.error import *
 
 password = 'gitisbetterthancvs'
-salt = 'git'
-sha1 = 'gitda2250b53614f05ad5ec31a95ee1e0080ae22288'
+sha1 = 'NcA_puae9ca8739ddfd7db27c153015d39bc5d8c47b345'
+salt = sha1[:passwd.SALT_LENGTH]
 
 class Test_passwd(unittest.TestCase):
     def test_new_password_with_known_hash(self):

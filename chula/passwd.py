@@ -8,6 +8,7 @@ from random import randrange
 from chula import error, regex
 
 lock = 'chula-salt'
+SALT_LENGTH = 6
 
 def hash(password, salt=None, pattern=regex.PASSWD):
     """
@@ -23,7 +24,7 @@ def hash(password, salt=None, pattern=regex.PASSWD):
 
     >>> from chula import passwd
     >>> hashed = passwd.hash('mypassword')
-    >>> len(hashed) == 42
+    >>> len(hashed) == 46
     True
     """
 
@@ -31,7 +32,11 @@ def hash(password, salt=None, pattern=regex.PASSWD):
         raise error.MalformedPasswordError
        
     if salt is None:
-        salt = chr(randrange(65, 122)) + chr(randrange(65, 122))
+        def generate_salt():
+            for i in xrange(SALT_LENGTH):
+                yield chr(randrange(65, 122))
+
+        salt = ''.join(generate_salt())
 
     return salt + hashlib.sha1(salt + password + lock).hexdigest()
     
@@ -47,7 +52,7 @@ def matches(password, known_hash):
 
     >>> from chula import passwd
     >>> user_input = 'mypassword'
-    >>> pass_from_db = 'abcb1b32c7848bac608f33c4464aab928a0bc1c2e57'
+    >>> pass_from_db = '^Bo\\Jcc16b5dae81478c1ab4655dd69df121e87ea43a2f'
     >>> passwd.matches(user_input, pass_from_db)
     True
 
@@ -55,6 +60,6 @@ def matches(password, known_hash):
     False
     """
 
-    salt = known_hash[:3]
+    salt = known_hash[:SALT_LENGTH]
 
     return hash(password, salt) == known_hash
