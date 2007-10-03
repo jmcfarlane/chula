@@ -12,7 +12,7 @@ def _handler(req, config):
     DEFAULT_METHOD = 'index'
     regexp = (r'^/'
               r'(?P<module>[_a-zA-Z]+)/'
-              r'(?P<method>[_a-zA-Z]+/)?'
+              r'((?P<method>[_a-zA-Z]+)/)?'
               r'((\?(?P<args>.*))?)?$')
 
     # Create the route which will map to a Python object
