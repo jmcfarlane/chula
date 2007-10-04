@@ -161,6 +161,23 @@ def date_within_range(time, offset, now=None):
     else:
         return False
 
+def escape_for_js(input):
+    """
+    Clean the input for use within javascript
+
+    @param input: String to have illegal js chars escaped
+    @type input: str
+    @return: str (safe for use in javascript)
+    """
+
+    replace = string.replace
+
+    input = replace(input, "'", r"\'")
+    input = replace(input, '"', r'\"')
+    input = replace(input, "\r\n", ' ')
+
+    return input
+
 def format_phone(input_):
     """
     Format a string into a properly formatted telephone number.  Accepts a
