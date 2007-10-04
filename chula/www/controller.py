@@ -67,12 +67,23 @@ class Controller(object):
         except:
             self.req.form = util.FieldStorage(req, keep_blank_values=1)
 
-    def gc(self):
+    def _gc(self):
         """
         Complete garbage collection.  The intended purpose is to allow
         consolidated garbage collection specific to each project.
         This method gets called in the apache handler just before
         sending data to the browser.
+        """
+
+        pass
+
+    def _pre_session_persist(self):
+        """
+        Provide mechanism for removing items from session just prior
+        to being persisted.  This is useful when you want to have
+        unserializeable objects that need to be casted to a different
+        type before being persisted to the database.  This usually
+        means casting to a JSON encodable type.
         """
 
         pass

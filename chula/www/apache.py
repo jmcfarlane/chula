@@ -80,8 +80,9 @@ def _handler(req, config):
     req.write(str(method()))
 
     # Persist session and perform garbage collection
+    controller._pre_session_persist()
     controller.session.persist()
-    controller.gc()
+    controller._gc()
 
     # If we got here, all is well
     return APACHE.OK
