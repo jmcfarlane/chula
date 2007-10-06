@@ -4,7 +4,7 @@ Chula configuration class (restricted collection class)
 
 from chula import error, collection
 
-class Config(collection.Collection):
+class Config(collection.RestrictedCollection):
     """
     Chula configuration class.  This class provides an organized
     structure to hold all supported chula configuration options.  Most
@@ -13,60 +13,30 @@ class Config(collection.Collection):
     Failure to do so will result in an exception.
     """
 
-    UNSET = 'THIS ATTRIBUTE NEEDS TO BE SET BY YOU'
-    supported = ['classpath',
-                 'session_db',
-                 'session_host',
-                 'session_port',
-                 'session_name',
-                 'session_memcache',
-                 'session_timeout',
-                 'session_encryption_key',
-                 'strict_method_resolution',
-                ]
-
-    def __init__(self):
+    def __validkeys__(self):
         """
         Initialize the supported configuration options with either a
         reasonable default, or I{UNSET}.
         """
 
-        self.classpath = self.UNSET
+        return ('classpath',
+                'session_db',
+                'session_host',
+                'session_port',
+                'session_name',
+                'session_memcache',
+                'session_timeout',
+                'session_encryption_key',
+                'strict_method_resolution')
+
+    def __defaults__(self):
+        self.classpath = collection.UNSET
         self.session_db = 'chula_session'
         self.session_host = 'localhost'
         self.session_port = 5432
         self.session_name = 'chula-session'
         self.session_memcache = [('localhost:11211', 1)]
         self.session_timeout = 30
-        self.session_encryption_key = self.UNSET
+        self.session_encryption_key = collection.UNSET
         self.strict_method_resolution = False
-
-    def __getitem__(self, key):
-        """
-        Allow restricted attribute access
-
-        @param key: Key to be accessed
-        @type key: String
-        @return: Attribute
-        """
-
-        if key in self.supported:
-            return self.get(key)
-        else:
-            raise error.UnsupportedConfigError(append=key)
-
-    def __setitem__(self, key, value):
-        """
-        Allow restricted attribute write access
-
-        @param key: Key to be set
-        @type key: String
-        @param value: Value of key
-        @type value: Anything
-        """
-
-        if key in self.supported:
-            self.__dict__[key] = value
-        else:
-            raise error.UnsupportedConfigError(append=key)
 

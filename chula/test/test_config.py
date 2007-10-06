@@ -17,11 +17,18 @@ class Test_config(unittest.TestCase):
         self.config.session_memcache = ('')
         self.config['classpath'] = 'foo'
 
+    def test_keys_method_not_destroyed(self):
+        self.assertEquals(len(self.config.keys()), 9)
+
+    def test_printing_not_result_in_empty_dict(self):
+        self.assertTrue(isinstance(self.config, dict))
+        self.assertNotEquals(str(self.config), '{}')
+
     def test_invalid_key_set_by_dict(self):
-        self.assertRaises(UnsupportedConfigError, self.d_set, 'foo', 'bar')
+        self.assertRaises(InvalidCollectionKeyError, self.d_set, 'foo', 'bar')
 
     def test_invalid_key_set_by_attr(self):
-        self.assertRaises(UnsupportedConfigError, self.a_set, 'foo', 'bar')
+        self.assertRaises(InvalidCollectionKeyError, self.a_set, 'foo', 'bar')
 
 def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())

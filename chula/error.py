@@ -83,6 +83,15 @@ class ExtremeDangerError(BaseException):
     def msg(self):
         return 'Chula is not willing to perform the requested task'
 
+class InvalidCollectionKeyError(BaseException):
+    """
+    Exception indicating an invalid key was used against a restricted
+    collection class.
+    """
+    def __init__(self, key, append=None):
+        self.message = 'Invalid key: %s' % key
+        self.append = append
+
 class MalformedConnectionStringError(BaseException):
     """
     Exception indicating that the database connection string used is
@@ -120,15 +129,6 @@ class UnsupportedUsageError(BaseException):
     def msg(self):
         return 'Invalid use of this object'
 
-class UnsupportedConfigError(BaseException):
-    """
-    Exception indicating the use of an unsupported chula configuration
-    attribute.  See chula.config for the supported attributes.
-    """
-
-    def msg(self):
-        return 'The specified configuration attribute is unsupported'
-
 class MissingDependancyError(BaseException):
     """
     Exception indicating a required dependancy of chula is either
@@ -139,3 +139,23 @@ class MissingDependancyError(BaseException):
         self.message = 'Please install: %s' % _pkg
         self.append = append
 
+class RestrictecCollectionKeyRemovalError(BaseException):
+    """
+    It is illegal to remove a key from a RestrictedCollection object.
+    """
+
+    def __init__(self, key, append=None):
+        self.message = ('Keys cannot be deleted from a'
+                        'ResctrictedCollection object: %s' % key)
+        self.append = append
+
+class RestrictecCollectionMissingDefaultAttrError(BaseException):
+    """
+    Exception indicating that a restricted attribute was not given a
+    default value.
+    """
+
+    def __init__(self, key, append=None):
+        self.message = ('RestrictedCollection attribute missing'
+                        'default value: %s' % key)
+        self.append = append

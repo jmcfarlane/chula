@@ -6,7 +6,7 @@ import re
 
 from mod_python import apache as APACHE
 
-from chula import error, collection, config as CONFIG
+from chula import error, collection
 
 def _handler(req, config):
     DEFAULT_METHOD = 'index'
@@ -34,7 +34,7 @@ def _handler(req, config):
         return APACHE.OK
 
     # Check to make sure the config is available
-    if config.classpath == CONFIG.Config.UNSET:
+    if config.classpath == collection.UNSET:
         msg = ('[cfg.classpath] must be specified in your apache handler. '
                'See documentation for help on how to set this.')
         raise error.UnsupportedConfigError(msg)
