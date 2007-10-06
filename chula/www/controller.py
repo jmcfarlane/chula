@@ -10,7 +10,7 @@ except ImportError:
     print "NOTICE: Creating FakeRequest object(s) and continuing anyway..."
 
 from chula import collection, error, session
-from chula.www import cookie
+from chula.www import cookie, env
 
 class Controller(object):
     """
@@ -30,8 +30,10 @@ class Controller(object):
         self.content_type = 'text/html'
         self._load_http_vars(req)
 
-        # Populate get/post or both (form) variables
+        # Populate GET/POST, and env variables
+        # TODO: Add specific object for GET vars as maybe != POST
         self.form = dict(self.req.form)
+        self.env = env.Env(req)
 
         # Get user configuration
         self.config = config
@@ -50,6 +52,7 @@ class Controller(object):
         # controller, or it can do it's own thing.
         self.model = collection.Collection()
         self.model.session = self.session
+        self.model.env = self.env
 
     def _load_http_vars(self, req):
         """
