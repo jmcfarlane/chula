@@ -62,6 +62,10 @@ def _handler(req, config):
     # Set the Apache content type (specified by the controller)
     req.content_type = controller.content_type
 
+    # Make sure we don't try to load a private method
+    if route['method'].startswith('_'):
+        route['method'] = DEFAULT_METHOD
+
     # Lookup the requested method to make sure it exists
     method = getattr(controller, route['method'], None)
 

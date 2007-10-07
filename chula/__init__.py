@@ -7,19 +7,19 @@ def get_version():
     return '0.0.0'
 
 __VERSION__ = get_version()
+version = __VERSION__
 
-__all__ = ['error',
-           'collection',
+__all__ = ['collection',
            'config',
            'data',
            'db',
-           'example',
+           'ecalendar',
+           'error',
            'guid',
            'json',
            'memcache',
            'pager',
            'passwd',
            'regex',
-           'session'
-          ]
-
+           'session',
+           'webservice']
