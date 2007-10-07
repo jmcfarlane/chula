@@ -13,6 +13,7 @@ class Env(collection.Collection):
         # mod_python req variables
         self.args = req.args
         self.content_type = req.content_type
+        self.document_root = req.document_root()
         self.filename = req.filename
         self.hostname = req.hostname
         self.method = req.method
