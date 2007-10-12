@@ -189,9 +189,13 @@ class Test_data(unittest.TestCase):
         self.assertEqual(data.istag('4'), True)
         self.assertEqual(data.istag(4), False)
         self.assertEqual(data.istag('a,b'), False)
+        self.assertEqual(data.istag(r'abc'), True)
+        self.assertEqual(data.istag(u'abc'), True)
 
     def test_istags(self):
         self.assertEqual(data.istags("a b"), True)
+        self.assertEqual(data.istags(u"a b"), True)
+        self.assertEqual(data.istags("a$a b"), False)
 
     def test_none2empty(self):
         self.assertEqual(data.none2empty(self.int), self.int)

@@ -265,7 +265,7 @@ def istag(input_, regexp=None):
     False
     """
     
-    if not isinstance(input_, str):
+    if not isinstance(input_, basestring):
         return False
 
     if regexp is None:
@@ -294,7 +294,7 @@ def istags(input_, regexp=None):
     False
     """
     
-    if not isinstance(input_, str):
+    if not isinstance(input_, basestring):
         return False
 
     if regexp is None:
@@ -387,7 +387,7 @@ def str2date(input_):
     2005-10-04 21:45:00
     """
     
-    if not isinstance(input_, str):
+    if not isinstance(input_, basestring):
         msg = 'Value passed must be of type string.'
         raise error.TypeConversionError(input_,
                                                  'datetime.datetime',
