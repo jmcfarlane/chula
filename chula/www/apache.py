@@ -45,8 +45,8 @@ def _handler(req, config):
                              globals(),
                              locals(),
                              [route['class']])
-    except ImportError:
-        msg = config.classpath + '.' + route['module']
+    except ImportError, ex:
+        msg = config.classpath + '.' + route['module'] + ' - ' + str(ex)
         raise error.ControllerModuleNotFoundError(msg)
     except Exception:
         raise
