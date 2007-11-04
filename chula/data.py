@@ -26,6 +26,12 @@ def commaify(input_):
     
     parts = str(input_).split('.')
     formatted = re.sub(r'(\d{3})', r'\1,', parts[0][::-1])
+
+    # Strip off extra comma on the front (currently end) if it exists
+    if formatted.endswith(','):
+        formatted = formatted[:-1]
+
+    # Add the decimal value(s) back on if they exist
     try:
         output = formatted[::-1] + '.' + parts[1]
     except:

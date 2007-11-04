@@ -81,7 +81,11 @@ def _handler(req, config):
     # Execute the method and write the returned string to request object.
     # We're manually casting the return as a string because Cheetah
     # templates seem to require it.
-    req.write(str(method()))
+    output = method()
+    if not output is None:
+        req.write(str(output))
+    else:
+        raise error.ControllerMethodReturnError()
 
     # Persist session and perform garbage collection
     controller._pre_session_persist()

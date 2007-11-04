@@ -73,6 +73,19 @@ class ControllerModuleNotFoundError(BaseException):
         self.message = 'Unable to find the following module: %s' % _pkg
         self.append = append
 
+class ControllerMethodReturnError(BaseException):
+    """
+    Exception indicating that a controller method is returning None,
+    which is probably not on purpose.  It's true that we do cast all
+    output as a string, thus None is technically valid, it's most
+    likely that the controller method simply forgot to return.  This
+    will save time by pointing this out.  If you really need to return
+    None, then return: 'None'
+    """
+
+    def msg(self):
+        return "Method either didn't return, or returned None"
+
 class ExtremeDangerError(BaseException):
     """
     Exception indicating a refusal to do something dangerous.  Usually
