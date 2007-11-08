@@ -222,6 +222,7 @@ def cdate(input_, doquote=True, isfunction=False):
         return input_
 
     else:
+        input_ = str(input_)
         if data.isdate(input_):
             if doquote:
                 input_ = data.wrap(input_, "'")

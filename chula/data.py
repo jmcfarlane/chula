@@ -408,17 +408,22 @@ def str2date(input_):
              'M':r'(?P<M>([0-5]?[0-9]|60))',
              'S':r'(?P<S>([0-5]?[0-9]|60))'}
 
-    regexes = []
-    regexes.append('^%(m)s\D%(d)s\D%(Y)s$')
-    regexes.append('^%(m)s%(d)s%(Y)s$') 
-    regexes.append('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s$') 
-    regexes.append('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s\D%(S)s$') 
-    regexes.append('^%(Y)s\D%(m)s\D%(d)s$') 
-    regexes.append('^%(Y)s%(m)s%(d)s$') 
-    regexes.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s$') 
-    regexes.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s$') 
+    regs = []
+    regs.append('^%(m)s\D%(d)s\D%(Y)s$')
+    regs.append('^%(m)s%(d)s%(Y)s$') 
+    regs.append('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s$') 
+    regs.append('^%(m)s\D%(d)s\D%(Y)s\D%(I)s\D%(M)s\D%(S)s$') 
+    regs.append('^%(Y)s\D%(m)s\D%(d)s$') 
+    regs.append('^%(Y)s%(m)s%(d)s$') 
+    regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s$') 
+    regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s$') 
 
-    for regexp in regexes:
+    # 2007-09-25 00:00:00-04:00
+    regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s-\d\d:\d\d$') 
+    # 2005-10-4 21:01:00.970532-04:00 
+    regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s\.[0-9]+-\d\d:\d\d$') 
+
+    for regexp in regs:
         match = re.match(regexp % parts, input_)
         if not match is None:
             ptime.update(match.groupdict())

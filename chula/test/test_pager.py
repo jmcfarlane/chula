@@ -14,7 +14,7 @@ class Test_pager(unittest.TestCase):
                 selectedcount += 1
             
             # Test that the right keys come back
-            if ['isselected', 'offset'] != page.keys():
+            if ['isselected', 'number', 'offset'] != page.keys():
                 raise KeyError, page
 
         # Test that exactly one page is selected
