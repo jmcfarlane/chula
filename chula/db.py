@@ -355,3 +355,18 @@ def empty2null(input_):
     else:
         return input_
 
+def unquote(input_):
+    """
+    Return string not padded with single quotes.  This is useful to
+    clean something changed by cstr()
+
+    @param: input_
+    @type input_: str
+    @return: str, or input unchanged
+    """
+
+    if isinstance(input_, str):
+        if input_.startswith("'") and input_.endswith("'"):
+            input_ = input_[1:-1]
+
+    return input_

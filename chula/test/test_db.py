@@ -190,6 +190,18 @@ class Test_db(unittest.TestCase):
         conn = db.Datastore('pg:chula@localhost/chula_test')
         self.assertRaises(UnsupportedUsageError, conn.cursor, type='list')
         conn.close()
+
+    def test_unquote(self):
+        self.assertEqual(db.unquote("'abc'"), "abc")
+        self.assertEqual(db.unquote('"abc"'), '"abc"')
+        self.assertEqual(db.unquote("'ABC'"), "ABC")
+        self.assertEqual(db.unquote("'a'bc'"), "a'bc")
+        self.assertEqual(db.unquote("'a\"bc'"), "a\"bc")
+        self.assertEqual(db.unquote("'x'"), "x")
+        self.assertEqual(db.unquote("abc"), "abc")
+        self.assertEqual(db.unquote(None), None)
+        self.assertEqual(db.unquote(5), 5)
+        self.assertEqual(db.unquote('5'), '5')
             
 def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())
