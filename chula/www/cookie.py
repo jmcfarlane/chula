@@ -25,9 +25,11 @@ class Cookie(object):
                                           Apache.MarshalCookie,
                                           secret=self.HMAC)
 
-        # Create the reqeuested cookie if it doesn't exist
+        # Create/update the cookie
         if self.name not in self.cookies:
             self.persist(guid.guid())
+        else:
+            self.persist(self.value())
 
     def exists(self):
         """

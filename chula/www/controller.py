@@ -30,7 +30,6 @@ class Controller(object):
         self.content_type = 'text/html'
         self._load_http_vars(req)
 
-        # Populate GET/POST, and env variables
         # TODO: Add specific object for GET vars as maybe != POST
         self.form = dict(self.req.form)
         self.env = env.Env(req)
