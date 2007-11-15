@@ -86,6 +86,15 @@ class ControllerMethodReturnError(BaseException):
     def msg(self):
         return "Method either didn't return, or returned None"
 
+class ControllerRedirectionError(BaseException):
+    """
+    Exception indicating that the controller was unable to perform the
+    requested redirect.
+    """
+
+    def msg(self):
+        return "Unable to redirect as requested"
+
 class ExtremeDangerError(BaseException):
     """
     Exception indicating a refusal to do something dangerous.  Usually

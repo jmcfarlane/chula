@@ -98,7 +98,11 @@ class Controller(object):
         @type destination: String
         """
 
-        self.req.headers_out['location'] = destination
+        try:
+            self.req.headers_out['location'] = str(destination)
+        except TypeError, ex:
+            msg = 'Invalid redirection uri: %s, %s' % (destination, ex)
+            raise error.ControllerRedirectionError(msg)
 
         if type == 'TEMPORARY':
             self.req.status = apache.HTTP_MOVED_TEMPORARILY
