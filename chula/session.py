@@ -71,6 +71,7 @@ class Session(dict):
             self.connect_db()
             self._cursor.execute(sql)
             self._conn.commit()
+            self.isauthenticated = False
         except db.ProgrammingError:
             self._conn.rollback()
             raise
