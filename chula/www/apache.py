@@ -6,17 +6,21 @@ import re
 
 from mod_python import apache as APACHE
 
-from chula import error, collection
+from chula import error
 
 def _handler(req, config):
     DEFAULT_METHOD = 'index'
     regexp = (r'^/'
-              r'(?P<module>[_a-zA-Z]+)/'
-              r'((?P<method>[_a-zA-Z]+)/)?'
+              r'(?P<module>[a-zA-Z]+[_a-zA-Z0-9]*)/'
+              r'((?P<method>[a-zA-Z]+[_a-zA-Z0-9]*)/)?'
               r'((\?(?P<args>.*))?)?$')
 
-    # Create the route which will map to a Python object
-    route = {'module':'home', 'method':DEFAULT_METHOD}
+    # Create the default route which will [later] map to a Python object
+    if req.unparsed_uri == '/':
+        route = {'module':'home', 'method':DEFAULT_METHOD}
+    else:
+        # Consider the page a 404 until proven otherwise
+        route = {'module':config.error_controller, 'method':'e404'}
 
     # Update any parts we should use based on the url
     parts = re.match(regexp, req.unparsed_uri)
@@ -28,13 +32,8 @@ def _handler(req, config):
     # The first letter of a class is always uppercase (PEP8)
     route['class'] = route['module'].capitalize()
 
-    if False:
-        req.content_type = 'text/html'
-        req.write(str(route))
-        return APACHE.OK
-
     # Check to make sure the config is available
-    if config.classpath == collection.UNSET:
+    if config.classpath is None:
         msg = ('[cfg.classpath] must be specified in your apache handler. '
                'See documentation for help on how to set this.')
         raise error.UnsupportedConfigError(msg)
@@ -46,8 +45,15 @@ def _handler(req, config):
                              locals(),
                              [route['class']])
     except ImportError, ex:
+        # Debugging info, toggle for use
+        if False:
+            req.content_type = 'text/html'
+            req.write(str(route))
+            return APACHE.OK
+
         msg = config.classpath + '.' + route['module'] + ' - ' + str(ex)
         raise error.ControllerModuleNotFoundError(msg)
+
     except Exception:
         raise
 

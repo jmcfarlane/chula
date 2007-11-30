@@ -96,7 +96,11 @@ class RestrictedCollection(Collection):
         """
 
         if key in self.__dict__['validkeys']:
-            return super(RestrictedCollection, self).__getitem__(key)
+            value = super(RestrictedCollection, self).__getitem__(key)
+            if value != UNSET:
+                return value
+            else:
+                raise error.RestrictecCollectionMissingDefaultAttrError(key)
         else:
             raise error.InvalidCollectionKeyError(key)
 

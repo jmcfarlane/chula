@@ -178,6 +178,5 @@ class RestrictecCollectionMissingDefaultAttrError(BaseException):
     """
 
     def __init__(self, key, append=None):
-        self.message = ('RestrictedCollection attribute missing'
-                        'default value: %s' % key)
+        self.message = 'Please set the "%s" attr in your apache handler' % key
         self.append = append
