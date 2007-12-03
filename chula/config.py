@@ -21,6 +21,7 @@ class Config(collection.RestrictedCollection):
 
         return ('classpath',
                 'error_controller',
+                'local',
                 'session_db',
                 'session_host',
                 'session_port',
@@ -33,6 +34,7 @@ class Config(collection.RestrictedCollection):
     def __defaults__(self):
         self.classpath = collection.UNSET
         self.error_controller = collection.UNSET
+        self.local = collection.Collection()
         self.session_db = 'chula_session'
         self.session_host = 'localhost'
         self.session_port = 5432
