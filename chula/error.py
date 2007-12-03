@@ -2,7 +2,7 @@
 Custom chula exceptions
 """
 
-class BaseException(Exception):
+class ChulaException(Exception):
     """
     Chula exception class which adds additional functionality to aid
     in efficiently raising custom exceptions.
@@ -46,7 +46,7 @@ class BaseException(Exception):
 
         return 'Generic chula exception'
 
-class ControllerClassNotFoundError(BaseException):
+class ControllerClassNotFoundError(ChulaException):
     """
     Exception indicating the requested controller class not found.
     """
@@ -55,7 +55,7 @@ class ControllerClassNotFoundError(BaseException):
         self.message = 'Unable to find the following class: %s' % _pkg
         self.append = append
 
-class ControllerMethodNotFoundError(BaseException):
+class ControllerMethodNotFoundError(ChulaException):
     """
     Exception indicating the requested controller method not found.
     """
@@ -64,7 +64,7 @@ class ControllerMethodNotFoundError(BaseException):
         self.message = 'Unable to find the following method: %s' % _pkg
         self.append = append
 
-class ControllerModuleNotFoundError(BaseException):
+class ControllerModuleNotFoundError(ChulaException):
     """
     Exception indicating the requested module method not found.
     """
@@ -73,7 +73,7 @@ class ControllerModuleNotFoundError(BaseException):
         self.message = 'Unable to find the following module: %s' % _pkg
         self.append = append
 
-class ControllerMethodReturnError(BaseException):
+class ControllerMethodReturnError(ChulaException):
     """
     Exception indicating that a controller method is returning None,
     which is probably not on purpose.  It's true that we do cast all
@@ -86,7 +86,7 @@ class ControllerMethodReturnError(BaseException):
     def msg(self):
         return "Method either didn't return, or returned None"
 
-class ControllerRedirectionError(BaseException):
+class ControllerRedirectionError(ChulaException):
     """
     Exception indicating that the controller was unable to perform the
     requested redirect.
@@ -95,7 +95,7 @@ class ControllerRedirectionError(BaseException):
     def msg(self):
         return "Unable to redirect as requested"
 
-class ExtremeDangerError(BaseException):
+class ExtremeDangerError(ChulaException):
     """
     Exception indicating a refusal to do something dangerous.  Usually
     if this exception is raised you'll be glad it saved you from doing
@@ -105,7 +105,7 @@ class ExtremeDangerError(BaseException):
     def msg(self):
         return 'Chula is not willing to perform the requested task'
 
-class InvalidCollectionKeyError(BaseException):
+class InvalidCollectionKeyError(ChulaException):
     """
     Exception indicating an invalid key was used against a restricted
     collection class.
@@ -114,7 +114,7 @@ class InvalidCollectionKeyError(BaseException):
         self.message = 'Invalid key: %s' % key
         self.append = append
 
-class MalformedConnectionStringError(BaseException):
+class MalformedConnectionStringError(ChulaException):
     """
     Exception indicating that the database connection string used is
     invalid.
@@ -123,7 +123,7 @@ class MalformedConnectionStringError(BaseException):
     def msg(self):
         return 'Invalid database connection string'
 
-class MalformedPasswordError(BaseException):
+class MalformedPasswordError(ChulaException):
     """
     Exception indicating that the password used does not meet minimum
     requirements (aka: isn't strong enough).
@@ -132,7 +132,7 @@ class MalformedPasswordError(BaseException):
     def msg(self):
         return 'Password does not adhere to: chula.regex.PASSWD'
 
-class TypeConversionError(BaseException):
+class TypeConversionError(ChulaException):
     """
     Exception indicating that the requested data type conversion was
     not possible.
@@ -143,7 +143,7 @@ class TypeConversionError(BaseException):
             % (str(_value), str(_type))
         self.append = append
 
-class UnsupportedUsageError(BaseException):
+class UnsupportedUsageError(ChulaException):
     """
     Exception indicating the chula api is being misused.
     """
@@ -151,7 +151,7 @@ class UnsupportedUsageError(BaseException):
     def msg(self):
         return 'Invalid use of this object'
 
-class MissingDependancyError(BaseException):
+class MissingDependancyError(ChulaException):
     """
     Exception indicating a required dependancy of chula is either
     missing or of an incompatible version.
@@ -161,7 +161,7 @@ class MissingDependancyError(BaseException):
         self.message = 'Please install: %s' % _pkg
         self.append = append
 
-class RestrictecCollectionKeyRemovalError(BaseException):
+class RestrictecCollectionKeyRemovalError(ChulaException):
     """
     It is illegal to remove a key from a RestrictedCollection object.
     """
@@ -171,7 +171,7 @@ class RestrictecCollectionKeyRemovalError(BaseException):
                         'ResctrictedCollection object: %s' % key)
         self.append = append
 
-class RestrictecCollectionMissingDefaultAttrError(BaseException):
+class RestrictecCollectionMissingDefaultAttrError(ChulaException):
     """
     Exception indicating that a restricted attribute was not given a
     default value.
