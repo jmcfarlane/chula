@@ -4,13 +4,16 @@ Functions to make working with databases easier. I{Currently only PostgreSQL}
 
 import re
 
+# Loading ourselves before third party is bad, but we need to be able
+# to raise our own exception if things go wrong
+from chula import error, data
+
 try:
     import psycopg2
     from psycopg2 import extensions, extras
 except:
     raise error.MissingDependancyError('psycopg2')
 
-from chula import error, data   
 
 # Expose the psycopg2 exceptions
 DataError = psycopg2.DataError
