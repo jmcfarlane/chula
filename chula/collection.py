@@ -58,6 +58,7 @@ class RestrictedCollection(Collection):
 
     def __init__(self):
         super(RestrictedCollection, self).__init__()
+        self.__dict__['privatekeys'] = self.__privatekeys__()
         self.__dict__['validkeys'] = self.__validkeys__()
         self.__defaults__()
 
@@ -65,6 +66,9 @@ class RestrictedCollection(Collection):
         for key in self.__dict__['validkeys']:
             if not key in self:
                 raise error.RestrictecCollectionMissingDefaultAttrError(key)
+
+    def __privatekeys__(self):
+        return (())
 
     def __validkeys__(self):
         return (())
@@ -101,6 +105,9 @@ class RestrictedCollection(Collection):
                 return value
             else:
                 raise error.RestrictecCollectionMissingDefaultAttrError(key)
+
+        elif key in self.__dict__['privatekeys']:
+            return super(RestrictedCollection, self).__getitem__(key)
         else:
             raise error.InvalidCollectionKeyError(key)
 
@@ -116,6 +123,8 @@ class RestrictedCollection(Collection):
 
         if key in self.__dict__['validkeys']:
             super(RestrictedCollection, self).__setitem__(key, value)
+        elif key in self.__dict__['privatekeys']:
+            super(RestrictedCollection, self).__setitem__(key, value)
         else:
             raise error.InvalidCollectionKeyError(key)
 
@@ -127,3 +136,16 @@ class RestrictedCollection(Collection):
 
     def __setattr__(self, key, value):
         self.__setitem__(key, value)
+
+    def strip(self):
+        """
+        Purge I{privatekeys} from the collection.  This is useful when
+        passing the collection along, without it's private keys.  This
+        does actually delete the private keys, and thus acts on
+        itself.  If this isn't what you want use copy.deepcopy().
+        """
+
+        for key in self.__dict__['privatekeys']:
+            super(RestrictedCollection, self).__delitem__(key)
+
+        return self
