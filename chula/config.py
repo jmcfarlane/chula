@@ -20,6 +20,7 @@ class Config(collection.RestrictedCollection):
         """
 
         return ('classpath',
+                'debug',
                 'error_controller',
                 'local',
                 'session_db',
@@ -33,6 +34,7 @@ class Config(collection.RestrictedCollection):
 
     def __defaults__(self):
         self.classpath = collection.UNSET
+        self.debug = True
         self.error_controller = collection.UNSET
         self.local = collection.Collection()
         self.session_db = 'chula_session'

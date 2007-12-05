@@ -2,6 +2,7 @@
 Chula apache handler
 """
 
+import copy
 import re
 
 from mod_python import apache as APACHE
@@ -20,7 +21,8 @@ def _handler(req, config):
         route = {'module':'home', 'method':DEFAULT_METHOD}
     else:
         # Consider the page a 404 until proven otherwise
-        route = {'module':config.error_controller, 'method':'e404'}
+        route_404 = {'module':config.error_controller, 'method':'e404'}
+        route = copy.copy(route_404)
 
     # Update any parts we should use based on the url
     parts = re.match(regexp, req.unparsed_uri)
@@ -41,9 +43,7 @@ def _handler(req, config):
     # Import the controller module
     try:
         module =  __import__(config.classpath + '.' + route['module'],
-                             globals(),
-                             locals(),
-                             [route['class']])
+                             globals(), locals(), [route['class']])
     except ImportError, ex:
         # Debugging info, toggle for use
         if False:
@@ -51,8 +51,17 @@ def _handler(req, config):
             req.write(str(route))
             return APACHE.OK
 
-        msg = config.classpath + '.' + route['module'] + ' - ' + str(ex)
-        raise error.ControllerModuleNotFoundError(msg)
+        # If debugging raise an exception, else reconstruct the error
+        # controller from the copy.copy() we made earlier, and let the
+        # e404 method handle things
+        if not config.debug:
+            route = route_404
+            route['class'] = route['module'].capitalize()
+            module =  __import__(config.classpath + '.' + route['module'],
+                                 globals(), locals(), [route['class']])
+        else:
+            msg = config.classpath + '.' + route['module'] + ' - ' + str(ex)
+            raise error.ControllerModuleNotFoundError(msg)
 
     except Exception:
         raise
