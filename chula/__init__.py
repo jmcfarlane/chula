@@ -2,11 +2,7 @@
 Chula python package
 """
 
-def get_version():
-    # TODO: Add checks for git/raw/installed
-    return '0.0.0'
-
-__VERSION__ = get_version()
+__VERSION__ = '0.0.1'
 version = __VERSION__
 
 __all__ = ['collection',
@@ -15,6 +11,7 @@ __all__ = ['collection',
            'db',
            'ecalendar',
            'error',
+           'example',
            'guid',
            'json',
            'memcache',
