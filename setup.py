@@ -17,8 +17,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-"""Chula is a lightweight web framework for mod_python"""
-
 classifiers = """
 Development Status :: 3 - Beta
 Intended Audience :: Developers
@@ -34,18 +32,23 @@ Operating System :: Unix
 from distutils.core import setup
 
 import chula
-version = chula.version
 
+version = chula.version
 setup(author='John McFarlane',
       author_email='john.mcfarlane@rockfloat.com',
       classifiers=filter(None, classifiers.split("\n")),
-      description=__doc__.split("\n")[0],
+      data_files=[('share/chula/sql', ['sql/test/reload',
+                                       'sql/test/schema.sql',
+                                       'sql/session/reload',
+                                       'sql/session/schema.sql'])],
+      description=chula.__doc__.split('\n')[0],
+      long_description='\n'.join(chula.__doc__.split('\n')[2:]),
       download_url = "http://rockfloat.com/chula/chula-%s.tar.gz" % version,
       license='GPL',
       maintainer="John McFarlane",
       name='chula',
       package_dir={'chula':'chula'},
-      packages=['chula', 'chula.test', 'chula.www']
+      packages=['chula', 'chula.test', 'chula.www'],
       platforms = ["any"],
       url='http://rockfloat.com/projects/chula/',
       version=version)

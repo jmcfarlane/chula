@@ -1,0 +1,5 @@
+To install on linux/unix/mac:
+    root# python setup.py
+
+To install on windows (replace 1.2.3 with the actual version):
+    Double click on chula-1.2.3.win32.exe and follow the prompts
