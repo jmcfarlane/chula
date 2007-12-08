@@ -1,0 +1,23 @@
+digraph chula {
+    apache [label="Apache 2"]
+    browser [label="Web Browser" style=filled fillcolor=orange]
+    config [label="Configuration" style=filled fillcolor=green]
+    controller [label="Controller" style=filled]
+    handler [label="Apache Handler"]
+    model [label="Model" style=filled]
+    mod_python [label="Mod_python"]
+    view [label="View (Cheetah, Kid, etc.)" style=filled]
+    web [label="Internet"]
+
+    browser
+    ->web
+    ->apache
+    ->mod_python
+    ->config
+    ->handler
+    ->controller
+    ->model
+    ->view
+    ->web
+    ->browser
+}
