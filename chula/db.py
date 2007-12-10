@@ -12,7 +12,7 @@ try:
     import psycopg2
     from psycopg2 import extensions, extras
 except:
-    raise error.MissingDependancyError('psycopg2')
+    raise error.MissingDependencyError('Psycopg2')
 
 
 # Expose the psycopg2 exceptions

@@ -151,9 +151,9 @@ class UnsupportedUsageError(ChulaException):
     def msg(self):
         return 'Invalid use of this object'
 
-class MissingDependancyError(ChulaException):
+class MissingDependencyError(ChulaException):
     """
-    Exception indicating a required dependancy of chula is either
+    Exception indicating a required dependency of chula is either
     missing or of an incompatible version.
     """
     

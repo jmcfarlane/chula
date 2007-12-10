@@ -29,9 +29,30 @@ Operating System :: Microsoft :: Windows
 Operating System :: Unix
 """
 
+import sys
+
 from distutils.core import setup
 
 import chula
+
+# Check for dependencies
+if 'install' in sys.argv:
+    from chula import error
+
+    if sys.version_info < (2, 5):
+        raise error.MissingDependencyError('Python-2.5 or higher')
+
+    # Simplejson
+    try:
+        import simplejson
+    except:
+        raise error.MissingDependencyError('Simplejson')
+        
+    # Psycopg
+    try:
+        import psycopg2
+    except:
+        raise error.MissingDependencyError('Psycopg2')
 
 version = chula.version
 setup(author='John McFarlane',
@@ -52,3 +73,4 @@ setup(author='John McFarlane',
       platforms = ["any"],
       url='http://rockfloat.com/projects/chula/',
       version=version)
+
