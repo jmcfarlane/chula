@@ -2,13 +2,18 @@ digraph chula {
     apache [label="Apache 2"]
     browser [label="Web Browser" style=filled fillcolor=orange]
     config [label="Configuration" style=filled fillcolor=green]
-    controller [label="Controller" style=filled]
+    controller [label="Controller" style=filled fillcolor=green]
     handler [label="Apache Handler"]
-    model [label="Model" style=filled]
+    json [label="JSON"]
+    memcache [label="Memcached"]
     mod_python [label="Mod_python"]
+    model [label="Model" style=filled]
+    postgres [label="PostgreSQL"]
+    session [label="Session Cluster"]
     view [label="View (Cheetah, Kid, etc.)" style=filled]
     web [label="Internet"]
 
+    /* Main stack */
     browser
     ->web
     ->apache
@@ -20,4 +25,10 @@ digraph chula {
     ->view
     ->web
     ->browser
+
+    /* Session stack */
+    handler->session
+    session->json
+    json->postgres
+    json->memcache
 }
