@@ -54,14 +54,16 @@ if 'install' in sys.argv:
     except:
         raise error.MissingDependencyError('Psycopg2')
 
+# Data files
+sql_session = ['sql/session/reload', 'sql/session/schema.sql']
+sql_test = ['sql/test/reload', 'sql/test/schema.sql']
+
 version = chula.version
 setup(author='John McFarlane',
       author_email='john.mcfarlane@rockfloat.com',
       classifiers=filter(None, classifiers.split("\n")),
-      data_files=[('share/chula/sql', ['sql/test/reload',
-                                       'sql/test/schema.sql',
-                                       'sql/session/reload',
-                                       'sql/session/schema.sql'])],
+      data_files=[('share/chula/sql/session', sql_session),
+                  ('share/chula/sql/test', sql_test)],
       description=chula.__doc__.split('\n')[0],
       long_description='\n'.join(chula.__doc__.split('\n')[2:]),
       download_url = "http://rockfloat.com/chula/chula-%s.tar.gz" % version,
