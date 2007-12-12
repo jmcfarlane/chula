@@ -2,4 +2,3 @@ recursive-include chula *.py
 recursive-include sql *
 include LICENSE
 include INSTALL
-include Changelog
