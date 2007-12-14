@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
-    <release date="" version="0.0.1.beta_01">
+    <release date="12/14/2007" version="0.0.1.beta_01">
         <log>Initial release</log>
     </release>
 </project>
