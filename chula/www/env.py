@@ -39,6 +39,10 @@ class Env(collection.Collection):
         self.referer = headers('Referer')
         self.user_agent = headers('User-Agent')
 
+        # Check for broken variables
+        if self.host is None:
+            self.host = '%s:%s' % (self.hostname, self.local_addr[1])
+
         # Computed variables
         self.protocol_type = re.match(r'(HTTPS?)', self.protocol).group()
         self.ajax_uri = self.protocol_type.lower() + '://' + self.host
