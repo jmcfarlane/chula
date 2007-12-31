@@ -7,6 +7,7 @@ import re
 
 from mod_python import apache as APACHE
 
+import chula
 from chula import error
 
 def _handler(req, config):
@@ -17,7 +18,7 @@ def _handler(req, config):
               r'((\?(?P<args>.*))?)?$')
 
     # Create the default route which will [later] map to a Python object
-    if req.unparsed_uri == '/':
+    if req.unparsed_uri == '/' or req.unparsed_uri.startswith('/?'):
         route = {'module':'home', 'method':DEFAULT_METHOD}
     else:
         # Consider the page a 404 until proven otherwise
@@ -92,6 +93,12 @@ def _handler(req, config):
     if method is None:
         msg = '%s.%s()' % (route['class'], route['method'])
         raise error.ControllerMethodNotFoundError(msg)
+
+    # Expose Chula specific environment information
+    controller.env['chula_version'] = chula.version
+    controller.env['chula_module'] = route['module']
+    controller.env['chula_class'] = route['class']
+    controller.env['chula_method'] = route['method']
 
     # Execute the method and write the returned string to request object.
     # We're manually casting the return as a string because Cheetah
