@@ -38,19 +38,20 @@ class Controller(object):
         self.config = config
 
         # Fetch the user's cookie
-        ck = cookie.Cookie(self.req,
-                           config.session_name,
-                           config.session_encryption_key,
-                           config.session_timeout)
+        self.cookie = cookie.Cookie(self.req,
+                                    config.session_name,
+                                    config.session_encryption_key,
+                                    config.session_timeout)
 
         # Expose if the client supports cookies
-        self.env['chula_client_cookies_enabled'] = ck.client_cookies_enabled
+        client_cookies_enabled = self.cookie.client_cookies_enabled
+        self.env['chula_client_cookies_enabled'] = client_cookies_enabled
 
         # Start up session using the cookie's guid (or a fake one)
-        if ck.cookies is None: 
+        if self.cookie.cookies is None: 
             self.session = session.Session(config, guid.guid())
         else:
-            guid_ = ck.value()
+            guid_ = self.cookie.value()
             self.session = session.Session(config, guid_)
 
         # Create a default model. This object is optionally populated by the
