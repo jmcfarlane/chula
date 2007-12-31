@@ -38,13 +38,13 @@ class Controller(object):
         self.config = config
 
         # Fetch the user's cookie
-        ck = cookie.Cookie(self.req,
-                           config.session_name,
-                           config.session_encryption_key,
-                           config.session_timeout)
+        self.cookie = cookie.Cookie(self.req,
+                                    config.session_name,
+                                    config.session_encryption_key,
+                                    config.session_timeout)
 
         # Start up session using the cookie's guid
-        guid = ck.value()
+        guid = self.cookie.value()
         self.session = session.Session(config, guid)
 
         # Create a default model. This object is optionally populated by the
