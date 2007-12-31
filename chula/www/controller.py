@@ -9,7 +9,7 @@ except ImportError:
     print "NOTICE: Unable to access mod_python"
     print "NOTICE: Creating FakeRequest object(s) and continuing anyway..."
 
-from chula import collection, error, session
+from chula import collection, guid, error, session
 from chula.www import cookie, env
 
 class Controller(object):
@@ -43,9 +43,15 @@ class Controller(object):
                            config.session_encryption_key,
                            config.session_timeout)
 
-        # Start up session using the cookie's guid
-        guid = ck.value()
-        self.session = session.Session(config, guid)
+        # Expose if the client supports cookies
+        self.env['chula_client_cookies_enabled'] = ck.client_cookies_enabled
+
+        # Start up session using the cookie's guid (or a fake one)
+        if ck.cookies is None: 
+            self.session = session.Session(config, guid.guid())
+        else:
+            guid_ = ck.value()
+            self.session = session.Session(config, guid_)
 
         # Create a default model. This object is optionally populated by the
         # controller, or it can do it's own thing.

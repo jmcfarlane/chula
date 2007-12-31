@@ -4,6 +4,7 @@
     <release date="" version="0.0.2">
         <log>Fixed defect where controller.self.host is None</log>
 		<log>Fixed defect where request_uri of: "/?" was loading e404</log>
+		<log>More gracefully handle clients lacking cookie support</log>
     </release>
 	
     <release date="12/14/2007" version="0.0.1">
