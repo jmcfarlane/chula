@@ -4,9 +4,19 @@
     <release date="" version="0.0.2">
         <log>Fixed defect where controller.self.host is None</log>
 		<log>Fixed defect where request_uri of: "/?" was loading e404</log>
+		<log>More gracefully handle clients lacking cookie support</log>
+        <log>
+            Allow the controller to have direct access to the cookie
+            object.  This provides access to it's destroy() method, useful
+            for logout pages.
+        </log>
     </release>
 	
     <release date="12/14/2007" version="0.0.1">
         <log>Initial release</log>
     </release>
 </project>
+
+<!--
+# vim: filetype=xml
+-->
