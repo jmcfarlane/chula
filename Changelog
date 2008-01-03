@@ -10,6 +10,7 @@
             object.  This provides access to it's destroy() method, useful
             for logout pages.
         </log>
+        <log>Tweaks to improve support for static content</log>
     </release>
 	
     <release date="12/14/2007" version="0.0.1">

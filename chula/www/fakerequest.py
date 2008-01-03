@@ -22,7 +22,7 @@ class FakeFieldStorage(dict):
         super(FakeFieldStorage, self).__init__() 
         self.list = self
     
-class FakeRequest(object):
+class FakeRequest(dict):
     """
     Fake request object
     """
@@ -36,6 +36,9 @@ class FakeRequest(object):
 
         environ = os.environ
         self.subprocess_env = environ
+        self.method = 'GET'
+        self.proto_num = 9999
+        self.protocol = 'HTTP/1.1'
         self.content_type = "text/plain"
         self.status = 200
         self.args = environ.get('QUERY_STRING', '')
@@ -53,7 +56,9 @@ class FakeRequest(object):
         self.read = sys.stdin.read
         self.server = FakeServer()
         self.headers_in = {'Referer':environ.get('HTTP_REFERER', ''),
-                           'Cookie':environ.get('HTTP_COOKIE', '')}
+                           'Cookie':environ.get('HTTP_COOKIE', ''),
+                           'User-Agent':environ.get('USER_AGENT', '')
+                          }
         self.get = FakeFieldStorage()
         self.form = FakeFieldStorage()
        
@@ -87,6 +92,10 @@ class FakeRequest(object):
 class FakeRequestConnection(object):
     def __init__(self):
         self.local_addr = ['', '']
+        self.local_host = ('127.0.0.1', 80)
+        self.remote_addr = ('127.0.0.1', 9999)
+        self.remote_host = 'localhost'
+        self.remote_ip = '127.0.0.1'
         
 class FakeServer(object):
     def __init__(self):

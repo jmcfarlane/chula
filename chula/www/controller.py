@@ -5,9 +5,12 @@ Generic base controller used by all web requests
 try:
     from mod_python import apache, util
 except ImportError:
+    import sys
+
     from chula.www import fakerequest as util
-    print "NOTICE: Unable to access mod_python"
-    print "NOTICE: Creating FakeRequest object(s) and continuing anyway..."
+
+    print >> sys.stderr, "NOTICE: Unable to access mod_python"
+    print >> sys.stderr, "NOTICE: Using chula.www.fakerequest.FakeRequest()"
 
 from chula import collection, guid, error, session
 from chula.www import cookie, env
