@@ -25,6 +25,7 @@ class Session(dict):
         self._config = config
         self._cache = self._config.session_memcache
         self._timeout = self._config.session_timeout
+        self._expired = False
 
         if existing_guid is None:
             self._guid = guid.guid()
@@ -72,7 +73,7 @@ class Session(dict):
             self._cursor.execute(sql)
             self._conn.commit()
             self.isauthenticated = False
-        except db.ProgrammingError:
+        except:
             self._conn.rollback()
             raise
         finally:
@@ -81,6 +82,9 @@ class Session(dict):
         # Delete from cache
         if not self._cache is None:
             self._cache.delete(self.mkey())
+
+        # Ensure the data still in memory (self) is not persisted back
+        self._expired = True
 
     def fetch_from_cache(self):
         """
@@ -185,6 +189,10 @@ class Session(dict):
         whether to store long-term or short-term Currently long-term
         is a postgres db, short-term is cache.
         """
+
+        # Don't do anthing if this session is expired
+        if self._expired:
+            return
 
         stale_count = 'REQUESTS-BETWEEN-DB-PERSIST'
         self[stale_count] = self.get(stale_count, -1) + 1
