@@ -100,19 +100,30 @@ def _handler(req, config):
     controller.env['chula_class'] = route['class']
     controller.env['chula_method'] = route['method']
 
-    # Execute the method and write the returned string to request object.
-    # We're manually casting the return as a string because Cheetah
-    # templates seem to require it.
-    output = method()
-    if not output is None:
-        req.write(str(output))
-    else:
-        raise error.ControllerMethodReturnError()
+    # Call the controller method
+    html = method()
 
     # Persist session and perform garbage collection
-    controller._pre_session_persist()
-    controller.session.persist()
-    controller._gc()
+    try:
+        controller._pre_session_persist()
+        controller.session.persist()
+    except error.SessionUnableToPersistError():
+        # Need to assign an error controller method to call here
+        raise
+    except Exception:
+        # This is a downstream exception, let them handle it
+        raise
+    finally:
+        controller._gc()
+
+    # Write the returned html to the request object.
+    # We're manually casting the view as a string because Cheetah
+    # templates seem to require it.  If you're not using Cheetah,
+    # sorry... str() is cheap  :)
+    if not html is None:
+        req.write(str(html))
+    else:
+        raise error.ControllerMethodReturnError()
 
     # If we got here, all is well
     return APACHE.OK

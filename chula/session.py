@@ -4,7 +4,9 @@ Class to manage user session.  It is designed to be generic in nature.
 
 import hashlib
 
-from chula import db, guid, json, memcache
+from chula import db, error, guid, json, memcache
+
+stale_count = 'REQUESTS-BETWEEN-DB-PERSIST'
 
 class Session(dict):
     """
@@ -194,7 +196,6 @@ class Session(dict):
         if self._expired:
             return
 
-        stale_count = 'REQUESTS-BETWEEN-DB-PERSIST'
         self[stale_count] = self.get(stale_count, -1) + 1
 
         # Persist to the session state to the database if this is a new
@@ -202,7 +203,6 @@ class Session(dict):
         # database persists) is greater than a constant value, 10 for
         # now. 
         if self[stale_count] == 0 or self[stale_count] > 10:
-            self[stale_count] = 0
             self.flush_next_persist()
         
         # Forces a write to the database on the next go
@@ -224,7 +224,15 @@ class Session(dict):
             # Set a reasonable default for cookies lacking an expiration
             timeout = 30
 
-        self._cache.set(self.mkey(), json.encode(self), timeout * 60)
+        if isinstance(self._cache, memcache.Client):
+            result = self._cache.set(self.mkey(),
+                                     json.encode(self),
+                                     timeout * 60)
+            # Non zero status is success
+            if result != 0:
+                return True
+
+        return False
 
     def persist_db(self):
         """
@@ -232,25 +240,45 @@ class Session(dict):
         call _gc() to garbage collect the session specific database
         connection if it exists.
         """
+
+        # Keep track of what happens
+        waspersisted = False
         
+        # Indicate a successfull db persist [rollback if necessary]
+        current_stale_count = self[stale_count]
+        self[stale_count] = 0
+
+        # Prepare the sql
         sql = "SELECT session_set(%s, %s, TRUE);"
         sql = sql % (db.cstr(self._guid), db.cstr(json.encode(self)))
 
+        # Attempt the persist
         try:
             self.connect_db()
             self._cursor.execute(sql)
             self._conn.commit()
-        except db.OperationalError, ex:
-            if isinstance(self._cache, memcache.Client):
-                self.flush_next_persist()
-            else:
-                raise
-        except db.ProgrammingError:
-            self._conn.rollback()
-            raise
+            waspersisted = True
+        except:
+            try:
+                self._conn.rollback()
+            except:
+                pass
+
+            self.flush_next_persist()
+            self[stale_count] = current_stale_count
         finally:
             # Because persistance is always at the end of the process
             # flow (actually called by apache.handler) we can safely
-            # close the database connection now :)
+            # close the database connection now, this is the last db
+            # work to be done.
             self._gc()
 
+        # If the db persist failed for whatever reason, try to
+        # failover on the cache till it comes back up.
+        if not waspersisted:
+            if self.persist_cache():
+                waspersisted = True
+
+        # Raise if we can't persist
+        if not waspersisted:
+            raise error.SessionUnableToPersistError()

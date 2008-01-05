@@ -12,6 +12,7 @@
         </log>
         <log>Tweaks to improve support for static content</log>
         <log>Fix defect where session not deleted on logout</log>
+        <log>Improve reliability/accuracy of session</log>
     </release>
 	
     <release date="12/14/2007" version="0.0.1">

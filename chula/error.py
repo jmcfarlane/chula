@@ -180,3 +180,11 @@ class RestrictecCollectionMissingDefaultAttrError(ChulaException):
     def __init__(self, key, append=None):
         self.message = 'Please set the "%s" attr in your apache handler' % key
         self.append = append
+
+class SessionUnableToPersistError(ChulaException):
+    """
+    Chula is unable to persist either to PostgreSQL or Memached.
+    """
+
+    def msg(self):
+        return 'Unable to persist session, all backends failed'
