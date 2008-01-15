@@ -44,7 +44,11 @@ class Env(collection.Collection):
             self.host = '%s:%s' % (self.hostname, self.local_addr[1])
 
         # Computed variables
-        self.protocol_type = re.match(r'(HTTPS?)', self.protocol).group()
+        protocol_type = re.match(r'(HTTPS?)', self.protocol)
+        if not protocol_type is None:
+            self.protocol_type = protocol_type.group()
+        else:
+            self.protocol_type = 'HTTP'
         self.ajax_uri = self.protocol_type.lower() + '://' + self.host
 
         # Misc variables

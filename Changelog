@@ -2,8 +2,10 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.0.2">
-        <log>Fixed defect where controller.self.host is None</log>
+        <log>Fixed defect where env.host is None</log>
+        <log>Fixed defect where env.protocol_type is None</log>
 		<log>Fixed defect where request_uri of: "/?" was loading e404</log>
+        <log>Fixed defect where session not deleted on logout</log>
 		<log>More gracefully handle clients lacking cookie support</log>
         <log>
             Allow the controller to have direct access to the cookie
@@ -11,7 +13,6 @@
             for logout pages.
         </log>
         <log>Tweaks to improve support for static content</log>
-        <log>Fix defect where session not deleted on logout</log>
         <log>Improve reliability/accuracy of session</log>
     </release>
 	
