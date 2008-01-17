@@ -3,6 +3,7 @@ Chula apache handler
 """
 
 import copy
+import time
 import re
 
 from mod_python import apache as APACHE
@@ -11,6 +12,8 @@ import chula
 from chula import error
 
 def _handler(req, config):
+    if config.add_timer:
+        TIME_start = time.time()
     DEFAULT_METHOD = 'index'
     regexp = (r'^/'
               r'(?P<module>[a-zA-Z]+[_a-zA-Z0-9]*)/'
@@ -121,9 +124,31 @@ def _handler(req, config):
     # templates seem to require it.  If you're not using Cheetah,
     # sorry... str() is cheap  :)
     if not html is None:
-        req.write(str(html))
+        html = str(html)
+
+        # Add info about server info and processing time
+        written = False
+        if config.add_timer:
+            end = html[-8:].strip()
+            for node in ('</html>', '</HTML>'):
+                if end == node:
+                    cost = (time.time() - TIME_start) * 1000
+                    req.write(html.replace(node, """
+                        <div style="display:none;">
+                            <div id="CHULA_SERVER">%s</div>
+                            <div id="CHULA_COST">%f ms</div>
+                        </div>
+                        """ % (controller.env['server_hostname'],
+                               cost)))
+                    req.write(node)
+                    written = True
+                    break
+
+        if not written:
+            req.write(html)
     else:
         raise error.ControllerMethodReturnError()
+
 
     # If we got here, all is well
     return APACHE.OK

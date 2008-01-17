@@ -19,7 +19,8 @@ class Config(collection.RestrictedCollection):
         reasonable default, or I{UNSET}.
         """
 
-        return ('classpath',
+        return ('add_timer',
+                'classpath',
                 'debug',
                 'error_controller',
                 'local',
@@ -33,6 +34,7 @@ class Config(collection.RestrictedCollection):
                 'strict_method_resolution')
 
     def __defaults__(self):
+        self.add_timer = True
         self.classpath = collection.UNSET
         self.debug = True
         self.error_controller = collection.UNSET

@@ -3,6 +3,7 @@ Environment variables
 """
 
 import re
+from socket import gethostname
 
 from chula import collection
 
@@ -23,6 +24,7 @@ class Env(collection.Collection):
         self.status = req.status
         self.the_request = req.the_request
         self.unparsed_uri = req.unparsed_uri
+        self.server_hostname = gethostname()
         self.uri = req.uri
 
         # mod_python req.connection variables
