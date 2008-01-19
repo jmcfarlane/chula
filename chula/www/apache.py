@@ -133,19 +133,28 @@ def _handler(req, config):
             for node in ('</html>', '</HTML>'):
                 if end == node:
                     cost = (time.time() - TIME_start) * 1000
-                    req.write(html.replace(node, """
-                        <div style="display:none;">
-                            <div id="CHULA_SERVER">%s</div>
-                            <div id="CHULA_COST">%f ms</div>
-                        </div>
-                        """ % (controller.env['server_hostname'],
-                               cost)))
-                    req.write(node)
-                    written = True
-                    break
+                    try:
+                        req.write(html.replace(node, """
+                            <div style="display:none;">
+                                <div id="CHULA_SERVER">%s</div>
+                                <div id="CHULA_COST">%f ms</div>
+                            </div>
+                            """ % (controller.env['server_hostname'],
+                                   cost)))
+                        req.write(node)
+                        written = True
+                    except IOError:
+                        if config.debug:
+                            raise
+                    finally:
+                        break
 
         if not written:
-            req.write(html)
+            try:
+                req.write(html)
+            except IOError:
+                if config.debug:
+                    raise
     else:
         raise error.ControllerMethodReturnError()
 

@@ -15,6 +15,7 @@
         <log>Tweaks to improve support for static content</log>
         <log>Improve reliability/accuracy of session</log>
         <log>Add timer to html output (turn off with config.add_timer)</log>
+        <log>Handle exception on premature client disconnection</log>
     </release>
 	
     <release date="12/14/2007" version="0.0.1">
