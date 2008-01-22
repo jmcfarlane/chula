@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
-    <release date="" version="0.0.2">
+    <release date="1/21/2008" version="0.0.2">
         <log>Fixed defect where env.host is None</log>
         <log>Fixed defect where env.protocol_type is None</log>
 		<log>Fixed defect where request_uri of: "/?" was loading e404</log>
