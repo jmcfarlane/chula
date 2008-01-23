@@ -6,7 +6,8 @@ thru mod_python to native Python objects"""
 __VERSION__ = '0.0.3'
 version = __VERSION__
 
-__all__ = ['collection',
+__all__ = ['cache',
+           'collection',
            'config',
            'data',
            'db',
