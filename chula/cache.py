@@ -9,6 +9,9 @@ class Cache(object):
         self.servers = servers
         self.cache = memcache.Client(self.servers, debug=0)
 
+    def close(self):
+        self.cache.disconnect_all()
+
     def delete(self, key):
         deleted = self.cache.delete(key)
 
@@ -26,7 +29,7 @@ class Cache(object):
         return self.delete(key)
 
     def set(self, key, value, minutes=1):
-        saved = self.cache.set(key, value, minutes * 60)
+        saved = self.cache.set(key, value, round(minutes * 60))
 
         # Non zero status is success
         if saved != 0:
