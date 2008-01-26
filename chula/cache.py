@@ -2,12 +2,25 @@
 Wrapper class for the Memcache client
 """
 
-from chula import memcache
+from chula import error, memcache
 
 class Cache(object):
     def __init__(self, servers):
         self.servers = servers
         self.cache = memcache.Client(self.servers, debug=0)
+
+    @staticmethod
+    def clean_key(key):
+        if not isinstance(key, basestring):
+            msg = 'Cache keys must be of type: str'
+            raise error.InvalidCacheKeyError(msg)
+
+        key = list(key)
+        for char in key:
+            if ord(char) < 33 or ord(char) == 127:
+                key.remove(char)
+
+        return ''.join(key)
 
     def close(self):
         self.cache.disconnect_all()
@@ -29,6 +42,10 @@ class Cache(object):
         return self.delete(key)
 
     def set(self, key, value, minutes=1):
+        if key != self.clean_key(key):
+            msg = "Memcache doesn't support ord < 33 or == 127"
+            raise error.InvalidCacheKeyError(msg)
+
         saved = self.cache.set(key, value, round(minutes * 60))
 
         # Non zero status is success
