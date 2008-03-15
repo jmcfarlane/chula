@@ -100,6 +100,14 @@ class Controller(object):
 
         pass
 
+    def execute(self):
+        """
+        Provide a consistent method name for execution by the handler.
+        This method is to be rebound by the UrlMapper.
+        """
+
+        return "ERROR: execute() has not been properly bound"
+
     def redirect(self, destination, type='TEMPORARY'):
         """
         Redirect the browser to another page.
