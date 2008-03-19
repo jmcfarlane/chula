@@ -6,13 +6,14 @@ class can be subclassed to customize the url mapping behavior.
 import copy
 import re
 
+import chula
 from chula import collection, error
 
 DEFAULT_MODULE = 'home'
 DEFAULT_METHOD = 'index'
 
 class UrlMapper(object):
-    def __init__(self, config, uri):
+    def __init__(self, config, req):
         # Check to make sure the config is available
         if config.classpath is None:
             msg = ('[cfg.classpath] must be specified in your configuration.'
@@ -20,7 +21,8 @@ class UrlMapper(object):
             raise error.UnsupportedConfigError(msg)
             
         self.config = config
-        self.uri = uri
+        self.req = req
+        self.uri = req.unparsed_uri
 
         # Set the default route values
         self.route = collection.Collection()
@@ -95,8 +97,9 @@ class UrlMapper(object):
             msg = '%(module)s.%(class_name)s' % self.route
             raise error.ControllerClassNotFoundError(msg)
         
-        self.controller = controller
-        return controller
+        self.controller = controller(self.req, self.config)
+        self.bind()
+        return self.controller
 
     def bind(self):
         # Make sure we don't try to load a private method
@@ -131,10 +134,11 @@ class UrlMapper(object):
 
 
     def update_env(self):
-        #env = self.controller.env
-        #env['chula_class'] = route.class_name
-        #env['chula_method'] = route.method
-        #env['chula_module'] = route.module
-        #env['chula_version'] = chula.version
+        env = self.controller.env
+        env['chula_class'] = self.route.class_name
+        env['chula_method'] = self.route.method
+        env['chula_module'] = self.route.module
+        env['chula_package'] = self.route.package
+        env['chula_version'] = chula.version
 
         return

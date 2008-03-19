@@ -14,9 +14,9 @@ def _handler(req, config):
     if config.add_timer:
         TIME_start = time.time()
 
-    mapper = urlmapper.UrlMapper(config, req.unparsed_uri)
-    controller = mapper.map()(req, config) # Unbound
-    mapper.bind()
+    # Fetch the controller via the configured url-mapper
+    mapper = urlmapper.UrlMapper(config, req)
+    controller = mapper.map()
 
     # Set the Apache content type (specified by the controller)
     req.content_type = controller.content_type
