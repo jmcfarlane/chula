@@ -22,7 +22,7 @@ class UrlMapper(object):
             
         self.config = config
         self.req = req
-        self.uri = req.unparsed_uri
+        self.uri = req.uri
 
         # Set the default route values
         self.route = collection.Collection()
