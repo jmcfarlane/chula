@@ -3,16 +3,9 @@ Base class to convert HTTP url path into a Python object path.  This
 class can be subclassed to customize the url mapping behavior.
 """
 
-import copy
-import re
+from chula.www.mapper import *
 
-import chula
-from chula import collection, error
-
-DEFAULT_MODULE = 'home'
-DEFAULT_METHOD = 'index'
-
-class UrlMapper(object):
+class BaseMapper(object):
     def __init__(self, config, req):
         # Check to make sure the config is available
         if config.classpath is None:
@@ -35,6 +28,13 @@ class UrlMapper(object):
         self.route_404.module = self.config.error_controller
         self.route_404.method = 'e404'
 
+    def __str__(self):
+        namespace = '%(package)s.%(module)s.%(class_name)s.%(method)s'
+        try:
+            return namespace % self.route
+        except:
+            return str(self.route)
+
     def default_route(self):
         """
         Create the default route which will [later] map to a Python
@@ -47,18 +47,14 @@ class UrlMapper(object):
 
     def parse(self):
         """
-        Update the route by passing the url thru the mapper (regex)
-        TODO: Add support for packages
+        Determine the right Python class and method to use.  The idea
+        here is to let subclasses determine this logic.
         """
 
-        parts = re.match(self.mapper(), self.uri)
-        if not parts is None:
-            for key, value in parts.groupdict().iteritems():
-                if not value is None:
-                    self.route[key] = value
+        raise NotImplementedError('The "parse" method must be overloaded')
 
     def import_module(self):
-        path = '%s.%s' %  (self.config.classpath, self.route.module)
+        path = '%s.%s' %  (self.route.package, self.route.module)
         class_name = self.route.module.capitalize()
         self.route.class_name = class_name
         try:
@@ -71,6 +67,7 @@ class UrlMapper(object):
                 module = self.import_module()
             else:
                 msg = '%s - %s' % (path, ex)
+                msg += ' => Route: %s' % self.route
                 raise error.ControllerModuleNotFoundError(msg)
 
         except Exception:
@@ -95,6 +92,7 @@ class UrlMapper(object):
 
         if controller is None:
             msg = '%(module)s.%(class_name)s' % self.route
+            msg += ' => Route: %s' % self.route
             raise error.ControllerClassNotFoundError(msg)
         
         self.controller = controller(self.req, self.config)
@@ -116,23 +114,13 @@ class UrlMapper(object):
         # If we still don't have a method something is very wrong
         if method is None:
             msg = '%(class_name)s.%(method)s()' % self.route
+            msg += ' => Route: %s' % self.route
+            msg += ' => Controller: %s' % self.controller
             raise error.ControllerMethodNotFoundError(msg)
 
         self.controller.execute = method
         self.update_env()
     
-    def mapper(self):
-        """
-        The mapper is the regular expression responsible for how the
-        url is actually mapped.
-        """
-        
-        return (r'^/'
-                r'(?P<module>[a-zA-Z]+[_a-zA-Z0-9]*)/'
-                r'((?P<method>[a-zA-Z]+[_a-zA-Z0-9]*)/)?'
-                r'((\?(?P<args>.*))?)?$')
-
-
     def update_env(self):
         env = self.controller.env
         env['chula_class'] = self.route.class_name

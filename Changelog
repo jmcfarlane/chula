@@ -6,6 +6,10 @@
             Add module for working with caching services, currently
             only Memcache is supported.
         </log>
+        <log>
+            Add support for controllers inside of packages, previously
+            only a single namespace was supported.
+        </log>
     </release>
 
     <release date="1/21/2008" version="0.0.2">

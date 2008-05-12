@@ -8,15 +8,16 @@ from mod_python import apache as APACHE
 
 import chula
 from chula import error
-from chula.www import urlmapper
+from chula.www.mapper.standard import StandardMapper
 
 def _handler(req, config):
     if config.add_timer:
         TIME_start = time.time()
 
     # Fetch the controller via the configured url-mapper
-    mapper = urlmapper.UrlMapper(config, req)
+    mapper = StandardMapper(config, req)
     controller = mapper.map()
+    controller.env.route = mapper.route
 
     # Set the Apache content type (specified by the controller)
     req.content_type = controller.content_type
