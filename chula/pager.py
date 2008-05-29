@@ -65,8 +65,13 @@ class Pager(list):
             firstvisible = 0
             lastvisible = totalpages - 1
 
+        self.currentpage = currentpage
+
         for page in xrange(firstvisible, lastvisible + 1):
             self.append({'offset':page * limit,
                          'isselected':(page == currentpage),
                          'number':page * limit / limit + 1})
+
+    def render(self):
+        return self
 

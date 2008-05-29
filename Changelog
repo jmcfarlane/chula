@@ -9,6 +9,16 @@
         <log>
             Add support for controllers inside of packages, previously
             only a single namespace was supported.
+            <br/>
+            <i>Note that this
+            feature is probably going to be moved into a FileMapper so
+            the StandardMapper can move to more of a map based
+            model.</i>
+        </log>
+        <log>
+            Add render method to pager.Pager for those that want to
+            subclass the output.  The base method simply returns the
+            pager unmodified.
         </log>
     </release>
 
