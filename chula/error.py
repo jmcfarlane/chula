@@ -95,15 +95,15 @@ class ControllerRedirectionError(ChulaException):
     def msg(self):
         return "Unable to redirect as requested"
 
-class ExtremeDangerError(ChulaException):
-    """
-    Exception indicating a refusal to do something dangerous.  Usually
-    if this exception is raised you'll be glad it saved you from doing
-    something stupid.
-    """
-
-    def msg(self):
-        return 'Chula is not willing to perform the requested task'
+#class ExtremeDangerError(ChulaException):
+#    """
+#    Exception indicating a refusal to do something dangerous.  Usually
+#    if this exception is raised you'll be glad it saved you from doing
+#    something stupid.
+#    """
+#
+#    def msg(self):
+#        return 'Chula is not willing to perform the requested task'
 
 class InvalidCacheKeyError(ChulaException):
     """

@@ -176,15 +176,15 @@ class Test_db(unittest.TestCase):
         self.assertEqual(db.empty2null('a'), 'a')
         self.assertEqual(db.empty2null(2), 2)
 
-    def test_extreme_danger_exception(self):
-        conn = db.Datastore('pg:chula@localhost/chula_test')
-        cursor = conn.cursor()
-        try:
-            sql = 'DELETE FROM cars;'
-            self.assertRaises(ExtremeDangerError, cursor.execute, sql)
-        finally:
-            conn.rollback()
-            conn.close()
+    #def test_extreme_danger_exception(self):
+    #    conn = db.Datastore('pg:chula@localhost/chula_test')
+    #    cursor = conn.cursor()
+    #    try:
+    #        sql = 'DELETE FROM cars;'
+    #        self.assertRaises(ExtremeDangerError, cursor.execute, sql)
+    #    finally:
+    #        conn.rollback()
+    #        conn.close()
         
     def test_invalid_cursor(self):
         conn = db.Datastore('pg:chula@localhost/chula_test')

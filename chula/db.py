@@ -128,49 +128,49 @@ class Datastore(object):
         """
 
         if type == 'tuple':
-            return self.conn.cursor(cursor_factory=SafetyCursor)
+            return self.conn.cursor(cursor_factory=psycopg2.extensions.cursor)
 
         elif type == 'dict':
-            return self.conn.cursor(cursor_factory=SafetyDictCursor)
+            return self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         else:
             msg = 'Invalid cursor type, use either tuple or dict'
             raise error.UnsupportedUsageError(append=msg)
     
-class SafetyCursor(psycopg2.extensions.cursor):
-    def execute(self, sql, args=None):
-        """
-        Simple factory to check that an update or delete statement aren't
-        being ran without a where clause.
-        """
-
-        sql = _checkForDanger(sql)
-
-        return super(SafetyCursor, self).execute(sql, args)
-
-class SafetyDictCursor(psycopg2.extras.DictCursor):
-    def execute(self, sql, args=None):
-        """
-        Simple factory to check that an update or delete statement aren't
-        being ran without a where clause.
-        """
-
-        sql = _checkForDanger(sql)
-        return super(SafetyDictCursor, self).execute(sql, args)
- 
-def _checkForDanger(sql):
-    """
-    Check that the passed sql statement has a where clause if it contains
-    either an update or delete statement.
-    """
-
-    danger = sql.upper()
-    if danger.find('UPDATE') >= 0 or danger.find('DELETE') >= 0:
-        if danger.find('WHERE') < 0:
-            msg = 'Please add a valid WHERE clause (use 1=1 to force)'
-            raise error.ExtremeDangerError(append=msg)
-
-    return sql
+#class SafetyCursor(psycopg2.extensions.cursor):
+#    def execute(self, sql, args=None):
+#        """
+#        Simple factory to check that an update or delete statement aren't
+#        being ran without a where clause.
+#        """
+#
+#        sql = _checkForDanger(sql)
+#
+#        return super(SafetyCursor, self).execute(sql, args)
+#
+#class SafetyDictCursor(psycopg2.extras.DictCursor):
+#    def execute(self, sql, args=None):
+#        """
+#        Simple factory to check that an update or delete statement aren't
+#        being ran without a where clause.
+#        """
+#
+#        sql = _checkForDanger(sql)
+#        return super(SafetyDictCursor, self).execute(sql, args)
+# 
+#def _checkForDanger(sql):
+#    """
+#    Check that the passed sql statement has a where clause if it contains
+#    either an update or delete statement.
+#    """
+#
+#    danger = sql.upper()
+#    if danger.find('UPDATE') >= 0 or danger.find('DELETE') >= 0:
+#        if danger.find('WHERE') < 0:
+#            msg = 'Please add a valid WHERE clause (use 1=1 to force)'
+#            raise error.ExtremeDangerError(append=msg)
+#
+#    return sql
 
 def cbool(input_):
     """

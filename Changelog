@@ -20,6 +20,11 @@
             subclass the output.  The base method simply returns the
             pager unmodified.
         </log>
+        <log>
+            Remove "danger" logic from db.py as it's best left up to
+            the consumer to handle that type of logic.  It was poorly
+            implemented anyway  :)
+        </log>
     </release>
 
     <release date="1/21/2008" version="0.0.2">
