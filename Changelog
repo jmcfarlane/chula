@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
-    <release date="" version="0.0.3">
+    <release date="6/15/2008" version="0.0.3">
         <log>
             Add module for working with caching services, currently
             only Memcache is supported.
