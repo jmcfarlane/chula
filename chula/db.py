@@ -284,6 +284,28 @@ def cint(input_):
     except:
         raise error.TypeConversionError(input_, 'sql float')
 
+def cregex(input_, doquote=True):
+    """
+    Returns a regular expression safe for use in SQL.  If None is
+    passed if will raise an exception as None is not a valid regular
+    expression.  The intented use is with regex based SQL expressions.
+
+
+    @param input_: Value to evaluate
+    @type input_: str
+    @param doquote: I{OPTIONAL}: Wrapped in single quotes, defaults to B{True}
+    @type doquote: bool
+    @return: str
+    """
+
+    if data.isregex(input_):
+        if doquote:
+            return data.wrap(input_, "'")
+        else:
+            return input_
+    else:
+        raise error.TypeConversionError(input_, 'sql regex')
+
 def cstr(input_, doquote=True, doescape=True):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it

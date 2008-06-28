@@ -255,6 +255,27 @@ def isdate(input_):
     except:
         return False
 
+def isregex(input_):
+    """
+    Determines if the value passed is a valid regular rexpression
+
+    @param input_: Value to evaluate
+    @type input_: str
+    @return: bool
+
+    >>> print isregex(r'.*')
+    True
+    >>> print isregex(r'[')
+    False
+    """
+
+    try:
+        re.compile(input_)
+        return True
+    except:
+        return False
+
+
 def istag(input_, regexp=None):
     """
     Determines if the value passed is a tag

@@ -137,6 +137,13 @@ class Test_db(unittest.TestCase):
         self.assertEqual(clean(True), "'True'")
         self.assertEqual(clean(False), "'False'")
     
+    def test_cregex(self):
+        self.assertEqual(db.cregex(r'.*'), "'.*'")
+        self.assertEqual(db.cregex(r''), "''")
+        self.assertEqual(db.cregex(r'.*', doquote=False), ".*")
+        self.assertRaises(TypeConversionError, db.cregex, '[')
+        self.assertRaises(TypeConversionError, db.cregex, None)
+
     def test_ctags(self):
         self.assertEqual(db.ctags(''), "NULL")
         self.assertEqual(db.ctags(None), "NULL")

@@ -178,6 +178,10 @@ class Test_data(unittest.TestCase):
         self.assertEqual(data.isdate(''), False)
         self.assertEqual(data.isdate("'"), False)
 
+    def test_isregex(self):
+        self.assertEqual(data.isregex(r"abc[a-z]"), True)
+        self.assertEqual(data.isregex(r"("), False)
+
     def test_istag(self):
         self.assertEqual(data.istag("'"), False)
         self.assertEqual(data.istag("''"), False)
