@@ -17,6 +17,13 @@ class BaseMapper(object):
         self.req = req
         self.uri = req.uri
 
+        # Set the under construction controller
+        construction_route = {'module':self.config.construction_controller,
+                              'method':'index'}
+        self.construction = collection.Collection()
+        self.construction.trigger = self.config.construction_trigger
+        self.construction.route = construction_route
+
         # Set the default route values
         self.route = collection.Collection()
         self.route.package = self.config.classpath

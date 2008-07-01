@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.0.4">
-        Planning things currently...
+        <log>Add support for an "under construction" controller</log>
     </release>
 
     <release date="6/15/2008" version="0.0.3">

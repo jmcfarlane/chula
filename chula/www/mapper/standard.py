@@ -2,10 +2,19 @@
 The standard Chula URL mapper
 """
 
+import os
+
 from chula.www.mapper import base
 
 class StandardMapper(base.BaseMapper):
     def parse(self):
+        # Determine if the site is under construction
+        if not self.construction.trigger is None:
+            if os.path.exists(self.construction.trigger):
+                self.route.update(self.construction.route)
+                return str(self)
+        
+        # Parse the uri
         parts = self.uri.split('/') 
 
         # Remove any empty segments

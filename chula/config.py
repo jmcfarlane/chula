@@ -21,6 +21,8 @@ class Config(collection.RestrictedCollection):
 
         return ('add_timer',
                 'classpath',
+                'construction_controller',
+                'construction_trigger',
                 'debug',
                 'error_controller',
                 'local',
@@ -36,15 +38,17 @@ class Config(collection.RestrictedCollection):
     def __defaults__(self):
         self.add_timer = True
         self.classpath = collection.UNSET
+        self.construction_controller = None
+        self.construction_trigger = None
         self.debug = True
         self.error_controller = collection.UNSET
         self.local = collection.Collection()
         self.session_db = 'chula_session'
-        self.session_host = 'localhost'
-        self.session_port = 5432
-        self.session_name = 'chula-session'
-        self.session_memcache = [('localhost:11211', 1)]
-        self.session_timeout = 30
         self.session_encryption_key = collection.UNSET
+        self.session_host = 'localhost'
+        self.session_memcache = [('localhost:11211', 1)]
+        self.session_name = 'chula-session'
+        self.session_port = 5432
+        self.session_timeout = 30
         self.strict_method_resolution = False
 
