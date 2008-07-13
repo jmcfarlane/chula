@@ -4,6 +4,7 @@
 Runs all unit tests in a directory tree, sequentially
 """
 import os
+import re
 import sys
 
 def get_tests(path):
@@ -14,11 +15,14 @@ def get_tests(path):
     tests = []
     path = path.rstrip('/')
     tree = os.walk(path)
+    regex = re.compile(r'^.*/test(_[a-z]+)?$')
+    #regex = re.compile(r'^[^\.]*/test(_[a-z]+)?$')
     for directory in tree:
-        if directory[0].endswith("/test"):
-                for file in directory[2]:
-                    if file.startswith("test_") and file.endswith(".py"):
-                        tests.append((directory[0] + "/", file))
+        if not re.match(regex, directory[0]) is None:
+            for file in directory[2]:
+                if file.startswith("test_") and file.endswith(".py"):
+                    tests.append((directory[0] + "/", file))
+
     return tests
 
 def run_tests(tests):

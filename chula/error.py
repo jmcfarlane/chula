@@ -151,6 +151,15 @@ class TypeConversionError(ChulaException):
             % (str(_value), str(_type))
         self.append = append
 
+class UnsupportedDatabaseEngineError(ChulaException):
+    """
+    Exception indicating a requst for an unsupported database engine
+    """
+
+    def __init__(self, engine, append=None):
+        self.message = 'Unsupported db engine: %s' % engine
+        self.append = append
+
 class UnsupportedUsageError(ChulaException):
     """
     Exception indicating the chula api is being misused.

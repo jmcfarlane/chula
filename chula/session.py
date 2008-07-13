@@ -5,6 +5,7 @@ Class to manage user session.  It is designed to be generic in nature.
 import hashlib
 
 from chula import db, error, guid, json, memcache
+from chula.db import datastore
 
 stale_count = 'REQUESTS-BETWEEN-DB-PERSIST'
 
@@ -119,7 +120,7 @@ class Session(dict):
             self.connect_db()
             self._cursor.execute(sql)
             self._record = self._cursor.fetchone()
-        except db.OperationalError, ex:
+        except self._conn.error.OperationalError, ex:
             return {'SESSION-ERROR':'DATABASE UNAVAILABLE!'}
 
         if self._record is None:
@@ -151,7 +152,7 @@ class Session(dict):
             config['session_host'] = self._config.session_host
             config['session_db'] = self._config.session_db
             uri = 'pg:chula@%(session_host)s/%(session_db)s' % config
-            self._conn = db.Datastore(uri)
+            self._conn = datastore.DataStoreFactory(uri)
             self._cursor = self._conn.cursor()
 
     def load(self):

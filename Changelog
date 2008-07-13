@@ -2,7 +2,9 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.0.4">
+        <log>Refactoring of chula.db (much better now)</log>
         <log>Add support for an "under construction" controller</log>
+        <log>Add support for sqlite to chula.db.datastore</log>
     </release>
 
     <release date="6/15/2008" version="0.0.3">
