@@ -26,6 +26,7 @@ class Config(collection.RestrictedCollection):
                 'debug',
                 'error_controller',
                 'local',
+                'mqueue_db',
                 'session_db',
                 'session_host',
                 'session_port',
@@ -43,6 +44,7 @@ class Config(collection.RestrictedCollection):
         self.debug = True
         self.error_controller = collection.UNSET
         self.local = collection.Collection()
+        self.mqueue_db = None
         self.session_db = 'chula_session'
         self.session_encryption_key = collection.UNSET
         self.session_host = 'localhost'
