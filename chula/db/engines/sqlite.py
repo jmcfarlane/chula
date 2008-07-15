@@ -7,13 +7,6 @@ except:
 
 from chula.db.engines import engine
 
-def _dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-
-    return d
-
 class DataStore(engine.Engine):
     """
     Sqlite engine class
@@ -29,7 +22,7 @@ class DataStore(engine.Engine):
 
     def cursor(self, type='dict'):
         if type == 'dict':
-            self.conn.row_factory = _dict_factory
+            self.conn.row_factory = sqlite3.Row
 
         return super(DataStore, self).cursor()
 
@@ -43,7 +36,7 @@ class DataStore(engine.Engine):
             - DEFFERED = ?
             - None = Autocommit mode (the default)
             - IMMEDIATE = ?
-            - EXCLUSIVE = ?
+            - EXCLUSIVE = Prevents anyone else from reading/writing
         
         @param level: Isolation level
         @type level: str
