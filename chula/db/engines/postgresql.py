@@ -16,7 +16,7 @@ class DataStore(engine.Engine):
     Postgresql engine class using the Psycopg2 driver
     """
     
-    def __init__(self, uri, passwd=''):
+    def __init__(self, uri, passwd='', *args, **kwargs):
         super(DataStore, self).__init__()
         m = re.match(r'(?P<user>[-a-zA-Z0-9]+)@'
                      r'(?P<host>[-a-zA-Z0-9]+)/'

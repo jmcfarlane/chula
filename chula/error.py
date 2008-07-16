@@ -105,6 +105,14 @@ class ControllerRedirectionError(ChulaException):
 #    def msg(self):
 #        return 'Chula is not willing to perform the requested task'
 
+class InvalidAttributeError(ChulaException):
+    """
+    Exception indicating an invalid attribute was used.
+    """
+    def __init__(self, key, append=None):
+        self.message = 'Invalid attribute: %s' % key
+        self.append = append
+
 class InvalidCacheKeyError(ChulaException):
     """
     Exception indicating an invalid key was used against a cache source.
