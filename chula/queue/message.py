@@ -1,6 +1,6 @@
 """Simple message queue object"""
 
-from chula import collection, db
+from chula import collection, db, error
 from chula.queue import base
 
 class Message(base.QueueObject):
@@ -10,8 +10,10 @@ class Message(base.QueueObject):
         msg.name = db.cstr(self.name)
         msg.created = db.cdate(self.created)
         msg.updated = db.cdate(self.updated)
-        msg.inprocess = db.cbool(self.inprocess)
-        msg.processed = db.cbool(self.processed)
+
+        # Sqlite needs quoted dates, so treat as strings
+        msg.inprocess = db.cstr(self.inprocess)
+        msg.processed = db.cstr(self.processed)
 
         if self.id is None:
             sql = """
@@ -23,8 +25,8 @@ class Message(base.QueueObject):
                 UPDATE messages SET
                     name = %(name)s,
                     updated = datetime(),
-                    inprocess = '%(inprocess)s',
-                    processed = '%(processed)s'
+                    inprocess = %(inprocess)s,
+                    processed = %(processed)s
                 WHERE id = %(id)s;
                 """ % msg
         
@@ -62,6 +64,14 @@ class MessageQueue(base.Queue):
         sql = 'DELETE FROM messages WHERE id = %s;' % db.cint(id)
         self.persist(sql)
 
+    def fetch_by_id(self, id):
+        sql = 'SELECT * FROM messages WHERE id = %s;' % db.cint(id)
+        self.cursor.execute(sql)
+        msg = self.cursor.fetchone()
+        msg = Message(msg)
+        
+        return msg
+
     def pop(self):
         sql = """SELECT * FROM messages
             ORDER BY id ASC limit 1;
@@ -81,3 +91,19 @@ class MessageQueue(base.Queue):
 
         return msg
 
+    def purge(self, msg):
+        inqueue = self.fetch_by_id(msg.id)
+        if inqueue.inprocess is True:
+            self.delete_by_id(msg.id)
+        else:
+            msg = 'The messagage was not marked as being processed'
+            raise CannotPurgeUnprocessedError(msg)
+
+class CannotPurgeUnprocessedError(error.ChulaException):
+    """
+    Exception indicating that the message was not marked as having
+    been processed, thus cannot be purged from the queue
+    """
+
+    def msg(self):
+        return "Unable to purge an unprocessed messagage"

@@ -47,6 +47,24 @@ class Test_mqueue(unittest.TestCase):
         msg = self.mqueue.pop()
         self.assertEquals(True, msg.inprocess)
 
+    def test_cannot_purge_unprocessed(self):
+        self.mqueue.add('testing')
+        msg = self.mqueue.pop()
+
+        # Force the processed flag to False
+        msg.inprocess = False
+        self.mqueue.persist(msg)
+
+        self.assertRaises(message.CannotPurgeUnprocessedError,
+                          self.mqueue.purge, msg)
+
+    def test_successfull_purge(self):
+        self.mqueue.add('testing')
+        msg = self.mqueue.pop()
+        msg = self.mqueue.purge(msg)
+        msg = self.mqueue.pop()
+        self.assertEquals(None, msg)
+
 def run_unittest():
     # Never change this, leave as is
     unittest.TextTestRunner(verbosity=2).run(get_tests())
