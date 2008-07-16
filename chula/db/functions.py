@@ -50,7 +50,7 @@ def cdate(input_, doquote=True, isfunction=False):
     SET updated = now();
     """
     
-    if input_ in [None, '']:
+    if input_ in [None, '', 'NULL']:
         return 'NULL'
 
     elif isfunction:

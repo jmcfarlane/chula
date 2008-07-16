@@ -2,15 +2,29 @@
 Base queue objects
 """
 
-from chula import collection
+from chula import collection, data
 from chula.db import datastore
 
 class QueueObject(collection.Collection):
-    def __init__(self):
+    def __init__(self, msg=None):
         self.id = None
         self.name = None
-        self.processed = 0
-        self.timestamp = None
+        self.inprocess = False
+        self.processed = False
+        self.created = None
+        self.updated = None
+
+        # Fill if data provided
+        if not msg is None:
+            for key in self.keys():
+                self[key] = msg[key]
+
+            # Enforce attribute types
+            self.id = int(self.id)
+            self.created = data.str2date(self.created)
+            self.updated = data.str2date(self.updated)
+            self.inprocess = data.str2bool(self.inprocess)
+            self.processed = data.str2bool(self.processed)
 
     def to_sql(self):
         msg = 'Please overload the to_sql() method'
@@ -26,7 +40,7 @@ class Queue(object):
             self.db = db
 
         # Create a connection to the database
-        self.conn = datastore.DataStoreFactory(self.db)
+        self.conn = datastore.DataStoreFactory(self.db, 'EXCLUSIVE')
         self.cursor = self.conn.cursor()
 
         # Create the schema if necessary

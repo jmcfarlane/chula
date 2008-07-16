@@ -67,6 +67,12 @@ class Test_functions(unittest.TestCase):
         self.assertEqual(fcn.cdate('1/1/2005'), "'1/1/2005'")
         self.assertEqual(fcn.cdate('now()', isfunction=True), 'now()')
 
+        # Date with time
+        self.assertEqual(fcn.cdate('1/1/2005 10:00:00'), "'1/1/2005 10:00:00'")
+        self.assertEqual(fcn.cdate('1-1-2005 10:00:00'), "'1-1-2005 10:00:00'")
+        self.assertEqual(fcn.cdate('2005-1-1 10:00:00'), "'2005-1-1 10:00:00'")
+        self.assertEqual(fcn.cdate('2008-7-16 5:50:20'), "'2008-7-16 5:50:20'")
+
         # Not leap year
         self.assertEqual(fcn.cdate('2/29/2008'), "'2/29/2008'")
         self.assertRaises(TypeConversionError, fcn.cdate, 2)

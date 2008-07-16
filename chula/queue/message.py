@@ -1,20 +1,34 @@
 """Simple message queue object"""
 
-from chula import data, db
+from chula import collection, db
 from chula.queue import base
 
 class Message(base.QueueObject):
     def to_sql(self):
-        self.name = db.cstr(self.name)
-        sql = """
-            INSERT INTO messages(timestamp, name)
-            VALUES(datetime(), %(name)s);
-            """ % self
+        msg = collection.Collection()
+        msg.id = db.cint(self.id)
+        msg.name = db.cstr(self.name)
+        msg.created = db.cdate(self.created)
+        msg.updated = db.cdate(self.updated)
+        msg.inprocess = db.cbool(self.inprocess)
+        msg.processed = db.cbool(self.processed)
+
+        if self.id is None:
+            sql = """
+                INSERT INTO messages(created, name)
+                VALUES(datetime(), %(name)s);
+                """ % msg
+        else:
+            sql = """
+                UPDATE messages SET
+                    name = %(name)s,
+                    updated = datetime(),
+                    inprocess = '%(inprocess)s',
+                    processed = '%(processed)s'
+                WHERE id = %(id)s;
+                """ % msg
         
         return sql
-
-    def pop(self):
-        pass
 
 class MessageQueue(base.Queue):
     def add(self, name):
@@ -34,9 +48,11 @@ class MessageQueue(base.Queue):
         sql = """
             CREATE TABLE messages(
                 id INTEGER PRIMARY KEY,
-                timestamp DATE,
+                created DATE,
+                updated DATE,
                 name TEXT,
-                processed INTEGER DEFAULT 0
+                inprocess TEXT DEFAULT 'False',
+                processed TEXT DEFAULT 'False' 
             )
             """
 
@@ -57,16 +73,11 @@ class MessageQueue(base.Queue):
             return row
 
         # We have a message
-        for key in msg.keys():
-            msg[key] = row[key]
+        msg = Message(row)
+        msg.inprocess = True
 
-        # Set non string types
-        msg.id = int(msg.id)
-        msg.timestamp = data.str2date(msg.timestamp)
-        msg.processed = data.str2bool(msg.processed)
-
-        # Remove from the queue
-        self.delete_by_id(msg.id)
+        # Persist
+        self.persist(msg)
 
         return msg
 

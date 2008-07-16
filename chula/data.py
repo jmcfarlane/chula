@@ -250,8 +250,11 @@ def isdate(input_):
     False
     """
     try:
-        str2date(input_)
-        return True
+        date = str2date(input_)
+        if date is None:
+            return False
+        else:
+            return True
     except:
         return False
 
@@ -403,18 +406,21 @@ def str2bool(input_):
 
 def str2date(input_):
     """
-    Conversion from string to datetime object.  Most of the commin
-    patterns are currently supported.
+    Conversion from string to datetime object.  Most of the common
+    patterns are currently supported.  If None is passed None will be
+    returned
 
     @param input_: Date time (of supported pattern)
-    @type input_: String
+    @type input_: String, or None
     @return: datetime.datetime
     
     >>> print str2date("10/4/2005 21:45")
     2005-10-04 21:45:00
     """
     
-    if not isinstance(input_, basestring):
+    if input_ is None:
+        return None
+    elif not isinstance(input_, basestring):
         msg = 'Value passed must be of type string.'
         raise error.TypeConversionError(input_,
                                                  'datetime.datetime',

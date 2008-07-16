@@ -20,8 +20,18 @@ class Test_mqueue(unittest.TestCase):
     def test_add(self):
         self.mqueue.add('testing')
 
-    def test_pop_return_value(self):
-        keys_expected = ['id', 'name', 'processed', 'timestamp']
+    def test_pop_returns_message(self):
+        self.mqueue.add('testing')
+        msg = self.mqueue.pop()
+        self.failIf(msg is None)
+        
+    def test_pop_return_msg_with_correct_fields(self):
+        keys_expected = ['id',
+                         'name',
+                         'inprocess',
+                         'processed',
+                         'created',
+                         'updated']
         keys_expected.sort()
 
         self.mqueue.add('testing')
@@ -31,11 +41,11 @@ class Test_mqueue(unittest.TestCase):
         self.assertEquals(keys_expected, keys_found)
         self.assertEquals(True, isinstance(msg, message.Message))
 
-    def test_pop_delete(self):
+    def test_pop_setting_inprocess(self):
         self.mqueue.add('testing')
         msg = self.mqueue.pop()
         msg = self.mqueue.pop()
-        self.assertEquals(None, msg)
+        self.assertEquals(True, msg.inprocess)
 
 def run_unittest():
     # Never change this, leave as is
