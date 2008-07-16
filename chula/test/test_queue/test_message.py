@@ -8,6 +8,9 @@ config = collection.Collection()
 config.mqueue_db = 'sqlite:memory'
 
 class Test_mqueue(unittest.TestCase):
+    def _add(self):
+        self.mqueue.add('testing', 'payload', 'type')
+
     def setUp(self):
         self.mqueue = message.MessageQueue(config)
 
@@ -18,23 +21,25 @@ class Test_mqueue(unittest.TestCase):
         self.assertEquals(True, self.mqueue.schema_exists())
 
     def test_add(self):
-        self.mqueue.add('testing')
+        self._add()
 
     def test_pop_returns_message(self):
-        self.mqueue.add('testing')
+        self._add()
         msg = self.mqueue.pop()
         self.failIf(msg is None)
         
     def test_pop_return_msg_with_correct_fields(self):
         keys_expected = ['id',
+                         'message',
                          'name',
                          'inprocess',
                          'processed',
+                         'type',
                          'created',
                          'updated']
         keys_expected.sort()
 
-        self.mqueue.add('testing')
+        self._add()
         msg = self.mqueue.pop()
         keys_found = msg.keys()
         keys_found.sort()
@@ -42,13 +47,13 @@ class Test_mqueue(unittest.TestCase):
         self.assertEquals(True, isinstance(msg, message.Message))
 
     def test_pop_setting_inprocess(self):
-        self.mqueue.add('testing')
+        self._add()
         msg = self.mqueue.pop()
         msg = self.mqueue.pop()
         self.assertEquals(True, msg.inprocess)
 
     def test_cannot_purge_unprocessed(self):
-        self.mqueue.add('testing')
+        self._add()
         msg = self.mqueue.pop()
 
         # Force the processed flag to False
@@ -59,7 +64,7 @@ class Test_mqueue(unittest.TestCase):
                           self.mqueue.purge, msg)
 
     def test_successfull_purge(self):
-        self.mqueue.add('testing')
+        self._add()
         msg = self.mqueue.pop()
         msg = self.mqueue.purge(msg)
         msg = self.mqueue.pop()

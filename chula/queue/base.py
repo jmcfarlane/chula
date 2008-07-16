@@ -8,9 +8,11 @@ from chula.db import datastore
 class QueueObject(collection.Collection):
     def __init__(self, msg=None):
         self.id = None
+        self.message = None
         self.name = None
         self.inprocess = False
         self.processed = False
+        self.type = None
         self.created = None
         self.updated = None
 

@@ -8,8 +8,10 @@ class Message(base.QueueObject):
         msg = collection.Collection()
         msg.id = db.cint(self.id)
         msg.name = db.cstr(self.name)
+        msg.message = db.cstr(self.message)
         msg.created = db.cdate(self.created)
         msg.updated = db.cdate(self.updated)
+        msg.type = db.cstr(self.type)
 
         # Sqlite needs quoted dates, so treat as strings
         msg.inprocess = db.cstr(self.inprocess)
@@ -17,25 +19,39 @@ class Message(base.QueueObject):
 
         if self.id is None:
             sql = """
-                INSERT INTO messages(created, name)
-                VALUES(datetime(), %(name)s);
+                INSERT INTO messages(
+                    created,
+                    message,
+                    name,
+                    type
+                )
+                VALUES(
+                    datetime(),
+                    %(message)s,
+                    %(name)s,
+                    %(type)s
+                );
                 """ % msg
         else:
             sql = """
                 UPDATE messages SET
                     name = %(name)s,
+                    message = %(message)s,
                     updated = datetime(),
                     inprocess = %(inprocess)s,
-                    processed = %(processed)s
+                    processed = %(processed)s,
+                    type = %(type)s
                 WHERE id = %(id)s;
                 """ % msg
         
         return sql
 
 class MessageQueue(base.Queue):
-    def add(self, name):
+    def add(self, name, message, type):
         msg = Message()
         msg.name = name
+        msg.message = message
+        msg.type = type
         self.persist(msg)
 
     def schema_exists(self):
@@ -52,7 +68,9 @@ class MessageQueue(base.Queue):
                 id INTEGER PRIMARY KEY,
                 created DATE,
                 updated DATE,
+                message TEXT,
                 name TEXT,
+                type TEXT,
                 inprocess TEXT DEFAULT 'False',
                 processed TEXT DEFAULT 'False' 
             )
