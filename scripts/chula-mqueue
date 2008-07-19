@@ -1,0 +1,81 @@
+#!/usr/bin/python
+
+"""
+Chula message queue daemon
+"""
+
+import os
+import socket
+import sys
+import thread
+
+from chula import collection
+from chula.queue import message
+
+localhost = socket.gethostname()
+localhost = 'localhost'
+config = collection.Collection()
+config.mqueue_db = 'sqlite:memory'
+
+class MessageQueueServer(object):
+    def worker(self, client):
+        chars_left = 1
+        msg = ['']
+        msg_length = None
+
+        for x in xrange(1000):
+            chunk = client.recv(chars_left)
+            if chunk == '':
+                client.send('OK ')
+                break
+
+            if msg_length is None:
+                if chunk == ':':
+                    try:
+                        msg_length = int(msg.pop())
+                        chars_left = msg_length
+                        continue
+                    except ValueError:
+                        client.send('BAD')
+                        break
+                else:
+                    msg[0] += chunk
+            else:
+                if chars_left > 1:
+                    chars_left -= len(chunk)
+                msg.append(chunk)
+
+        # Do something with the data
+        print '[%s]' % ''.join(msg)
+        queue = message.MessageQueue(config)
+        queue.add('testing', 'payload', 'type')
+        queue.close()
+
+        client.shutdown(0)
+        client.close()
+
+    def start(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((localhost, 8080))
+        s.listen(5)
+
+        # Serve forever
+        while True:
+            try:
+                (clientsocket, address) = s.accept()
+                thread.start_new_thread(self.worker, (clientsocket,))
+            except KeyboardInterrupt:
+                break
+
+        s.shutdown(0)
+        s.close()
+
+if __name__ == '__main__':
+    print 'Running with pid: %s' % os.getpid()
+    daemon = sys.argv[0].rsplit('/', 1)[-1]
+    #pid = open('/var/run/%s.pid' % daemon, 'w')
+    #pid.write(str(os.getpid()))
+    #pid.close()
+
+    server = MessageQueueServer()
+    server.start()
