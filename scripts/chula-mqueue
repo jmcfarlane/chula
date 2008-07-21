@@ -48,13 +48,20 @@ class MessageQueueServer(object):
                     chars_left -= len(chunk)
                 msg.append(chunk)
 
+        # Decode the data
+        message = ''.join(msg)
+
         # Do something with the data
-        print '[%s]' % ''.join(msg)
+        print '[%s]' % message
+
         queue = self.queue()
-        queue.add('testing', 'payload', 'type')
+        queue.add('testing', message, 'type')
         queue.close()
 
-        client.shutdown(0)
+        try:
+            client.shutdown(0)
+        except socket.error:
+            pass
         client.close()
 
     def consumer(self):

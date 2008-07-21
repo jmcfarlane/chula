@@ -90,8 +90,21 @@ class MessageQueue(base.Queue):
         
         return msg
 
+    def list(self):
+        messages = []
+
+        sql = 'SELECT * FROM messages ORDER BY id ASC;'
+        for msg in self.cursor.execute(sql).fetchall():
+            messages.append(Message(msg))
+
+        return messages
+
     def pop(self):
-        sql = """SELECT * FROM messages
+        sql = """
+            SELECT * FROM messages
+            WHERE
+                inprocess = 'False' AND
+                processed = 'False'
             ORDER BY id ASC limit 1;
             """
 

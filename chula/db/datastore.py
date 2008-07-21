@@ -52,12 +52,15 @@ class DataStoreFactory(object):
         >>> conn.close()
         """
         
-        parts = conn.split(':')
-        if len(parts) > 1:
-            engine = parts[0]
-            uri = ':'.join(parts[1:])
-        else:
-            raise error.MalformedConnectionStringError
+        try:
+            parts = conn.split(':')
+            if len(parts) > 1:
+                engine = parts[0]
+                uri = ':'.join(parts[1:])
+            else:
+                raise error.MalformedConnectionStringError
+        except AttributeError:
+            raise error.MalformedConnectionStringError(conn)
 
         if engine == 'pg':
             from chula.db.engines import postgresql as engine
