@@ -8,6 +8,7 @@ import os
 import socket
 import sys
 import thread
+import time
 
 from chula import collection
 from chula.queue import message
@@ -15,10 +16,12 @@ from chula.queue import message
 localhost = socket.gethostname()
 localhost = 'localhost'
 config = collection.Collection()
-config.mqueue_db = 'sqlite:memory'
+config.mqueue_db = 'sqlite:/tmp/mqueue-test.db'
+
+POLL_INTERVAL = 30
 
 class MessageQueueServer(object):
-    def worker(self, client):
+    def producer(self, client):
         chars_left = 1
         msg = ['']
         msg_length = None
@@ -47,28 +50,44 @@ class MessageQueueServer(object):
 
         # Do something with the data
         print '[%s]' % ''.join(msg)
-        queue = message.MessageQueue(config)
+        queue = self.queue()
         queue.add('testing', 'payload', 'type')
         queue.close()
 
         client.shutdown(0)
         client.close()
 
+    def consumer(self):
+        while True:
+            queue = self.queue()
+            msg = queue.pop()
+            if not msg is None:
+                print msg
+            queue.close()
+            print 'Queue polled for messages'
+            time.sleep(POLL_INTERVAL)
+
     def start(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((localhost, 8080))
         s.listen(5)
 
+        # Startup the consumer thread
+        thread.start_new_thread(self.consumer, ())
+
         # Serve forever
         while True:
             try:
                 (clientsocket, address) = s.accept()
-                thread.start_new_thread(self.worker, (clientsocket,))
+                thread.start_new_thread(self.producer, (clientsocket,))
             except KeyboardInterrupt:
                 break
 
         s.shutdown(0)
         s.close()
+
+    def queue(self):
+        return message.MessageQueue(config)
 
 if __name__ == '__main__':
     print 'Running with pid: %s' % os.getpid()
