@@ -11,7 +11,8 @@ import thread
 import time
 
 from chula import collection
-from chula.queue import message
+from chula.queue import mqueue
+from chula.queue.messages import message
 
 localhost = socket.gethostname()
 localhost = 'localhost'
@@ -49,13 +50,15 @@ class MessageQueueServer(object):
                 msg.append(chunk)
 
         # Decode the data
-        message = ''.join(msg)
-
-        # Do something with the data
-        print '[%s]' % message
-
+        msg = ''.join(msg)
+        print '[%s]' % msg
+        msg_obj = message.MessageFactory('email')
+        # TODO: Clean this up, type should be derived or something
+        msg_obj.type = 'email'
+        msg_obj.message = msg
+        
         queue = self.queue()
-        queue.add('testing', message, 'type')
+        queue.add(msg_obj)
         queue.close()
 
         try:
@@ -94,7 +97,7 @@ class MessageQueueServer(object):
         s.close()
 
     def queue(self):
-        return message.MessageQueue(config)
+        return mqueue.MessageQueue(config)
 
 if __name__ == '__main__':
     print 'Running with pid: %s' % os.getpid()

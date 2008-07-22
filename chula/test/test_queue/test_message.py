@@ -2,17 +2,23 @@ import unittest
 import doctest
 
 from chula import collection
-from chula.queue import message
+from chula.queue import mqueue
+from chula.queue.messages import message
 
 config = collection.Collection()
 config.mqueue_db = 'sqlite:memory'
 
 class Test_mqueue(unittest.TestCase):
-    def _add(self):
-        self.mqueue.add('testing', 'payload', 'type')
+    def _add(self, message_type='email'):
+        # TODO: Clean this up, type should be derived or something
+        msg = message.MessageFactory(message_type)
+        msg.name = 'testing'
+        msg.message = 'payload'
+        msg.type = message_type
+        self.mqueue.add(msg)
 
     def setUp(self):
-        self.mqueue = message.MessageQueue(config)
+        self.mqueue = mqueue.MessageQueue(config)
 
     def tearDown(self):
         self.mqueue.close()
