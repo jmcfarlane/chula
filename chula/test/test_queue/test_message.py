@@ -49,7 +49,6 @@ class Test_mqueue(unittest.TestCase):
     def test_pop_setting_inprocess(self):
         self._add()
         msg = self.mqueue.pop()
-        msg = self.mqueue.pop()
         self.assertEquals(True, msg.inprocess)
 
     def test_cannot_purge_unprocessed(self):
