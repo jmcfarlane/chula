@@ -3,18 +3,16 @@ import doctest
 
 from chula import collection
 from chula.queue import mqueue
-from chula.queue.messages import message
+from chula.queue.messages import message, email
 
 config = collection.Collection()
 config.mqueue_db = 'sqlite:memory'
 
 class Test_mqueue(unittest.TestCase):
-    def _add(self, message_type='email'):
-        # TODO: Clean this up, type should be derived or something
-        msg = message.MessageFactory(message_type)
+    def _add(self, mtype='email'):
+        msg = message.MessageFactory(mtype)
         msg.name = 'testing'
         msg.message = 'payload'
-        msg.type = message_type
         self.mqueue.add(msg)
 
     def setUp(self):
@@ -28,6 +26,28 @@ class Test_mqueue(unittest.TestCase):
 
     def test_add(self):
         self._add()
+
+    def test_add_empty_email(self):
+        mtype = 'email'
+        msg = message.MessageFactory(mtype)
+        self.assertEquals(mtype, msg.type)
+        self.failIf(isinstance(msg, email.Message) is False)
+
+    def test_add_dict(self):
+        mtype = 'email'
+        msg = {}
+        msg['id'] = 0
+        msg['message'] = 'foobar'
+        msg['name'] = 'foobar'
+        msg['inprocess'] = True
+        msg['processed'] = False
+        msg['type'] = mtype
+        msg['created'] = '5/4/1971 14:00:00'
+        msg['updated'] = '5/4/1971 14:00:00'
+        
+        msg = message.MessageFactory(msg)
+        self.assertEquals(mtype, msg.type)
+        self.failIf(isinstance(msg, email.Message) is False)
 
     def test_pop_returns_message(self):
         self._add()

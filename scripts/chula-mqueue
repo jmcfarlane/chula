@@ -10,7 +10,7 @@ import sys
 import thread
 import time
 
-from chula import collection
+from chula import collection, json
 from chula.queue import mqueue
 from chula.queue.messages import message
 
@@ -49,16 +49,17 @@ class MessageQueueServer(object):
                     chars_left -= len(chunk)
                 msg.append(chunk)
 
-        # Decode the data
+        # Combine the chunks
         msg = ''.join(msg)
         print '[%s]' % msg
-        msg_obj = message.MessageFactory('email')
-        # TODO: Clean this up, type should be derived or something
-        msg_obj.type = 'email'
-        msg_obj.message = msg
+
+        # Decode the data
+        msg = json.decode(msg)
+        msg = message.MessageFactory(msg)
         
+        # Create an instance of the queue and add to it
         queue = self.queue()
-        queue.add(msg_obj)
+        queue.add(msg)
         queue.close()
 
         try:
@@ -102,9 +103,9 @@ class MessageQueueServer(object):
 if __name__ == '__main__':
     print 'Running with pid: %s' % os.getpid()
     daemon = sys.argv[0].rsplit('/', 1)[-1]
-    #pid = open('/var/run/%s.pid' % daemon, 'w')
-    #pid.write(str(os.getpid()))
-    #pid.close()
+    pid = open('/tmp/%s.pid' % daemon, 'w')
+    pid.write(str(os.getpid()))
+    pid.close()
 
     server = MessageQueueServer()
     server.start()

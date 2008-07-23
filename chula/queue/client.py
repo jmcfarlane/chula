@@ -4,6 +4,9 @@ TCP client for the Chula message queue daemon
 
 import socket
 
+from chula import json
+from chula.queue.messages import message
+
 class MessageQueueClient(object):
     def __init__(self, config):
         pass
@@ -17,11 +20,11 @@ class MessageQueueClient(object):
         while chars_left > 0:
             sent = self.socket.send(msg)
             chars_left -= sent
-            print msg_length, sent
 
         self.close()
 
     def encode(self, msg):
+        msg = json.encode(msg)
         msg = '%s:%s' % (len(msg), msg)
         return msg
 
@@ -30,8 +33,13 @@ class MessageQueueClient(object):
         self.socket.connect(('localhost', 8080))
 
     def close(self):
-        #self.socket.shutdown()
+        self.socket.shutdown(0)
         self.socket.close()
 
-client = MessageQueueClient('')
-client.add('foo akdfalksd fkalsjd flkad fklafj ksajf kalsdf')
+# Testing
+if __name__ == '__main__':
+    client = MessageQueueClient('')
+    msg = message.MessageFactory('email')
+    msg.id = 8
+    msg.name = 'I love Lisa'
+    client.add(msg)

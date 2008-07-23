@@ -7,17 +7,22 @@ from chula.queue import messages
 
 class Message(collection.Collection):
     def __init__(self, msg=None):
+        self.created = None
         self.id = None
+        self.inprocess = False
         self.message = None
         self.name = None
-        self.inprocess = False
         self.processed = False
         self.type = None
-        self.created = None
         self.updated = None
 
-        # Fill if data provided
+        self.fill(msg)
+
+    def fill(self, msg):
         if not msg is None:
+            if isinstance(msg, dict):
+                pass
+
             for key in self.keys():
                 self[key] = msg[key]
 
@@ -30,12 +35,12 @@ class Message(collection.Collection):
 
     def to_sql(self):
         msg = collection.Collection()
-        msg.id = db.cint(self.id)
-        msg.name = db.cstr(self.name)
-        msg.message = db.cstr(self.message)
         msg.created = db.cdate(self.created)
-        msg.updated = db.cdate(self.updated)
+        msg.id = db.cint(self.id)
+        msg.message = db.cstr(self.message)
+        msg.name = db.cstr(self.name)
         msg.type = db.cstr(self.type)
+        msg.updated = db.cdate(self.updated)
 
         # Sqlite needs quoted dates, so treat as strings
         msg.inprocess = db.cstr(self.inprocess)
@@ -73,20 +78,22 @@ class Message(collection.Collection):
 class MessageFactory(object):
     def __new__(self, msg):
         if isinstance(msg, basestring):
-            message_type = msg
+            mtype = msg
             msg = None
         elif isinstance(msg, sqlite3.Row):
-            message_type = msg['type']
+            mtype = msg['type']
         elif isinstance(msg, Message):
-            message_type = msg.type
+            mtype = msg.type
+        elif isinstance(msg, dict):
+            mtype = msg['type']
         else:
             msg = 'Invalid message: %s' % msg
             raise Exception(msg)
 
-        if message_type == 'email':
+        if mtype == 'email':
             from chula.queue.messages import email as message
         else:
-            msg = 'Invalid message type: %s' % message_type
+            msg = 'Invalid message type: %s' % mtype
             raise Exception(msg)
 
         return message.Message(msg)
