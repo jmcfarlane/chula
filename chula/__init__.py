@@ -3,7 +3,7 @@
 Chula is an MVC style framework that works by routing web requests
 thru mod_python to native Python objects"""
 
-__VERSION__ = '0.0.4a'
+__VERSION__ = '0.0.4-alpha01'
 version = __VERSION__
 
 __all__ = ['cache',

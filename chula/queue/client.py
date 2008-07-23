@@ -9,7 +9,8 @@ from chula.queue.messages import message
 
 class MessageQueueClient(object):
     def __init__(self, config):
-        pass
+        self.host = config.mqueue_host
+        self.port = config.mqueue_port
 
     def add(self, msg):
         msg = self.encode(msg)
@@ -30,7 +31,7 @@ class MessageQueueClient(object):
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect(('localhost', 8080))
+        self.socket.connect((self.host, self.port))
 
     def close(self):
         self.socket.shutdown(0)
@@ -38,7 +39,10 @@ class MessageQueueClient(object):
 
 # Testing
 if __name__ == '__main__':
-    client = MessageQueueClient('')
+    from chula import config
+    config = config.Config()
+    client = MessageQueueClient(config)
+
     msg = message.MessageFactory('email')
     msg.id = 8
     msg.name = 'I love Lisa'

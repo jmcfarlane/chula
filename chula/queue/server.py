@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 """
 Chula message queue daemon
 """
@@ -10,18 +8,15 @@ import sys
 import thread
 import time
 
-from chula import collection, json
+from chula import json
 from chula.queue import mqueue
 from chula.queue.messages import message
 
-localhost = socket.gethostname()
-localhost = 'localhost'
-config = collection.Collection()
-config.mqueue_db = 'sqlite:/tmp/mqueue-test.db'
-
-POLL_INTERVAL = 30
-
 class MessageQueueServer(object):
+    def __init__(self, config):
+        self.config = config
+        self.poll = 30
+
     def producer(self, client):
         chars_left = 1
         msg = ['']
@@ -76,11 +71,11 @@ class MessageQueueServer(object):
                 print msg
             queue.close()
             print 'Queue polled for messages'
-            time.sleep(POLL_INTERVAL)
+            time.sleep(self.poll)
 
     def start(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((localhost, 8080))
+        s.bind((self.config.mqueue_host, self.config.mqueue_port))
         s.listen(5)
 
         # Startup the consumer thread
@@ -98,8 +93,9 @@ class MessageQueueServer(object):
         s.close()
 
     def queue(self):
-        return mqueue.MessageQueue(config)
+        return mqueue.MessageQueue(self.config)
 
+# Testing
 if __name__ == '__main__':
     print 'Running with pid: %s' % os.getpid()
     daemon = sys.argv[0].rsplit('/', 1)[-1]
@@ -107,5 +103,7 @@ if __name__ == '__main__':
     pid.write(str(os.getpid()))
     pid.close()
 
-    server = MessageQueueServer()
+    from chula import config
+    config = config.Config()
+    server = MessageQueueServer(config)
     server.start()

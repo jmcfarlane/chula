@@ -24,7 +24,7 @@ class Test_config(unittest.TestCase):
         self.config['classpath'] = 'foo'
 
     def test_keys_method_not_destroyed(self):
-        self.assertEquals(len(self.config.keys()), 16)
+        self.assertEquals(len(self.config.keys()), 18)
 
     def test_printing_not_result_in_empty_dict(self):
         self.assertTrue(isinstance(self.config, dict))
