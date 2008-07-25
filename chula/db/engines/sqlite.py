@@ -31,8 +31,16 @@ class DataStore(engine.Engine):
         else:
             isolation = None
 
+        # Handle the initial timeout level
+        if 'timeout' in kwargs:
+            timeout = kwargs['timeout']
+        else:
+            timeout = 5
+
         # Create a database connection
-        self.conn = sqlite3.connect(uri, isolation_level=isolation)
+        self.conn = sqlite3.connect(uri,
+                                    isolation_level=isolation,
+                                    timeout=timeout)
 
     def cursor(self, type='dict'):
         if type == 'dict':

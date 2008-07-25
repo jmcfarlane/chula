@@ -16,6 +16,7 @@ class MessageQueueServer(object):
     def __init__(self, config):
         self.config = config
         self.poll = 30
+        self.queue = mqueue.MessageQueue(self.config)
 
     def producer(self, client):
         chars_left = 1
@@ -52,10 +53,8 @@ class MessageQueueServer(object):
         msg = json.decode(msg)
         msg = message.MessageFactory(msg)
         
-        # Create an instance of the queue and add to it
-        queue = self.queue()
-        queue.add(msg)
-        queue.close()
+        # Add to the queue
+        self.queue.add(msg)
 
         try:
             client.shutdown(0)
@@ -65,11 +64,9 @@ class MessageQueueServer(object):
 
     def consumer(self):
         while True:
-            queue = self.queue()
-            msg = queue.pop()
+            msg = self.queue.pop()
             if not msg is None:
                 print msg
-            queue.close()
             print 'Queue polled for messages'
             time.sleep(self.poll)
 
@@ -91,9 +88,6 @@ class MessageQueueServer(object):
 
         s.shutdown(0)
         s.close()
-
-    def queue(self):
-        return mqueue.MessageQueue(self.config)
 
 # Testing
 if __name__ == '__main__':
