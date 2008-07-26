@@ -20,15 +20,22 @@ class Message(collection.Collection):
         self.fill(msg)
 
     def msg_name(self):
-        now = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
+        now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         return '%s.%s.msg' % (now, self.id)
 
     @staticmethod
     def decode(msg):
-        return json.decode(msg)
+        try:
+            return json.decode(msg)
+        except ValueError, er:
+            raise InvalidMessageEncodingError(str(msg))
 
     def encode(self):
-        return json.encode(self)
+        try:
+            return json.encode(self)
+        except TypeError, er:
+            msg = 'Message is not [json] not encodable: ' + str(self)
+            raise TypeError(msg)
 
     def fill(self, msg):
         if not msg is None:
@@ -78,3 +85,11 @@ class CannotPurgeUnprocessedError(error.ChulaException):
 
     def msg(self):
         return "Unable to purge an unprocessed message"
+
+class InvalidMessageEncodingError(error.ChulaException):
+    """
+    Exception indicating that the message is not propery encoded
+    """
+
+    def msg(self):
+        return "Incorrect encoding, or incomplete message"

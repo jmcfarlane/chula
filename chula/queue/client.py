@@ -4,7 +4,6 @@ TCP client for the Chula message queue daemon
 
 import socket
 
-from chula import json
 from chula.queue.messages import message
 
 class MessageQueueClient(object):
@@ -17,6 +16,7 @@ class MessageQueueClient(object):
         msg_length = len(msg)
         chars_left = msg_length
 
+        # Connect to the server and sent the message
         self.connect()
         while chars_left > 0:
             sent = self.socket.send(msg)
@@ -25,7 +25,7 @@ class MessageQueueClient(object):
         self.close()
 
     def encode(self, msg):
-        msg = json.encode(msg)
+        msg = message.Message.encode(msg)
         msg = '%s:%s' % (len(msg), msg)
         return msg
 

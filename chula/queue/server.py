@@ -9,7 +9,6 @@ import sys
 import thread
 import time
 
-from chula import json
 from chula.queue import mqueue
 from chula.queue.messages import message
 
@@ -63,19 +62,21 @@ class MessageQueueServer(object):
         # Combine the chunks
         msg = ''.join(msg)
 
-        # Decode the data
-        msg = json.decode(msg)
-        msg = message.MessageFactory(msg)
-        
-        # Add to the queue
-        self.queue.add(msg)
-        print '%s added' % msg.name
-
+        # Decode and add to the queue
         try:
-            client.shutdown(0)
-        except socket.error:
-            pass
-        client.close()
+            msg = message.Message.decode(msg)
+            msg = message.MessageFactory(msg)
+            self.queue.add(msg)
+            print '%s added' % msg.name
+        except message.InvalidMessageEncodingError, er:
+            print 'Bad message body'
+            client.send('BAD')
+        finally:
+            try:
+                client.shutdown(0)
+                client.close()
+            except:
+                pass
 
     def poller(self):
         while True:
