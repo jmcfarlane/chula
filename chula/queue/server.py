@@ -16,20 +16,21 @@ from chula.queue.messages import message
 class MessageQueueServer(object):
     def __init__(self, config):
         self.config = config
-        self.poll = 30
+        self.poll = 10 
         self.queue = mqueue.MessageQueue(self.config)
         self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
         self.log_file = os.path.join(self.config.mqueue_db, 'log')
 
     def consumer(self, msg):
-        print '%s IS being processed by: %s' % (msg.name, id(msg))
+        print '%s processed by: %s' % (msg.name, thread.get_ident())
+        # msg.process()
         self.queue.purge(msg)
-        self.log('%s has been processed' % msg.name)
+        self.log('%s was processed' % msg.name)
 
     def log(self, msg):
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log = file(self.log_file, 'a')
-        log.write('%s: %s\r' % (now, msg))
+        log = open(self.log_file, 'a')
+        log.write('%s: %s\n' % (now, msg))
         log.close()
 
     def producer(self, client):
@@ -68,8 +69,7 @@ class MessageQueueServer(object):
         
         # Add to the queue
         self.queue.add(msg)
-
-        print '%s has been added by: %s' % (msg.name, id(self))
+        print '%s added' % msg.name
 
         try:
             client.shutdown(0)
@@ -80,11 +80,10 @@ class MessageQueueServer(object):
     def poller(self):
         while True:
             msg = self.queue.pop()
-            if not msg is None:
+            if msg is None:
+                time.sleep(self.poll)
+            else:
                 thread.start_new_thread(self.consumer, (msg, ))
-
-            #print 'Queue polled for messages'
-            time.sleep(self.poll)
 
     def start(self):
         # Create a pid file
@@ -93,6 +92,7 @@ class MessageQueueServer(object):
         pid.write(str(os.getpid()))
         pid.close()
 
+        # Listen on the specified port
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((self.config.mqueue_host, self.config.mqueue_port))
         s.listen(5)
@@ -107,7 +107,6 @@ class MessageQueueServer(object):
                 thread.start_new_thread(self.producer, (clientsocket,))
             except KeyboardInterrupt:
                 os.remove(self.pid_file)
-                print 'Shutting down...'
                 break
 
         s.shutdown(0)

@@ -27,11 +27,6 @@ class MessageQueue(object):
                 raise
 
     def add(self, msg):
-        # Update the message to indicate this thread did the work
-        thread_id = id(msg)
-        msg.id = thread_id
-        msg.name = msg.msg_name()
-
         self.persist(msg)
 
     def list(self):
@@ -39,7 +34,7 @@ class MessageQueue(object):
 
         for f in os.listdir(self.msg_store):
             if f.endswith('.msg'):
-                msg = file.open(self.msg_path(f), 'r').readlines()
+                msg = open(self.msg_path(f), 'r').readlines()
                 msgs.append(message.MessageFactory(''.join(msg)))
 
         return msgs
@@ -53,6 +48,7 @@ class MessageQueue(object):
         fmsg.close()
 
     def pop(self):
+        # TODO: Fix this method as a huge performance nightmare
         msg = None
         for f in os.listdir(self.msg_store):
             if f.endswith('.msg'):

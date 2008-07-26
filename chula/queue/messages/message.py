@@ -1,6 +1,7 @@
 """Base message queue object"""
 
 import datetime
+import thread
 
 from chula import collection, data, error, json
 from chula.queue import messages
@@ -8,7 +9,7 @@ from chula.queue import messages
 class Message(collection.Collection):
     def __init__(self, msg=None):
         self.created = None
-        self.id = id(self)
+        self.id = thread.get_ident()
         self.inprocess = False
         self.message = None
         self.name = self.msg_name()
