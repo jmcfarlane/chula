@@ -46,7 +46,7 @@ class Config(collection.RestrictedCollection):
         self.debug = True
         self.error_controller = collection.UNSET
         self.local = collection.Collection()
-        self.mqueue_db = 'sqlite:memory'
+        self.mqueue_db = '/tmp/chula/mqueue'
         self.mqueue_host = 'localhost'
         self.mqueue_port = 8001
         self.session_db = 'chula_session'

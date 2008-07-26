@@ -2,8 +2,9 @@
 Chula message queue
 """
 
-from chula import collection, db
-from chula.db import datastore
+import os
+
+from chula import collection
 from chula.queue.messages import message
 
 class MessageQueue(object):
@@ -13,112 +14,63 @@ class MessageQueue(object):
         else:
             self.db = db
 
-        # Create a connection to the database
-        self.conn = datastore.DataStoreFactory(self.db, 'EXCLUSIVE')
-        self.cursor = self.conn.cursor()
+        # Where do we keep the actual messages on disk
+        self.msg_store = os.path.join(self.db, 'msgs')
 
-        # Create the schema if necessary
-        if self.schema_exists() is False:
-            self.create_schema()
+        # Make sure the db dir exists, creating it if necessary
+        try:
+            os.makedirs(self.msg_store)
+        except OSError, er:
+            if str(er).startswith('[Errno 17] File exists'):
+                pass
+            else:
+                raise
 
     def add(self, msg):
+        # Update the message to indicate this thread did the work
+        thread_id = id(msg)
+        msg.id = thread_id
+        msg.name = msg.msg_name()
+
         self.persist(msg)
-
-    def close(self):
-        self.cursor.close()
-        self.conn.close()
-
-    def create_schema(self):
-        sql = """
-            CREATE TABLE messages(
-                id INTEGER PRIMARY KEY,
-                created DATE,
-                updated DATE,
-                message TEXT,
-                name TEXT,
-                type TEXT,
-                inprocess TEXT DEFAULT 'False',
-                processed TEXT DEFAULT 'False' 
-            )
-            """
-
-        self.persist(sql)
-
-    def delete_by_id(self, id):
-        sql = 'DELETE FROM messages WHERE id = %s;' % db.cint(id)
-        self.persist(sql)
-
-    def fetch_by_id(self, id):
-        sql = 'SELECT * FROM messages WHERE id = %s;' % db.cint(id)
-        self.cursor.execute(sql)
-        msg = self.cursor.fetchone()
-        msg = message.MessageFactory(msg)
-        
-        return msg
-
-    def fetch_schema(self):
-        sql = 'SELECT * FROM sqlite_master;'
-        self.cursor.execute(sql)
-        objects = self.cursor.fetchall()
-
-        tables = []
-        for obj in objects:
-            if obj['type'] == 'table':
-                tables.append(obj)
-
-        return tables
 
     def list(self):
         msgs = []
 
-        sql = 'SELECT * FROM messages ORDER BY id ASC;'
-        for msg in self.cursor.execute(sql).fetchall():
-            msgs.append(message.MessageFactory(msg))
+        for f in os.listdir(self.msg_store):
+            if f.endswith('.msg'):
+                msg = file.open(self.msg_path(f), 'r').readlines()
+                msgs.append(message.MessageFactory(''.join(msg)))
 
         return msgs
 
-    def persist(self, obj):
-        if isinstance(obj, basestring):
-            self.cursor.execute(obj)
-        else:
-            self.cursor.execute(obj.to_sql())
+    def msg_path(self, name, ext=''):
+        return os.path.join(self.msg_store, name)
 
-        self.conn.commit()
+    def persist(self, msg):
+        fmsg = open(self.msg_path(msg.name), 'w')
+        fmsg.write(msg.encode())
+        fmsg.close()
 
     def pop(self):
-        sql = """
-            SELECT * FROM messages
-            WHERE
-                inprocess = 'False' AND
-                processed = 'False'
-            ORDER BY id ASC limit 1;
-            """
+        msg = None
+        for f in os.listdir(self.msg_store):
+            if f.endswith('.msg'):
+                before = self.msg_path(f)
+                after = before + '.inprocess'
+                os.rename(before, after)
+                msg = open(after, 'r')
 
-        row = self.cursor.execute(sql).fetchone()
-        if row is None:
-            return row
+                break
 
-        # We have a message
-        msg = message.MessageFactory(row)
-        msg.inprocess = True
-
-        # Persist
-        self.persist(msg)
+        if not msg is None:
+            msg = message.MessageFactory(msg)
 
         return msg
 
     def purge(self, msg):
-        inqueue = self.fetch_by_id(msg.id)
-        if inqueue.inprocess is True:
-            self.delete_by_id(msg.id)
-        else:
+        try:
+            os.remove(self.msg_path(msg.name + '.inprocess'))
+        except OSError, er:
             msg = 'The messagage was not marked as being processed'
             raise message.CannotPurgeUnprocessedError(msg)
-
-    def schema_exists(self):
-        tables = self.fetch_schema()
-        for table in tables:
-            if table['name'] == 'messages':
-                return True
-
-        return False

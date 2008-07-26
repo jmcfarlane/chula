@@ -2,6 +2,7 @@
 Chula message queue daemon
 """
 
+import datetime
 import os
 import socket
 import sys
@@ -17,6 +18,19 @@ class MessageQueueServer(object):
         self.config = config
         self.poll = 30
         self.queue = mqueue.MessageQueue(self.config)
+        self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
+        self.log_file = os.path.join(self.config.mqueue_db, 'log')
+
+    def consumer(self, msg):
+        print '%s IS being processed by: %s' % (msg.name, id(msg))
+        self.queue.purge(msg)
+        self.log('%s has been processed' % msg.name)
+
+    def log(self, msg):
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log = file(self.log_file, 'a')
+        log.write('%s: %s\r' % (now, msg))
+        log.close()
 
     def producer(self, client):
         chars_left = 1
@@ -47,7 +61,6 @@ class MessageQueueServer(object):
 
         # Combine the chunks
         msg = ''.join(msg)
-        print '[%s]' % msg
 
         # Decode the data
         msg = json.decode(msg)
@@ -56,27 +69,36 @@ class MessageQueueServer(object):
         # Add to the queue
         self.queue.add(msg)
 
+        print '%s has been added by: %s' % (msg.name, id(self))
+
         try:
             client.shutdown(0)
         except socket.error:
             pass
         client.close()
 
-    def consumer(self):
+    def poller(self):
         while True:
             msg = self.queue.pop()
             if not msg is None:
-                print msg
-            print 'Queue polled for messages'
+                thread.start_new_thread(self.consumer, (msg, ))
+
+            #print 'Queue polled for messages'
             time.sleep(self.poll)
 
     def start(self):
+        # Create a pid file
+        daemon = sys.argv[0].rsplit('/', 1)[-1]
+        pid = open(self.pid_file, 'w')
+        pid.write(str(os.getpid()))
+        pid.close()
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((self.config.mqueue_host, self.config.mqueue_port))
         s.listen(5)
 
-        # Startup the consumer thread
-        thread.start_new_thread(self.consumer, ())
+        # Startup the poller thread
+        thread.start_new_thread(self.poller, ())
 
         # Serve forever
         while True:
@@ -84,6 +106,8 @@ class MessageQueueServer(object):
                 (clientsocket, address) = s.accept()
                 thread.start_new_thread(self.producer, (clientsocket,))
             except KeyboardInterrupt:
+                os.remove(self.pid_file)
+                print 'Shutting down...'
                 break
 
         s.shutdown(0)
@@ -92,10 +116,6 @@ class MessageQueueServer(object):
 # Testing
 if __name__ == '__main__':
     print 'Running with pid: %s' % os.getpid()
-    daemon = sys.argv[0].rsplit('/', 1)[-1]
-    pid = open('/tmp/%s.pid' % daemon, 'w')
-    pid.write(str(os.getpid()))
-    pid.close()
 
     from chula import config
     config = config.Config()

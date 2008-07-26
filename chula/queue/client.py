@@ -44,6 +44,5 @@ if __name__ == '__main__':
     client = MessageQueueClient(config)
 
     msg = message.MessageFactory('email')
-    msg.id = 8
-    msg.name = 'I love Lisa'
+    msg.message = 'I love Lisa'
     client.add(msg)
