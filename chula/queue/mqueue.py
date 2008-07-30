@@ -30,9 +30,9 @@ class MessageQueue(object):
     def add(self, msg):
         self.persist(msg)
 
-    def fetch_msg_store_iter(self):
+    def fetch_msg_store_iter(self, suffix='.msg'):
         for f in os.listdir(self.msg_store):
-            if f.endswith('.msg'):
+            if f.endswith(suffix):
                 yield self.msg_path(f)
 
     def msg_path(self, name, ext=''):

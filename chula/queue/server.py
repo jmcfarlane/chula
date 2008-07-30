@@ -15,14 +15,14 @@ from chula.queue.messages import message
 class MessageQueueServer(object):
     def __init__(self, config):
         self.config = config
-        self.poll = 1.5
+        self.poll = self.config.mqueue_poll
         self.queue = mqueue.MessageQueue(self.config)
         self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
         self.log_file = os.path.join(self.config.mqueue_db, 'log')
 
     def consumer(self, msg):
         print ' >>> %s processed by: %s' % (msg.name, thread.get_ident())
-        # msg.process()
+        msg.process()
         self.queue.purge(msg)
         self.log('%s was processed' % msg.name)
 
@@ -123,5 +123,6 @@ if __name__ == '__main__':
 
     from chula import config
     config = config.Config()
+    config.mqueue_poll = 5
     server = MessageQueueServer(config)
     server.start()

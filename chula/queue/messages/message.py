@@ -8,20 +8,17 @@ from chula.queue import messages
 
 class Message(collection.Collection):
     def __init__(self, msg=None):
-        self.created = None
+        now = datetime.datetime.now()
+        self.created = now
         self.id = thread.get_ident()
         self.inprocess = False
         self.message = None
-        self.name = self.msg_name()
+        self.name = '%s.%s.msg' % (now.strftime('%Y%m%d%H%M%S'), self.id)
         self.processed = False
         self.type = None
         self.updated = None
 
         self.fill(msg)
-
-    def msg_name(self):
-        now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-        return '%s.%s.msg' % (now, self.id)
 
     @staticmethod
     def decode(msg):
@@ -32,6 +29,10 @@ class Message(collection.Collection):
 
     def encode(self):
         try:
+            mask = '%Y/%m/%d %H:%M:%S'
+            self.created = self.created.strftime(mask)
+            if not self.updated is None:
+                self.updated = self.created.updated(mask)
             return json.encode(self)
         except TypeError, er:
             msg = 'Message is not [json] not encodable: ' + str(self)
@@ -52,6 +53,9 @@ class Message(collection.Collection):
             self.inprocess = data.str2bool(self.inprocess)
             self.processed = data.str2bool(self.processed)
 
+    def process(self):
+        pass
+
 class MessageFactory(object):
     def __new__(self, msg):
         if isinstance(msg, basestring):
@@ -62,9 +66,16 @@ class MessageFactory(object):
         elif isinstance(msg, dict):
             mtype = msg['type']
         elif isinstance(msg, file):
-            msg = ''.join(msg.readlines())
+            f = msg
+            msg = ''.join(f.readlines())
             msg = Message.decode(msg)
             mtype = msg['type']
+
+            # Currently not persisting "inprocess" to the file so go
+            # by the name of the actual file, not it's contents
+            if f.name.endswith('.inprocess'):
+                msg['inprocess'] = True
+
         else:
             msg = 'Invalid message: %s' % msg
             raise Exception(msg)
