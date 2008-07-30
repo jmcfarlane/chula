@@ -9,6 +9,7 @@ from chula.queue.messages import message
 
 class MessageQueue(object):
     def __init__(self, config, db=None):
+        self._msg_store_iter = None
         if db is None:
             self.db = config.mqueue_db
         else:
@@ -29,15 +30,10 @@ class MessageQueue(object):
     def add(self, msg):
         self.persist(msg)
 
-    def list(self):
-        msgs = []
-
+    def fetch_msg_store_iter(self):
         for f in os.listdir(self.msg_store):
             if f.endswith('.msg'):
-                msg = open(self.msg_path(f), 'r').readlines()
-                msgs.append(message.MessageFactory(''.join(msg)))
-
-        return msgs
+                yield self.msg_path(f)
 
     def msg_path(self, name, ext=''):
         return os.path.join(self.msg_store, name)
@@ -48,19 +44,18 @@ class MessageQueue(object):
         fmsg.close()
 
     def pop(self):
-        # TODO: Fix this method as a huge performance nightmare
-        msg = None
-        for f in os.listdir(self.msg_store):
-            if f.endswith('.msg'):
-                before = self.msg_path(f)
-                after = before + '.inprocess'
-                os.rename(before, after)
-                msg = open(after, 'r')
+        # If necessary fetch a fresh file iterator
+        if self._msg_store_iter is None:
+            self._msg_store_iter = self.fetch_msg_store_iter()
 
-                break
-
-        if not msg is None:
-            msg = message.MessageFactory(msg)
+        try:
+            f = self._msg_store_iter.next()
+            after = f + '.inprocess'
+            os.rename(f, after)
+            msg = message.MessageFactory(open(after, 'r'))
+        except StopIteration:
+            self._msg_store_iter = None
+            msg = None
 
         return msg
 
