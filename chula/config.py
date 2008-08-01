@@ -13,7 +13,8 @@ class Config(collection.RestrictedCollection):
     Failure to do so will result in an exception.
     """
 
-    def __validkeys__(self):
+    @staticmethod
+    def __validkeys__():
         """
         Initialize the supported configuration options with either a
         reasonable default, or I{UNSET}.

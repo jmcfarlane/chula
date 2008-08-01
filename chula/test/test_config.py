@@ -23,8 +23,9 @@ class Test_config(unittest.TestCase):
         self.config.session_memcache = ('')
         self.config['classpath'] = 'foo'
 
-    def test_keys_method_not_destroyed(self):
-        self.assertEquals(len(self.config.keys()), 18)
+    def test_keys_method_available_and_working(self):
+        self.assertEquals(len(self.config.keys()),
+                          len(config.Config.__validkeys__()))
 
     def test_printing_not_result_in_empty_dict(self):
         self.assertTrue(isinstance(self.config, dict))
