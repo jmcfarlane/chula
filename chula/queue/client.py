@@ -13,16 +13,22 @@ class MessageQueueClient(object):
 
     def add(self, msg):
         msg = self.encode(msg)
-        msg_length = len(msg)
-        chars_left = msg_length
 
         # Connect to the server and sent the message
         self.connect()
-        while chars_left > 0:
-            sent = self.socket.send(msg)
-            chars_left -= sent
+        sent = self.socket.sendall(msg)
 
+        # Read back the response
+        response = []
+        while True:
+            chunk = self.socket.recv(512)
+            response.append(chunk)
+            if chunk == '':
+                break
+            
         self.close()
+
+        return ''.join(response)
 
     def encode(self, msg):
         msg = message.Message.encode(msg)
@@ -45,4 +51,5 @@ if __name__ == '__main__':
 
     msg = message.MessageFactory('email')
     msg.message = 'I love Lisa'
-    client.add(msg)
+    response = client.add(msg)
+    print 'Message added by server:', response

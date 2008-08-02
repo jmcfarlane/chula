@@ -46,12 +46,12 @@ class MessageQueueServer(object):
         msg_length = None
 
         # Consume the message
-        while True:
+        while chars_left > 0:
             chunk = client.recv(chars_left)
 
-            # End of message
+            # Check if the client closed prematurely
             if chunk == '':
-                client.send('OK ')
+                print 'ERROR: Client socket closed prematurely'
                 break
 
             # Look for the message size
@@ -62,7 +62,7 @@ class MessageQueueServer(object):
                         chars_left = msg_length
                         continue
                     except ValueError:
-                        client.send('BAD')
+                        client.sendall('BAD')
                         break
                 else:
                     msg[0] += chunk
@@ -81,9 +81,13 @@ class MessageQueueServer(object):
             msg = message.MessageFactory(msg)
             self.queue.add(msg)
             print '%s added' % msg.name
+
+            # Send a response to the client
+            client.sendall(msg.name)
+        
         except message.InvalidMessageEncodingError, er:
             print 'Bad message body'
-            client.send('BAD')
+            client.sendall('BAD')
         finally:
             try:
                 client.shutdown(0)
@@ -112,10 +116,14 @@ class MessageQueueServer(object):
                 thread.start_new_thread(self.producer, (clientsocket,))
             except KeyboardInterrupt:
                 os.remove(self.pid_file)
+                print 'Received signal to shutdown...'
                 break
 
         s.shutdown(0)
         s.close()
+        
+        # Give the socket a second to close
+        time.sleep(1)
 
 # Testing
 if __name__ == '__main__':
