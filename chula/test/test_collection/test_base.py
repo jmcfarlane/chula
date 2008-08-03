@@ -1,8 +1,10 @@
 import unittest
 import doctest
-from chula import collection
 
-class Test_collection(unittest.TestCase):
+from chula import collection
+from chula.collection import base
+
+class Test_base_collection(unittest.TestCase):
     def _get(self, key):
         return self.col[key]
 
@@ -81,8 +83,8 @@ def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())
 
 def get_tests():
-    tests = unittest.makeSuite(Test_collection)
-    tests.addTest(doctest.DocTestSuite(collection))
+    tests = unittest.makeSuite(Test_base_collection)
+    tests.addTest(doctest.DocTestSuite(base))
     return tests
 
 if __name__ == '__main__':

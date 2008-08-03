@@ -2,6 +2,7 @@ import unittest
 import doctest
 
 from chula import collection
+from chula.collection import restricted
 from chula.error import *
 
 # Example usage of RestrictedCollection class to test it
@@ -15,7 +16,7 @@ class Human(collection.RestrictedCollection):
         self.arm = 'hold coffee with'
         self.foot = 'smell'
 
-class Test_collection_res(unittest.TestCase):
+class Test_restricted_collection(unittest.TestCase):
     def setUp(self):
         self.human = Human()
 
@@ -65,9 +66,8 @@ def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())
 
 def get_tests():
-    tests = unittest.makeSuite(Test_collection_res)
-    # test_collection.py already runs doctests
-    # tests.addTest(doctest.DocTestSuite(collection))
+    tests = unittest.makeSuite(Test_restricted_collection)
+    tests.addTest(doctest.DocTestSuite(restricted))
     return tests
 
 if __name__ == '__main__':
