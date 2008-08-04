@@ -8,7 +8,7 @@ from chula.queue.messages import message, email
 config = config.Config()
 
 class Test_mqueue(unittest.TestCase):
-    def _add(self, mtype='email'):
+    def _add(self, mtype='echo'):
         msg = message.MessageFactory(mtype)
         msg.message = 'payload'
         self.mqueue.add(msg)

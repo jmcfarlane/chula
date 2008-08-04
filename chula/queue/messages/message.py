@@ -54,7 +54,8 @@ class Message(collection.Collection):
             self.processed = data.str2bool(self.processed)
 
     def process(self):
-        pass
+        msg = 'Please overload the process() method'
+        raise NotImplementedError(msg)
 
 class MessageFactory(object):
     def __new__(self, msg):
@@ -82,6 +83,8 @@ class MessageFactory(object):
 
         if mtype == 'email':
             from chula.queue.messages import email as message
+        elif mtype == 'echo':
+            from chula.queue.messages import echo as message
         else:
             msg = 'Invalid message type: %s' % mtype
             raise Exception(msg)

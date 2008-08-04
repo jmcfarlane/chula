@@ -63,12 +63,19 @@ class MessageQueueClient(object):
 
 # Testing
 if __name__ == '__main__':
+    import time
     from chula import config
     config = config.Config()
     client = MessageQueueClient(config)
 
-    msg = message.MessageFactory('email')
+    msg = message.MessageFactory('echo')
     msg.message = 'I love Lisa'
     response = client.add(msg)
     print 'Message added by server:', response
-    print 'Processed message response:', client.fetch(response)
+
+    while True:
+        time.sleep(0.1)
+        response = client.fetch(response)
+        if not response is None:
+            print 'Processed message response:', response
+            break

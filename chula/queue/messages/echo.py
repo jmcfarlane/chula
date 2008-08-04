@@ -1,5 +1,5 @@
 """
-Chula email message object
+Chula echo message object
 """
 
 from chula.queue.messages import message
@@ -7,7 +7,7 @@ from chula.queue.messages import message
 class Message(message.Message):
     def __init__(self, msg):
         super(Message, self).__init__(msg)
-        self.type = 'email'
+        self.type = 'echo'
 
     def process(self):
-        return 'The email processing is not implemented yet :/'
+        return self.message
