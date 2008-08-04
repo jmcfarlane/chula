@@ -203,7 +203,7 @@ class RestrictecCollectionMissingDefaultAttrError(ChulaException):
     """
 
     def __init__(self, key, append=None):
-        self.message = 'Please set the "%s" attr in your apache handler' % key
+        self.message = 'Please set the "%s" attr to fix this' % key
         self.append = append
 
 class SessionUnableToPersistError(ChulaException):

@@ -12,6 +12,7 @@ class MessageQueueClient(object):
         self.port = config.mqueue_port
 
     def add(self, msg):
+        msg.validate()
         msg = message.Message.encode(msg)
         msg = self.encode(msg)
 
@@ -68,14 +69,24 @@ if __name__ == '__main__':
     config = config.Config()
     client = MessageQueueClient(config)
 
-    msg = message.MessageFactory('echo')
-    msg.message = 'I love Lisa'
+    msg = message.MessageFactory('email')
+    msg.message.body = 'I love Lisa'
+    msg.message.from_addy = 'john.mcfarlane@gmail.com'
+    msg.message.to_addy = 'john.mcfarlane@gmail.com'
+    msg.message.smtp = 'localhost'
+
     response = client.add(msg)
     print 'Message added by server:', response
 
+    tries = 0
     while True:
+        tries += 1
         time.sleep(0.1)
         response = client.fetch(response)
         if not response is None:
             print 'Processed message response:', response
+            break
+
+        if tries > 100:
+            print "No response"
             break

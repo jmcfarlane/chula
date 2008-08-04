@@ -57,6 +57,9 @@ class Message(collection.Collection):
         msg = 'Please overload the process() method'
         raise NotImplementedError(msg)
 
+    def validate(self):
+        pass
+
 class MessageFactory(object):
     def __new__(self, msg):
         if isinstance(msg, basestring):
