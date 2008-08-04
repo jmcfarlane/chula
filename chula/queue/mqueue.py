@@ -18,6 +18,9 @@ class MessageQueue(object):
         # Where do we keep the actual messages on disk
         self.msg_store = os.path.join(self.db, 'msgs')
 
+        # Create a location to store the message processing output
+        self.msg_result_store = collection.UboundCollection(1024)
+
         # Make sure the db dir exists, creating it if necessary
         try:
             os.makedirs(self.msg_store)
@@ -29,11 +32,15 @@ class MessageQueue(object):
 
     def add(self, msg):
         self.persist(msg)
+        self.persist_result(msg, None)
 
     def fetch_msg_store_iter(self, suffix='.msg'):
         for f in os.listdir(self.msg_store):
             if f.endswith(suffix):
                 yield self.msg_path(f)
+
+    def fetch(self, name):
+        return self.msg_result_store.get(name, None)
 
     def msg_path(self, name, ext=''):
         return os.path.join(self.msg_store, name)
@@ -42,6 +49,9 @@ class MessageQueue(object):
         fmsg = open(self.msg_path(msg.name), 'w')
         fmsg.write(msg.encode())
         fmsg.close()
+
+    def persist_result(self, msg, result):
+        self.msg_result_store[msg.name] = result
 
     def pop(self):
         # If necessary fetch a fresh file iterator

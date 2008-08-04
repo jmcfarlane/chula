@@ -9,6 +9,7 @@ import sys
 import thread
 import time
 
+from chula import json
 from chula.queue import mqueue
 from chula.queue.messages import message
 
@@ -22,7 +23,8 @@ class MessageQueueServer(object):
 
     def consumer(self, msg):
         print ' >>> %s processed by: %s' % (msg.name, thread.get_ident())
-        msg.process()
+        result = msg.process()
+        self.queue.persist_result(msg, result)
         self.queue.purge(msg)
         self.log('%s was processed' % msg.name)
 
@@ -75,6 +77,16 @@ class MessageQueueServer(object):
         # Combine the chunks
         msg = ''.join(msg)
 
+        # Check to see if this is a message result fetch
+        if msg.endswith('.msg'):
+            result = self.queue.fetch(msg)
+            result = json.encode(result)
+            client.sendall(result)
+            client.shutdown(0)
+            client.close()
+
+            return
+
         # Decode and add to the queue
         try:
             msg = message.Message.decode(msg)
@@ -116,6 +128,7 @@ class MessageQueueServer(object):
                 thread.start_new_thread(self.producer, (clientsocket,))
             except KeyboardInterrupt:
                 os.remove(self.pid_file)
+                print
                 print 'Received signal to shutdown...'
                 break
 

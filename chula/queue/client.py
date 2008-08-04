@@ -12,6 +12,7 @@ class MessageQueueClient(object):
         self.port = config.mqueue_port
 
     def add(self, msg):
+        msg = message.Message.encode(msg)
         msg = self.encode(msg)
 
         # Connect to the server and sent the message
@@ -31,7 +32,6 @@ class MessageQueueClient(object):
         return ''.join(response)
 
     def encode(self, msg):
-        msg = message.Message.encode(msg)
         msg = '%s:%s' % (len(msg), msg)
         return msg
 
@@ -43,6 +43,24 @@ class MessageQueueClient(object):
         self.socket.shutdown(0)
         self.socket.close()
 
+    def fetch(self, name):
+        # Connect to the server and sent the message
+        self.connect()
+        sent = self.socket.sendall(self.encode(msg.name))
+
+        # Read back the response
+        response = []
+        while True:
+            chunk = self.socket.recv(512)
+            response.append(chunk)
+            if chunk == '':
+                break
+            
+        self.close()
+
+        response = ''.join(response)
+        return message.Message.decode(response)
+
 # Testing
 if __name__ == '__main__':
     from chula import config
@@ -53,3 +71,4 @@ if __name__ == '__main__':
     msg.message = 'I love Lisa'
     response = client.add(msg)
     print 'Message added by server:', response
+    print 'Processed message response:', client.fetch(response)
