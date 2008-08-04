@@ -1,5 +1,6 @@
 import unittest
 import doctest
+
 from chula import example
 
 class Test_example(unittest.TestCase):
