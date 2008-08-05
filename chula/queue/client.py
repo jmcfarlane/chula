@@ -45,9 +45,12 @@ class MessageQueueClient(object):
         self.socket.close()
 
     def fetch(self, name):
+        if name is None:
+            return None
+
         # Connect to the server and sent the message
         self.connect()
-        sent = self.socket.sendall(self.encode(msg.name))
+        sent = self.socket.sendall(self.encode(name))
 
         # Read back the response
         response = []
@@ -61,32 +64,3 @@ class MessageQueueClient(object):
 
         response = ''.join(response)
         return message.Message.decode(response)
-
-# Testing
-if __name__ == '__main__':
-    import time
-    from chula import config
-    config = config.Config()
-    client = MessageQueueClient(config)
-
-    msg = message.MessageFactory('email')
-    msg.message.body = 'I love Lisa'
-    msg.message.from_addy = 'john.mcfarlane@gmail.com'
-    msg.message.to_addy = 'john.mcfarlane@gmail.com'
-    msg.message.smtp = 'localhost'
-
-    response = client.add(msg)
-    print 'Message added by server:', response
-
-    tries = 0
-    while True:
-        tries += 1
-        time.sleep(0.1)
-        response = client.fetch(response)
-        if not response is None:
-            print 'Processed message response:', response
-            break
-
-        if tries > 100:
-            print "No response"
-            break

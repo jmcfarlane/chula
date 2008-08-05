@@ -2,17 +2,36 @@
 Chula email message object
 """
 
-from chula import collection
+from chula import collection, mail
 from chula.queue.messages import message
 
 class Message(message.Message):
     def __init__(self, msg):
         super(Message, self).__init__(msg)
         self.type = 'email'
+
+    def fill(self, msg):
+        super(Message, self).fill(msg)
         self.message = Contract()
 
+        # Update the contract
+        if not msg is None:
+            if not msg['message'] is None:
+                for key, value in msg['message'].iteritems():
+                    self.message[key] = value
+
     def process(self):
-        return 'The email processing is not implemented yet :/'
+        email = mail.Mail(self.message.smtp)
+        email.from_addy = self.message.from_addy
+        email.to_addy = self.message.to_addy
+        email.body = self.message.body
+        email.subject = self.message.subject
+
+        try:
+            email.send()
+            return 'Mail Sent'
+        except Exception, er:
+            return er
 
     def validate(self):
         for key, value in self.message.iteritems():
@@ -26,11 +45,16 @@ class Contract(collection.RestrictedCollection):
         Email message body to force the required attributes
         """
 
-        return ('body', 'from_addy', 'smtp', 'to_addy')
+        return ('body',
+                'from_addy',
+                'smtp',
+                'subject',
+                'to_addy')
 
 
     def __defaults__(self):
         self.body = collection.UNSET
-        self.smtp = collection.UNSET
         self.from_addy = collection.UNSET
+        self.smtp = collection.UNSET
+        self.subject = collection.UNSET
         self.to_addy = collection.UNSET
