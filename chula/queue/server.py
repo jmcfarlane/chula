@@ -2,6 +2,7 @@
 Chula message queue daemon
 """
 
+from __future__ import with_statement
 import datetime
 import os
 import socket
@@ -9,24 +10,33 @@ import sys
 import thread
 import time
 
-from chula import json
+from chula import json, system
 from chula.queue import mqueue
 from chula.queue.messages import message
 
 class MessageQueueServer(object):
     def __init__(self, config):
+        self.debug = True
         self.config = config
+        self.lock = thread.allocate_lock()
+        self.log_file = os.path.join(self.config.mqueue_db, 'log')
+        self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
         self.poll = self.config.mqueue_poll
         self.queue = mqueue.MessageQueue(self.config)
-        self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
-        self.log_file = os.path.join(self.config.mqueue_db, 'log')
+        self.system = system.System()
+        self.thread_count = 0
+        self.thread_max = self.system.procs + 1
 
     def consumer(self, msg):
-        print ' >>> %s processed by: %s' % (msg.name, thread.get_ident())
         result = msg.process()
         self.queue.persist_result(msg, result)
         self.queue.purge(msg)
         self.log('%s was processed' % msg.name)
+        if self.debug:
+            print ' >>> %s processed by: %s' % (msg.name, thread.get_ident())
+
+        with self.lock:
+            self.thread_count -= 1
 
     def log(self, msg):
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -36,11 +46,18 @@ class MessageQueueServer(object):
 
     def poller(self):
         while True:
-            msg = self.queue.pop()
-            if msg is None:
-                time.sleep(self.poll)
+            # Only check for work if we have available threads
+            if self.thread_count < self.thread_max:
+                msg = self.queue.pop()
+                if msg is None:
+                    time.sleep(self.poll)
+                else:
+                    with self.lock:
+                        self.thread_count += 1
+                    thread.start_new_thread(self.consumer, (msg, ))
             else:
-                thread.start_new_thread(self.consumer, (msg, ))
+                time.sleep(0.01)
+                
 
     def producer(self, client):
         chars_left = 1
@@ -144,6 +161,5 @@ if __name__ == '__main__':
 
     from chula import config
     config = config.Config()
-    config.mqueue_poll = 5
     server = MessageQueueServer(config)
     server.start()

@@ -50,7 +50,7 @@ class Config(collection.RestrictedCollection):
         self.local = collection.Collection()
         self.mqueue_db = '/tmp/chula/mqueue'
         self.mqueue_host = 'localhost'
-        self.mqueue_poll = 60
+        self.mqueue_poll = 5
         self.mqueue_port = 8001
         self.session_db = 'chula_session'
         self.session_encryption_key = collection.UNSET
