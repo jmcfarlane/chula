@@ -2,9 +2,21 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.0.4">
-        <log>Refactoring of chula.db (much better now)</log>
-        <log>Add support for an "under construction" controller</log>
-        <log>Add support for sqlite to chula.db.datastore</log>
+        <log>Changed dependency checking to be further down the stack</log>
+        <log>Cleaned up directory structure of source tree a little</log>
+        <log>Improved installer to use distro specific locations</log>
+        <log>Promoted chula.collection into a package</log>
+        <log>Promoted chula.db into a package (much better now)</log>
+        <log>Added chula.collection.UboundCollection</log>
+        <log>Added chula.data.isregex and chula.db.cregex</log>
+        <log>Added chula.mail</log>
+        <log>Added chula.system</log>
+        <log>Added support for an "under construction" controller</log>
+        <log>Added support for sqlite to chula.db.datastore</log>
+        <log>
+            Added tcp based message queue (<i>working, but very much
+            not ready to be used</i>)
+        </log>
     </release>
 
     <release date="6/15/2008" version="0.0.3">
