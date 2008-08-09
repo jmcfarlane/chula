@@ -7,16 +7,16 @@ import os
 import re
 import sys
 
+import chula
+
 def get_tests(path):
     """
     Creates and returns a list of all tests in a directory tree
     List items are tuples of the form (Path, Filename)
     """
     tests = []
-    path = path.rstrip('/')
-    tree = os.walk(path)
+    tree = os.walk(path.rstrip(os.sep))
     regex = re.compile(r'^.*/test(_[a-z]+)?$')
-    #regex = re.compile(r'^[^\.]*/test(_[a-z]+)?$')
     for directory in tree:
         if not re.match(regex, directory[0]) is None:
             for file in directory[2]:
@@ -61,7 +61,18 @@ if __name__ == "__main__":
         path = argv[0]
     except IndexError, ex:
         path = os.getcwd()
-        
+
+        # Compensate for the fact that the scripts directory is
+        # parallel to the source directory
+        if not path.endswith(chula.package_dir.capitalize()):
+            path = path.split(os.sep)[:-1]
+            path.append(chula.package_dir)
+            path = os.sep.join(path)
+
+    #print 'Path used:', path
+    #sys.exit(1)
+
+    # Run the tests
     tests = get_tests(path)
     run_tests(tests)
 

@@ -2,13 +2,14 @@
 
 import re
 
+from chula import error
+
 try:
     import psycopg2
     from psycopg2 import extensions, extras
 except:
     raise error.MissingDependencyError('Psycopg2')
 
-from chula import error
 from chula.db.engines import engine
 
 class DataStore(engine.Engine):
