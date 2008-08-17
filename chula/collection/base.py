@@ -25,7 +25,10 @@ class Collection(dict):
         @return: Attribute
         """
 
-        return self.__getitem__(key)
+        if key == '__deepcopy__':
+            return None
+        else:
+            return self.__getitem__(key)
 
     def __setattr__(self, key, value):
         """

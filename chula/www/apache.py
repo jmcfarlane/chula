@@ -3,11 +3,12 @@ Chula apache handler
 """
 
 import time
+from copy import deepcopy
 
 from mod_python import apache as APACHE
 
 import chula
-from chula import error
+from chula import collection, error
 from chula.www.mapper.standard import StandardMapper
 
 def _handler(req, config):
@@ -28,9 +29,20 @@ def _handler(req, config):
     try:
         html = controller.execute()
     except Exception, ex:
-        controller = mapper.map(500)
-        controller.model.exception  = ex
-        html = controller.execute()
+        if config.debug:
+            raise
+        else:
+            # Prepare a collection to hold exception context
+            context = collection.Collection()
+            context.exception = ex
+            context.env = deepcopy(controller.env)
+            context.form = deepcopy(controller.form)
+
+            # Try the error controller (and set an exception attribute in
+            # the model)
+            controller = mapper.map(500)
+            controller.model.exception = context
+            html = controller.execute()
 
     # Persist session and perform garbage collection
     try:
@@ -83,7 +95,6 @@ def _handler(req, config):
                     raise
     else:
         raise error.ControllerMethodReturnError()
-
 
     # If we got here, all is well
     return APACHE.OK

@@ -7,6 +7,8 @@
         <log>Improved installer to use distro specific locations</log>
         <log>Promoted chula.collection into a package</log>
         <log>Promoted chula.db into a package (much better now)</log>
+        <log>Fixed defect in chula.collection when copy.deepcopy is used</log>
+        <log>Wired up specified error controller (previously unused)</log>
         <log>Added chula.collection.UboundCollection</log>
         <log>Added chula.data.isregex and chula.db.cregex</log>
         <log>Added chula.mail</log>
