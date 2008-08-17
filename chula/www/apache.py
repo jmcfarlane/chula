@@ -22,8 +22,15 @@ def _handler(req, config):
     # Set the Apache content type (specified by the controller)
     req.content_type = controller.content_type
 
-    # Call the controller method
-    html = controller.execute()
+    # Call the controller method and if an exception is raised, use
+    # the configured e500 controller.  If that breaks, it's up to your
+    # web server custom 500 handler to handle things.
+    try:
+        html = controller.execute()
+    except Exception, ex:
+        controller = mapper.map(500)
+        controller.model.exception  = ex
+        html = controller.execute()
 
     # Persist session and perform garbage collection
     try:

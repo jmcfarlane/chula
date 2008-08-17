@@ -83,13 +83,17 @@ class BaseMapper(object):
         return module
             
 
-    def map(self):
+    def map(self, status=None):
         """
         Return a reference to the controller module?
         """
 
-        self.default_route()
-        self.parse()
+        if status is None:
+            self.default_route()
+            self.parse()
+        elif status == 500:
+            self.route.module = self.config.error_controller
+            self.route.method = 'e500'
 
         # Import the controller module
         module = self.import_module()
