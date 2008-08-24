@@ -6,7 +6,7 @@ class can be subclassed to customize the url mapping behavior.
 from chula.www.mapper import *
 
 class BaseMapper(object):
-    def __init__(self, config, req):
+    def __init__(self, config, env):
         # Check to make sure the config is available
         if config.classpath is None:
             msg = ('[cfg.classpath] must be specified in your configuration.'
@@ -14,8 +14,8 @@ class BaseMapper(object):
             raise error.UnsupportedConfigError(msg)
             
         self.config = config
-        self.req = req
-        self.uri = req.uri
+        self.env = env
+        self.uri = env.REQUEST_URI
 
         # Set the under construction controller
         construction_route = {'module':self.config.construction_controller,
@@ -74,7 +74,7 @@ class BaseMapper(object):
                 module = self.import_module()
             else:
                 msg = '%s - %s' % (path, ex)
-                msg += ' => Route: %s' % self.route
+                msg += ' [Route being used: %s]' % self.route
                 raise error.ControllerModuleNotFoundError(msg)
 
         except Exception:
@@ -106,7 +106,7 @@ class BaseMapper(object):
             msg += ' => Route: %s' % self.route
             raise error.ControllerClassNotFoundError(msg)
         
-        self.controller = controller(self.req, self.config)
+        self.controller = controller(self.env, self.config)
         self.bind()
         return self.controller
 

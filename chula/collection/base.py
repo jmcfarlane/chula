@@ -42,6 +42,18 @@ class Collection(dict):
 
         self.__setitem__(key, value)
 
+    def add(self, key, value):
+        """
+        Allow set via method
+
+        @param key: Key to be set
+        @type key: String
+        @param value: Value of key
+        @type value: Any
+        """
+
+        self.__setitem__(key, value)
+
     def remove(self, key):
         """
         Allow list.remove() style attribute deletion

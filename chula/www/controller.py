@@ -2,18 +2,8 @@
 Generic base controller used by all web requests
 """
 
-try:
-    from mod_python import apache, util
-except ImportError:
-    import sys
-
-    from chula.www import fakerequest as util
-
-    print >> sys.stderr, "NOTICE: Unable to access mod_python"
-    print >> sys.stderr, "NOTICE: Using chula.www.fakerequest.FakeRequest()"
-
 from chula import collection, guid, error, session
-from chula.www import cookie, env
+from chula.www import http
 
 class Controller(object):
     """
@@ -21,63 +11,37 @@ class Controller(object):
     by all requests being either of this class or a subclass.
     """
 
-    def __init__(self, req, config):
+    def __init__(self, env, config):
         """
         Initialize the web request, performing taks common to all web
         requests.
 
-        @param req: Apache request object
-        @type req: req (mod_python request object)
+        @param env: Normalized environment (wsgi at a minimum)
+        @type env: env WSGI environ object with a few extra objects
         """
         
         self.content_type = 'text/html'
-        self._load_http_vars(req)
 
-        # TODO: Add specific object for GET vars as maybe != POST
-        self.form = dict(self.req.form)
-        self.env = env.Env(req)
-
-        # Get user configuration
+        # Add some convenience attributes
         self.config = config
-
-        # Fetch the user's cookie
-        self.cookie = cookie.Cookie(self.req,
-                                    config.session_name,
-                                    config.session_encryption_key,
-                                    config.session_timeout)
-
-        # Expose if the client supports cookies
-        client_cookies_enabled = self.cookie.client_cookies_enabled
-        self.env['chula_client_cookies_enabled'] = client_cookies_enabled
+        self.env = env
+        self.form = env.form
 
         # Start up session using the cookie's guid (or a fake one)
-        if self.cookie.cookies is None: 
-            self.session = session.Session(config, guid.guid())
-        else:
-            guid_ = self.cookie.value()
+        if self.config.session_name in self.env.cookies:
+            guid_ = self.env.cookies[self.config.session_name].value
             self.session = session.Session(config, guid_)
+        else:
+            # Create a new guid create a cookie
+            guid_ = guid.guid()
+            self.session = session.Session(config, guid_)
+            self.env.cookies[self.config.session_name] = guid_
 
         # Create a default model. This object is optionally populated by the
         # controller, or it can do it's own thing.
         self.model = collection.Collection()
         self.model.session = self.session
         self.model.env = self.env
-
-    def _load_http_vars(self, req):
-        """
-        Takes the request object and fills self.* values based on it
-        """
-
-        self.req = req
-
-        # If self.req.form exists and is of type util.FieldStorage trust
-        # it's contents and move on, else set it (currently to the same
-        # value that mod_python publisher would set it).
-        try:
-            if isinstance(self.req.form, util.FieldStorage):
-                return
-        except:
-            self.req.form = util.FieldStorage(req, keep_blank_values=1)
 
     def _gc(self):
         """
@@ -117,15 +81,15 @@ class Controller(object):
         """
 
         try:
-            self.req.headers_out['location'] = str(destination)
+            self.env.headers.append(('location', str(destination)))
         except TypeError, ex:
-            msg = 'Invalid redirection uri: %s, %s' % (destination, ex)
+            msg = 'Invalid redirection content_type: %s, %s' % (destination, ex)
             raise error.ControllerRedirectionError(msg)
 
         if type == 'TEMPORARY':
-            self.req.status = apache.HTTP_MOVED_TEMPORARILY
+            self.env.status = http.HTTP_MOVED_TEMPORARILY
         elif type == 'PERMANENT':
-            self.req.status = apache.HTTP_MOVED_PERMANENTLY
+            self.env.status = http.HTTP_MOVED_PERMANENTLY
         else:
             msg = 'Unkonwn redirection type: %s' % type
             raise error.UnsupportedUsageError(msg)

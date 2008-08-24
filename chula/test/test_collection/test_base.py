@@ -58,11 +58,17 @@ class Test_base_collection(unittest.TestCase):
                 self.assertEquals(thing, 'foo')
             i += 1
 
+    def test_set_by_add(self):
+        self.col.add('foo', 'bar')
+        self.assertEquals(self.col.foo, 'bar')
+
     def test_set_by_attr(self):
         self.col.foo = None
+        self.assertEquals(self.col.foo, None)
 
     def test_set_by_dict(self):
         self.col['foo'] = None
+        self.assertEquals(self.col.foo, None)
 
     def test_missing_key_raises_key_error(self):
         self.assertRaises(KeyError, self._get, 'missing')

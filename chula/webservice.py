@@ -10,16 +10,16 @@ class Transport(collection.RestrictedCollection):
     various means of encoding.
     """
 
-    def __init__(self, req):
+    def __init__(self, env):
         super(Transport, self).__init__()
-        self.req = req
+        self.env = env
 
     def __privatekeys__(self):
         """
         Populate the private keys
         """
 
-        return ('req',)
+        return ('env',)
 
     def __validkeys__(self):
         """
@@ -50,8 +50,8 @@ class JSON(Transport):
         """
         Encode the transport into a json string and return X-JSON
         """
-
-        self.req.content_type = 'application/x-json'
-        self.req.headers_out.add('X-JSON', json.encode(self.strip()))
+        
+        self.env.content_type = 'application/x-json'
+        self.env.headers.append(('X-JSON', json.encode(self.strip())))
 
         return '<X-JSON Object>'

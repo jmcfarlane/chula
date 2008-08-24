@@ -14,8 +14,8 @@ class StandardMapper(base.BaseMapper):
                 self.route.update(self.construction.route)
                 return str(self)
         
-        # Parse the uri
-        parts = self.uri.split('/') 
+        # Parse the uri (excluding the querystring)
+        parts = self.uri.split('?')[0].split('/')
 
         # Remove any empty segments
         while '' in parts:

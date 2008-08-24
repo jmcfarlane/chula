@@ -2,7 +2,7 @@ import unittest
 import doctest
 
 from chula import config
-from chula.www import fakerequest
+from chula.www.adapters.mod_python import fakerequest
 from chula.www.mapper import standard
 
 class Test_standard(unittest.TestCase):

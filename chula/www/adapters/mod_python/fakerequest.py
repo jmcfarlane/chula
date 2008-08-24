@@ -45,7 +45,7 @@ class FakeRequest(dict):
         self.filename = 'index.py'
         self.hostname = 'localhost'
         self.path_info = environ.get('PATH_INFO', '')
-        self.unparsed_uri = '/'
+        self.REQUEST_URI = '/'
         self.uri = '/'
         self.the_request = 'GET / HTTP/1.1'
         self.connection = FakeRequestConnection()
