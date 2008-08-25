@@ -1,57 +1,67 @@
 """
-Environment variables
+Manage the environment when python is using mod_python
 """
 
 import re
-from socket import gethostname
 
-from chula import collection
+from mod_python import util
 
-class Env(collection.Collection):
+from chula.www.adapters import env
+
+class Environment(env.BaseEnv):
     def __init__(self, req):
-        super(Env, self).__init__()
-        
-        # mod_python req variables
-        self.args = req.args
-        self.content_type = req.content_type
-        self.document_root = req.document_root()
-        self.filename = req.filename
-        self.hostname = req.hostname
-        self.method = req.method
-        self.path_info = req.path_info
-        self.proto_num = req.proto_num
-        self.protocol = req.protocol
-        self.status = req.status
-        self.the_request = req.the_request
-        self.unparsed_uri = req.unparsed_uri
-        self.server_hostname = gethostname()
-        self.uri = req.uri
+        super(Environment, self).__init__()
 
-        # mod_python req.connection variables
-        conn = req.connection
-        self.local_addr = conn.local_addr
-        self.local_host = conn.local_host
-        self.remote_addr = conn.remote_addr
-        self.remote_host = conn.remote_host
-        self.remote_ip = conn.remote_ip
+        # Set the required variables from mod_python's req object(s)
+        self.DOCUMENT_ROOT = req.document_root()
+        self.HTTP_HOST = req.hostname
+        self.HTTP_USER_AGENT = req.headers_in.get('User-Agent')
+        self.REQUEST_URI = req.unparsed_uri
+        self.SERVER_PROTOCOL = req.protocol
+        self.HTTP_COOKIE = req.headers_in.get('Cookie')
 
-        # mod_python req.headers_in variables
-        headers = req.headers_in.get
-        self.host = headers('host')
-        self.referer = headers('Referer')
-        self.user_agent = headers('User-Agent')
+        # TODO: Implement these
+        self.GATEWAY_INTERFACE = 'MOD_PYTHON'
+        self.HTTP_ACCEPT = 'NA'
+        self.HTTP_ACCEPT_CHARSET = 'NA'
+        self.HTTP_ACCEPT_ENCODING = 'NA'
+        self.HTTP_ACCEPT_LANGUAGE = 'NA'
+        self.HTTP_CONNECTION = 'NA'
+        self.HTTP_KEEP_ALIVE = 'NA'
+        self.PATH = 'NA'
+        self.PATH_INFO = 'NA'
+        self.QUERY_STRING = 'NA'
+        self.REMOTE_ADDR = 'NA'
+        self.REMOTE_HOST = 'NA'
+        self.REMOTE_PORT = 'NA'
+        self.REQUEST_METHOD = 'NA'
+        self.SCRIPT_FILENAME = 'NA'
+        self.SCRIPT_NAME = 'NA'
+        self.SERVER_ADDR = 'NA'
+        self.SERVER_ADMIN = 'NA'
+        self.SERVER_NAME = 'NA'
+        self.SERVER_PORT = 'NA'
+        self.SERVER_SIGNATURE = 'NA'
+        self.SERVER_SOFTWARE = 'NA'
 
-        # Check for broken variables
-        if self.host is None:
-            self.host = '%s:%s' % (self.hostname, self.local_addr[1])
+        # If self.req.form exists and is of type util.FieldStorage
+        # trust it's contents and move on, else set it (currently to
+        # the same value that mod_python publisher would set it).
+        try:
+            if isinstance(self.req.form, util.FieldStorage):
+                return
+        except:
+            self.form = util.FieldStorage(req, keep_blank_values=1)
 
-        # Computed variables
-        protocol_type = re.match(r'(HTTPS?)', self.protocol)
+        self.form = dict(self.form)
+
+        # Set ajax_uri
+        # TODO: (move to the baseclass if possible)
+        protocol_type = re.match(r'(HTTPS?)', self.SERVER_PROTOCOL)
         if not protocol_type is None:
-            self.protocol_type = protocol_type.group()
+            protocol_type = protocol_type.group()
         else:
-            self.protocol_type = 'HTTP'
-        self.ajax_uri = self.protocol_type.lower() + '://' + self.host
+            msg = 'Unsupported protocol: %s' % self.SERVER_PROTOCOL
+            raise ValueError(msg)
 
-        # Misc variables
-        self.debug = False
+        self.ajax_uri = protocol_type.lower() + '://' + self.HTTP_HOST
