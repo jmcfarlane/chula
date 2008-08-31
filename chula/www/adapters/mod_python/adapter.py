@@ -9,22 +9,18 @@ from chula.www.adapters.mod_python import env
 
 def _handler(req, config):
     adapter = base.BaseAdapter(config)
-    _env = env.Environment(req)
-    adapter.set_environment(_env)
-    adapter.set_cookies(_env.HTTP_COOKIE)
+    adapter.set_environment(env.Environment(req))
 
     bfr = []
     for chunk in adapter.execute():
         #req.write(chunk)
         bfr.append(chunk)
 
-    adapter.close()
-
     # Set HTTP headers set by the controller
     for header in adapter.env.headers:
         req.headers_out.add(header[0], header[1])
 
-    # Set the HTTP status
+    # Set the content_type and status
     req.content_type = adapter.env.content_type
     req.status = adapter.env.status
 

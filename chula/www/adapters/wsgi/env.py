@@ -17,6 +17,9 @@ class Environment(env.BaseEnv):
             if key in self:
                 self[key] = value
 
+        # Make sure HTTP_COOKIE exists even if empty
+        self.HTTP_COOKIE = environ.get('HTTP_COOKIE', {})
+
         # Set ajax_uri
         # TODO: (move to the baseclass if possible)
         protocol_type = re.match(r'(HTTPS?)', self.SERVER_PROTOCOL)

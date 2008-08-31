@@ -88,7 +88,6 @@ class BaseAdapter(object):
         # Add the cookies to the headers
         self.env.headers.append(self.env.cookies.headers())
 
-    def close(self):
         # Persist session and perform garbage collection
         try:
             self.controller._pre_session_persist()
@@ -108,21 +107,21 @@ class BaseAdapter(object):
         else:
             self.timer = None
 
-    def set_cookies(self, cookies):
-        self.env.cookies = cookie.CookieCollection()
-        self.env.cookies.load(cookies)
-        self.env.cookies.timeout = self.config.session_timeout
-        self.env.cookies.key = self.config.session_encryption_key
-
     def set_environment(self, env):
         self.env = env
         self.env.headers = []
 
-    def set_headers(self, headers):
-        for header in headers:
-            self.env.headers.append(header)
-        
-        return self.env.headers
+        # Initialize cookies
+        self.env.cookies = cookie.CookieCollection()
+        self.env.cookies.timeout = self.config.session_timeout
+        self.env.cookies.key = self.config.session_encryption_key
+
+        # Load exising cookies sent from the client (browser)
+        if not self.env.HTTP_COOKIE is None:
+            self.env.cookies.load(self.env.HTTP_COOKIE)
+
+    def add_header(self, header):
+        self.env.headers.append(header)
 
     def fetch_controller(self):
         self.mapper = StandardMapper(self.config, self.env)
