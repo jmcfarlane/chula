@@ -2,7 +2,7 @@
 Manage the environment when python is using wsgi
 """
 
-from cgi import FieldStorage as FS
+from cgi import FieldStorage
 
 from chula.www.adapters import env
 
@@ -16,12 +16,10 @@ class Environment(env.BaseEnv):
             if key in self:
                 self[key] = value
 
-        # Fetch get/post variables from wsgi_input
-        form = FS(fp=self.wsgi_input, environ=environ, keep_blank_values=1)
-
-        # Replace the value (a morsel object) with it's actual value
-        for key in form.keys():
-            self.form[key] = form[key].value
+        # Set http get or post variables
+        self.form = FieldStorage(fp=self.wsgi_input,
+                                 environ=environ,
+                                 keep_blank_values=1)
 
         # Add additional variables provided by the base class
         super(Environment, self).extras()

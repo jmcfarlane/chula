@@ -30,8 +30,6 @@ class Environment(env.BaseEnv):
                 pass
         except:
             self.form = util.FieldStorage(req, keep_blank_values=1)
-        finally:
-            self.form = dict(self.form)
 
         # Add additional variables provided by the base class
         super(Environment, self).extras()

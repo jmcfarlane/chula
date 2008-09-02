@@ -2,6 +2,8 @@
 Chula adapter environment class
 """
 
+import cgi
+from copy import deepcopy
 import re
 
 from chula import error, collection
@@ -63,6 +65,8 @@ class BaseEnv(collection.RestrictedCollection):
                 'cookies',
                 'debug',
                 'form',
+                'form_get',
+                'form_post',
                 'headers',
                 'route',
                 'status',
@@ -116,7 +120,9 @@ class BaseEnv(collection.RestrictedCollection):
         self.cookies = None
         self.debug = True
         self.headers = []
-        self.form = {}
+        self.form = collection.UNSET
+        self.form_get = collection.UNSET
+        self.form_post = collection.UNSET
         self.status = 200
 
     def _ajax_uri(self):
@@ -136,6 +142,26 @@ class BaseEnv(collection.RestrictedCollection):
 
         return self.get('HTTP_COOKIE', {})
 
+    def _clean_http_vars(self):
+        passed = deepcopy(dict(self.form))
+
+        # Create object to hold only HTTP GET variables
+        self.form_get = cgi.parse_qs(self.QUERY_STRING, keep_blank_values=1)
+        for key in self.form_get.keys():
+            if len(self.form_get[key]) == 1:
+                self.form_get[key] = self.form_get[key][0]
+
+        # Create an object to hold only HTTP POST variables
+        self.form_post = {}
+        for key in passed.keys():
+            if not key in self.form_get:
+                self.form_post[key] = passed[key].value
+
+        # Make sure the form object contains both while taking
+        # precedence over POST when overlap exists
+        self.form = deepcopy(self.form_get)
+        self.form.update(self.form_post)
+
     def extras(self):
         """
         Set extra environment variables, all being Chula specific
@@ -143,3 +169,6 @@ class BaseEnv(collection.RestrictedCollection):
 
         self.HTTP_COOKIE = self._cookie()
         self.ajax_uri = self._ajax_uri()
+
+        # Make sure get/post variables are handled correctly
+        self._clean_http_vars()
