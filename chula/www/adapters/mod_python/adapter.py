@@ -11,12 +11,10 @@ def _handler(req, config):
     adapter = base.BaseAdapter(config)
     adapter.set_environment(env.Environment(req))
 
-    bfr = []
-    for chunk in adapter.execute():
-        #req.write(chunk)
-        bfr.append(chunk)
+    # Execute the controller and store it's output
+    chunks = [c for c in adapter.execute()]
 
-    # Set HTTP headers set by the controller
+    # Add the headers to the mod_python req object
     for header in adapter.env.headers:
         req.headers_out.add(header[0], header[1])
 
@@ -24,9 +22,11 @@ def _handler(req, config):
     req.content_type = adapter.env.content_type
     req.status = adapter.env.status
 
-    for chunk in bfr:
+    # Write the data to the client
+    for chunk in chunks:
         req.write(chunk)
 
+    # All is well
     return APACHE.OK
 
 def handler(fcn):

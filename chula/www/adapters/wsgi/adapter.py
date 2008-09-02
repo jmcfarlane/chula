@@ -9,15 +9,18 @@ def _application(environ, start_response, config):
     adapter = base.BaseAdapter(config)
     adapter.set_environment(env.Environment(environ))
 
-    bfr = []
-    for chunk in adapter.execute():
-        #yield chunk
-        bfr.append(chunk)
+    # Execute the controller and store it's output
+    chunks = [c for c in adapter.execute()]
 
+    # Add the content type to the headers
     adapter.add_header(('Content-Type', adapter.env.content_type))
+
+    # Execute the wsgi callback
     start_response('%s OK' % adapter.env.status, adapter.env.headers) 
 
-    return ''.join(bfr)
+    # Yield the data to the client
+    for chunk in chunks:
+        yield chunk
 
 def wsgi(fcn):
     def wrapper(environ, start_response):
