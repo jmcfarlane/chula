@@ -1,5 +1,6 @@
 import unittest
 import doctest
+import copy
 
 from chula import collection
 from chula.collection import restricted
@@ -61,6 +62,16 @@ class Test_restricted_collection(unittest.TestCase):
             self.human['back'] = 'important'
 
         self.assertRaises(InvalidCollectionKeyError, simulate)
+        
+    def test_deepcopy(self):
+        person = copy.deepcopy(self.human)
+        self.assertEquals(person.head, 'wears hat')
+        self.assertEquals(person.foot, 'smell')
+        self.assertEquals(True, isinstance(person, collection.Collection))
+
+        # TODO: This needs to pass
+        self.assertEquals(True, isinstance(person,
+                                           collection.RestrictedCollection))
         
 def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())

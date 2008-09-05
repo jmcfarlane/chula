@@ -16,6 +16,17 @@ class Collection(dict):
 
         self.__delitem__(key)
 
+    def __deepcopy__(self, memo={}):
+        """
+        Return a fresh copy of a Collection object or subclass object
+        """
+
+        fresh = self.__class__()
+        for key, value in self.iteritems():
+            fresh[key] = value
+
+        return fresh
+
     def __getattr__(self, key):
         """
         Allow attribute style get
@@ -25,10 +36,7 @@ class Collection(dict):
         @return: Attribute
         """
 
-        if key == '__deepcopy__':
-            return None
-        else:
-            return self.__getitem__(key)
+        return self.__getitem__(key)
 
     def __setattr__(self, key, value):
         """

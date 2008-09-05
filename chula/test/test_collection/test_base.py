@@ -1,5 +1,6 @@
 import unittest
 import doctest
+import copy
 
 from chula import collection
 from chula.collection import base
@@ -84,6 +85,13 @@ class Test_base_collection(unittest.TestCase):
     def test_can_delete_by_remove_method(self):
         self.col.remove('name')
         self.assertRaises(KeyError, self._get, 'name')
+
+    def test_deepcopy(self):
+        freshcopy = copy.deepcopy(self.col)
+        self.assertEquals(freshcopy.name, 'foo')
+        self.assertEquals(freshcopy.location, 'bar')
+        self.assertEquals(freshcopy.age, 25)
+        self.assertEquals(True, isinstance(freshcopy, collection.Collection))
 
 def run_unittest():
     unittest.TextTestRunner(verbosity=2).run(get_tests())
