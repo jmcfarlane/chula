@@ -162,6 +162,19 @@ class BaseEnv(collection.RestrictedCollection):
         self.form = deepcopy(self.form_get)
         self.form.update(self.form_post)
 
+    def fill(self, env):
+        """
+        Populate the collection with values.  Some keys contain "."
+        characters which would break attribute access on this
+        collection.  For this reason dots will be replaced with
+        underbars.
+        """
+
+        for key, value in env.iteritems():
+            key = key.replace('.', '_')
+            if key in self:
+                self[key] = value
+
     def extras(self):
         """
         Set extra environment variables, all being Chula specific

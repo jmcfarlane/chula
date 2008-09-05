@@ -11,10 +11,7 @@ class Environment(env.BaseEnv):
         super(Environment, self).__init__()
 
         # Set the required variables from the wsgi environ object
-        for key, value in environ.iteritems():
-            key = key.replace('.', '_')
-            if key in self:
-                self[key] = value
+        self.fill(environ)
 
         # Set http get or post variables
         self.form = FieldStorage(fp=self.wsgi_input,

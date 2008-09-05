@@ -10,15 +10,12 @@ class Environment(env.BaseEnv):
     def __init__(self, req):
         super(Environment, self).__init__()
 
-        # Expose access to additional mod_python environment variables
+        # Fetch additional mod_python environment variables
         req.add_common_vars()
         subprocess = req.subprocess_env.copy()
 
         # Set the required variables from mod_python's req object(s)
-        for key, value in req.subprocess_env.copy().iteritems():
-            key = key.replace('.', '_')
-            if key in self:
-                self[key] = value
+        self.fill(req.subprocess_env.copy())
             
         # Add environment variables not available in subprocess_env
         self.PATH_INFO = req.path_info
