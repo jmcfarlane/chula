@@ -11,6 +11,18 @@ class Human(collection.RestrictedCollection):
     def __validkeys__(self):
         return ('head', 'leg', 'arm', 'foot')
 
+    # TODO: Fix this huge mess, why can't the base class do it!!
+    def __deepcopy__(self, memo={}):
+        """
+        Return a fresh copy of a Collection object or subclass object
+        """
+        
+        fresh = Human()
+        for key, value in self.iteritems():
+            fresh[key] = copy.deepcopy(value, memo)
+
+        return fresh
+
     def __defaults__(self):
         self.head = 'wears hat'
         self.leg = 'two to walk with'

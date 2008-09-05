@@ -3,6 +3,8 @@ Flexible collection that supports both dictionary and attribute style
 access.
 """
 
+from copy import deepcopy
+
 from chula import error
 
 class Collection(dict):
@@ -20,10 +22,10 @@ class Collection(dict):
         """
         Return a fresh copy of a Collection object or subclass object
         """
-
-        fresh = self.__class__()
+        
+        fresh = Collection()
         for key, value in self.iteritems():
-            fresh[key] = value
+            fresh[key] = deepcopy(value, memo)
 
         return fresh
 

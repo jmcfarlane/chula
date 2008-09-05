@@ -125,6 +125,17 @@ class BaseEnv(collection.RestrictedCollection):
         self.form_post = collection.UNSET
         self.status = 200
 
+    def __deepcopy__(self, memo={}):
+        """
+        Return a fresh copy of a Collection object or subclass object
+        """
+        
+        fresh = BaseEnv()
+        for key, value in self.iteritems():
+            fresh[key] = deepcopy(value, memo)
+
+        return fresh
+
     def _ajax_uri(self):
         protocol_type = re.match(r'(HTTPS?)', self.SERVER_PROTOCOL)
         if not protocol_type is None:

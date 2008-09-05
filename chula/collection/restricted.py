@@ -4,6 +4,8 @@ This class is useful for situations where you you need to enforce
 every instance of the collection has the exact same structure.
 """
 
+from copy import deepcopy
+
 from chula import error
 from chula.collection import base
 
@@ -14,8 +16,8 @@ class RestrictedCollection(base.Collection):
     Collection class with a pre-determined set of validkeys attributes
     """
 
-    def __init__(self):
-        super(RestrictedCollection, self).__init__()
+    def __init__(self, initial={}):
+        super(RestrictedCollection, self).__init__(initial)
         self.__dict__['privatekeys'] = self.__privatekeys__()
         self.__dict__['validkeys'] = self.__validkeys__()
         self.__defaults__()
@@ -24,6 +26,17 @@ class RestrictedCollection(base.Collection):
         for key in self.__dict__['validkeys']:
             if not key in self:
                 raise error.RestrictecCollectionMissingDefaultAttrError(key)
+
+    def __deepcopy__(self, memo={}):
+        """
+        Return a fresh copy of a Collection object or subclass object
+        """
+        
+        fresh = RestrictedCollection()
+        for key, value in self.iteritems():
+            fresh[key] = deepcopy(value, memo)
+
+        return fresh
 
     def __privatekeys__(self):
         return (())
