@@ -150,12 +150,18 @@ class BaseEnv(collection.RestrictedCollection):
         for key in self.form_get.keys():
             if len(self.form_get[key]) == 1:
                 self.form_get[key] = self.form_get[key][0]
+            else:
+                self.form_get[key] = self.form_get[key]
+                
 
         # Create an object to hold only HTTP POST variables
         self.form_post = {}
         for key in passed.keys():
             if not key in self.form_get:
-                self.form_post[key] = passed[key].value
+                if isinstance(passed[key], list):
+                    self.form_post[key] = passed[key]
+                else:
+                    self.form_post[key] = passed[key].value
 
         # Make sure the form object contains both while taking
         # precedence over POST when overlap exists
