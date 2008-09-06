@@ -22,6 +22,7 @@ class CookieCollection(SimpleCookie):
         self.timeout = timeout
         self.path = path
         self.key = key
+        self.domain = None
 
     def headers(self):
         timeout = self.timeout * 60
@@ -33,8 +34,9 @@ class CookieCollection(SimpleCookie):
             value = self.get(key).value
             parts.append('%s=%s;' % (key, value))
 
+        parts.append('expires=%s;' % expires)
         parts.append('path=%s;' % self.path)
-        parts.append('expires %s;' % expires)
+        parts.append('domain=%s;' % self.domain)
 
         return ('Set-Cookie', ' '.join(parts))
 
