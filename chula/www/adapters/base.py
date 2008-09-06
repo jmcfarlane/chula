@@ -58,32 +58,23 @@ class BaseAdapter(object):
                 for node in ('</html>', '</HTML>'):
                     if end == node:
                         cost = (time.time() - self.timer) * 1000
-                        try:
-                            yield html.replace(node, """
-                                <div style="display:none;">
-                                    <div id="CHULA_ADAPTER">%s</div>
-                                    <div id="CHULA_SERVER">%s</div>
-                                    <div id="CHULA_VERSION">%s</div>
-                                    <div id="CHULA_COST">%f ms</div>
-                                </div>
-                                """ % (self.controller.env.chula_adapter,
-                                       self.controller.env.server_hostname,
-                                       self.controller.env.chula_version,
-                                       cost))
-                            yield node
-                            written = True
-                        except IOError:
-                            if self.config.debug:
-                                raise
-                        finally:
-                            break
+                        yield html.replace(node, """
+                            <div style="display:none;">
+                                <div id="CHULA_ADAPTER">%s</div>
+                                <div id="CHULA_SERVER">%s</div>
+                                <div id="CHULA_VERSION">%s</div>
+                                <div id="CHULA_COST">%f ms</div>
+                            </div>
+                            """ % (self.controller.env.chula_adapter,
+                                   self.controller.env.server_hostname,
+                                   self.controller.env.chula_version,
+                                   cost))
+                        yield node
+                        written = True
+                        break
 
             if not written:
-                try:
-                    yield html
-                except IOError:
-                    if self.config.debug:
-                        raise
+                yield html
         else:
             raise error.ControllerMethodReturnError()
 
