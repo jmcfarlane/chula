@@ -20,7 +20,12 @@ class Cache(object):
             if ord(char) < 33 or ord(char) == 127:
                 key.remove(char)
 
-        return ''.join(key)
+        key = ''.join(key)
+        if len(key) > memcache.SERVER_MAX_KEY_LENGTH:
+            msg = 'Key must <= %s chars' % memcache.SERVER_MAX_KEY_LENGTH
+            raise error.InvalidCacheKeyError(msg)
+        else:
+            return key
 
     def close(self):
         self.cache.disconnect_all()
