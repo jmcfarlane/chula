@@ -149,7 +149,12 @@ class BaseEnv(collection.RestrictedCollection):
             msg = 'Unsupported protocol: %s' % self.SERVER_PROTOCOL
             raise ValueError(msg)
 
-        return protocol_type.lower() + '://' + self.HTTP_HOST
+        # Prefer HTTP_HOST over SERVER_NAME per PEP333
+        domain = self.HTTP_HOST
+        if domain is None:
+            domain = self.SERVER_NAME
+
+        return protocol_type.lower() + '://' + domain
 
     def _cookie(self):
         """
