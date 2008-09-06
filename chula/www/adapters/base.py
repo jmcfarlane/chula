@@ -125,5 +125,3 @@ class BaseAdapter(object):
         controller.env.route = self.mapper.route
 
         return controller
-
-        

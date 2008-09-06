@@ -23,11 +23,15 @@ class Environment(env.BaseEnv):
         # Add environment variables not available in subprocess_env
         self.PATH_INFO = req.path_info
 
+        # Check for mod_python detecting redirects??
+        if 'REDIRECT_QUERY_STRING' in subprocess:
+            self.QUERY_STRING = subprocess.get('REDIRECT_QUERY_STRING')
+
         # If req.form exists and is of type util.FieldStorage use it,
         # else use what mod_python publisher would use.
         try:
             if isinstance(self.req.form, util.FieldStorage):
-                pass
+                self.form = self.req.form
         except:
             self.form = util.FieldStorage(req, keep_blank_values=1)
 
