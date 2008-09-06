@@ -23,11 +23,17 @@ def _handler(req, config):
     req.status = adapter.env.status
 
     # Write the data to the client
-    for chunk in chunks:
-        req.write(chunk)
+    try:
+        for chunk in chunks:
+            req.write(chunk)
+    except IOError, ex:
+        pass
 
     # All is well
-    return APACHE.OK
+    try:
+        return APACHE.OK
+    except:
+        pass
 
 def handler(fcn):
     def wrapper(req):
