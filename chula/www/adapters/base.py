@@ -63,10 +63,12 @@ class BaseAdapter(object):
                                 <div style="display:none;">
                                     <div id="CHULA_ADAPTER">%s</div>
                                     <div id="CHULA_SERVER">%s</div>
+                                    <div id="CHULA_VERSION">%s</div>
                                     <div id="CHULA_COST">%f ms</div>
                                 </div>
                                 """ % (self.controller.env.chula_adapter,
                                        self.controller.env.server_hostname,
+                                       self.controller.env.chula_version,
                                        cost))
                             yield node
                             written = True
