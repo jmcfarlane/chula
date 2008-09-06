@@ -2,9 +2,10 @@
 Chula adapter environment class
 """
 
-import cgi
 from copy import deepcopy
+import cgi
 import re
+import socket
 
 from chula import error, collection
 
@@ -47,6 +48,7 @@ class BaseEnv(collection.RestrictedCollection):
                 'SERVER_PROTOCOL',
                 'SERVER_SIGNATURE',
                 'SERVER_SOFTWARE',
+                'chula_adapter',
                 'chula_class',
                 'chula_method',
                 'chula_module',
@@ -69,6 +71,7 @@ class BaseEnv(collection.RestrictedCollection):
                 'form_post',
                 'headers',
                 'route',
+                'server_hostname',
                 'status',
                )
 
@@ -101,6 +104,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.SERVER_PROTOCOL = collection.UNSET
         self.SERVER_SIGNATURE = collection.UNSET
         self.SERVER_SOFTWARE = collection.UNSET
+        self.chula_adapter = collection.UNSET
         self.chula_class = collection.UNSET
         self.chula_method = collection.UNSET
         self.chula_module = collection.UNSET
@@ -123,6 +127,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.form = collection.UNSET
         self.form_get = collection.UNSET
         self.form_post = collection.UNSET
+        self.server_hostname = None
         self.status = 200
 
     def __deepcopy__(self, memo={}):
@@ -152,6 +157,9 @@ class BaseEnv(collection.RestrictedCollection):
         """
 
         return self.get('HTTP_COOKIE', {})
+
+    def _server_hostname(self):
+        return socket.gethostname()
 
     def _clean_http_vars(self):
         passed = deepcopy(dict(self.form))
@@ -199,6 +207,7 @@ class BaseEnv(collection.RestrictedCollection):
 
         self.HTTP_COOKIE = self._cookie()
         self.ajax_uri = self._ajax_uri()
+        self.server_hostname = self._server_hostname()
 
         # Make sure get/post variables are handled correctly
         self._clean_http_vars()

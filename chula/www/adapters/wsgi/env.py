@@ -9,6 +9,9 @@ from chula.www.adapters import env
 class Environment(env.BaseEnv):
     def __init__(self, environ):
         super(Environment, self).__init__()
+        
+        # Indicate what type of adapter this is
+        self.chula_adapter = 'wsgi'
 
         # Set the required variables from the wsgi environ object
         self.fill(environ)

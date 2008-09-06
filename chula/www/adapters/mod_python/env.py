@@ -10,6 +10,9 @@ class Environment(env.BaseEnv):
     def __init__(self, req):
         super(Environment, self).__init__()
 
+        # Indicate what type of adapter this is
+        self.chula_adapter = 'mod_python'
+
         # Fetch additional mod_python environment variables
         req.add_common_vars()
         subprocess = req.subprocess_env.copy()

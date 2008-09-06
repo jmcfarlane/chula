@@ -61,10 +61,13 @@ class BaseAdapter(object):
                         try:
                             yield html.replace(node, """
                                 <div style="display:none;">
+                                    <div id="CHULA_ADAPTER">%s</div>
                                     <div id="CHULA_SERVER">%s</div>
                                     <div id="CHULA_COST">%f ms</div>
                                 </div>
-                                """ % (self.controller.env.HTTP_HOST, cost))
+                                """ % (self.controller.env.chula_adapter,
+                                       self.controller.env.server_hostname,
+                                       cost))
                             yield node
                             written = True
                         except IOError:
