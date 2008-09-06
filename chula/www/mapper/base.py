@@ -69,14 +69,13 @@ class BaseMapper(object):
         except ImportError, ex:
             # Reconstruct the route from the route_error we
             # made earlier, and let its e404 method handle things
-            if not self.config.debug:
-                self.route = self.route_404
-                module = self.import_module()
-            else:
+            if self.config.debug:
                 msg = '%s - %s' % (path, ex)
                 msg += ' [Route being used: %s]' % self.route
                 raise error.ControllerModuleNotFoundError(msg)
-
+            else:
+                self.route = self.route_404
+                module = self.import_module()
         except Exception:
             raise
 
@@ -124,14 +123,21 @@ class BaseMapper(object):
 
         # If we still don't have a method something is very wrong
         if method is None:
-            msg = '%(class_name)s.%(method)s()' % self.route
-            msg += ' => Route: %s' % self.route
-            msg += ' => Controller: %s' % self.controller
-            raise error.ControllerMethodNotFoundError(msg)
+            if self.config.debug:
+                msg = '%(class_name)s.%(method)s()' % self.route
+                msg += ' => Route: %s' % self.route
+                msg += ' => Controller: %s' % self.controller
+                raise error.ControllerMethodNotFoundError(msg)
+            else:
+                self.route = self.route_404
+                module = self.import_module()
+                controller = getattr(module, self.route.class_name, None)
+                self.controller = controller(self.env, self.config)
+                method = getattr(self.controller, self.route.method, None)
 
         self.controller.execute = method
         self.update_env()
-    
+
     def update_env(self):
         env = self.controller.env
         env['chula_class'] = self.route.class_name
