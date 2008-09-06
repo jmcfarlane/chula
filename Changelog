@@ -6,6 +6,8 @@
         <log>Improved chula.webservice removing dependency on mod_python</log>
         <log>Improved chula.www.cookie removing dependency on mod_python</log>
         <log>Improved env to hold GET, POST (previously only a combo)</log>
+        <log>Improved support for copy.deepcopy on chula.collection</log>
+        <log>Improved error.e404 used when method resolution fails</log>
         <log>Added initial support for WSGI</log>
     </release>
     <release date="8/19/2008" version="0.0.4">
