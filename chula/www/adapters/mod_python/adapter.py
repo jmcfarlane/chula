@@ -27,7 +27,7 @@ def _handler(req, config):
         for chunk in chunks:
             req.write(chunk)
     except IOError, ex:
-        if self.config.debug:
+        if config.debug:
             raise
 
     # All is well
