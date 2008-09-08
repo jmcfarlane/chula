@@ -26,8 +26,9 @@ class CookieCollection(SimpleCookie):
 
     def headers(self):
         timeout = self.timeout * 60
-        expires = data.date_add('m', timeout, datetime.now(pytz.utc))
-        expires = expires.strftime('%a, %m-%b-%Y %H:%M:%S %Z')
+        now = datetime.now(pytz.timezone('GMT'))
+        expires = data.date_add('s', timeout, now)
+        expires = expires.strftime('%a, %d-%b-%Y %H:%M:%S %Z')
 
         parts = []
         for key in self.keys():
@@ -41,4 +42,5 @@ class CookieCollection(SimpleCookie):
         return ('Set-Cookie', ' '.join(parts))
 
     def destroy(self):
-        self.timeout = -10
+        self.timeout = -10000
+        #self['expired'] = True
