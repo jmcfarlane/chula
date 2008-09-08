@@ -82,7 +82,7 @@ class BaseAdapter(object):
         self.env.content_type = self.controller.content_type
 
         # Add the cookies to the headers
-        self.env.headers.append(self.env.cookies.headers())
+        self.env.headers.extend(self.env.cookies.headers())
 
         # Persist session and perform garbage collection
         try:

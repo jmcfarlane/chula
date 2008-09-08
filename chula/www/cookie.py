@@ -9,19 +9,17 @@ import pytz
 from chula import data
 
 class CookieCollection(SimpleCookie):
-    def __init__(self, timeout=20, path='/', key=None):
+    def __init__(self, timeout=20, path='/', input=None):
         """
-        Create a collection of cookies that share timeout and hash
-        keys
+        Create a collection of cookies
 
         @param timeout: How long the cookie should live
         @type timeout: int (Unit of measure: minutes)
         """
 
-        super(CookieCollection, self).__init__()
+        super(CookieCollection, self).__init__(input)
         self.timeout = timeout
         self.path = path
-        self.key = key
         self.domain = None
 
     def headers(self):
@@ -30,16 +28,20 @@ class CookieCollection(SimpleCookie):
         expires = data.date_add('s', timeout, now)
         expires = expires.strftime('%a, %d-%b-%Y %H:%M:%S %Z')
 
-        parts = []
-        for key in self.keys():
-            value = self.get(key).value
-            parts.append('%s=%s;' % (key, value))
+        cookies = []
+        for key, cookie in self.iteritems():
+            # Don't write out cookies that are prefixed with underbars
+            # as they are considered private. This also has the side
+            # effect of not writing out Urchin cookies like crazy :)
+            if not key.startswith('_'):
+                header = []
+                header.append('%s=%s' % (key, cookie.value))
+                header.append('expires=%s' % expires)
+                header.append('path=%s' % self.path)
+                header.append('domain=%s' % self.domain)
+                cookies.append(('Set-Cookie', '; '.join(header)))
 
-        parts.append('expires=%s;' % expires)
-        parts.append('path=%s;' % self.path)
-        parts.append('domain=%s;' % self.domain)
-
-        return ('Set-Cookie', ' '.join(parts))
+        return cookies
 
     def destroy(self):
         self.timeout = -10000
