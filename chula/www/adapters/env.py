@@ -132,14 +132,10 @@ class BaseEnv(collection.RestrictedCollection):
 
     def __deepcopy__(self, memo={}):
         """
-        Return a fresh copy of a Collection object or subclass object
+        Return a copy of a BaseEnv object
         """
-        
-        fresh = BaseEnv()
-        for key, value in self.iteritems():
-            fresh[key] = deepcopy(value, memo)
 
-        return fresh
+        return self.copy_into(BaseEnv())
 
     def _ajax_uri(self):
         protocol_type = re.match(r'(HTTPS?)', self.SERVER_PROTOCOL)

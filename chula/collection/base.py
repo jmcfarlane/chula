@@ -20,14 +20,24 @@ class Collection(dict):
 
     def __deepcopy__(self, memo={}):
         """
-        Return a fresh copy of a Collection object or subclass object
+        Return a fresh copy of a Collection object
         """
         
-        fresh = Collection()
-        for key, value in self.iteritems():
-            fresh[key] = deepcopy(value, memo)
+        return self.copy_into(self.__class__())
 
-        return fresh
+    def copy_into(self, collection):
+        """
+        Copy the current object into the object passed
+
+        @param collection: Object to be copied into
+        @type collection: chula.collection.Collection
+        @return: chula.collection.Collection (filled copy)
+        """
+
+        for key, value in self.iteritems():
+            collection[key] = deepcopy(value)
+
+        return collection
 
     def __getattr__(self, key):
         """
