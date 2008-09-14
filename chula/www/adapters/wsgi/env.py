@@ -16,6 +16,10 @@ class Environment(env.BaseEnv):
         # Set the required variables from the wsgi environ object
         self.fill(environ)
 
+        # Check for redirects and recover the querystring
+        if 'REDIRECT_QUERY_STRING' in environ:
+            self.QUERY_STRING = environ.get('REDIRECT_QUERY_STRING')
+
         # Set http get or post variables
         self.form = FieldStorage(fp=self.wsgi_input,
                                  environ=environ,

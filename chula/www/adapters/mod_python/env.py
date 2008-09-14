@@ -23,7 +23,7 @@ class Environment(env.BaseEnv):
         # Add environment variables not available in subprocess_env
         self.PATH_INFO = req.path_info
 
-        # Check for mod_python detecting redirects??
+        # Check for redirects and recover the querystring
         if 'REDIRECT_QUERY_STRING' in subprocess:
             self.QUERY_STRING = subprocess.get('REDIRECT_QUERY_STRING')
 
