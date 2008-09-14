@@ -27,22 +27,19 @@ class BaseAdapter(object):
         try:
             html = self.controller.execute()
         except Exception, ex:
-            if self.config.debug:
-                raise
-            else:
-                # Prepare a collection to hold exception context
-                context = collection.Collection()
-                context.exception = ex
-                context.env = deepcopy(self.controller.env)
-                context.form = deepcopy(self.controller.form)
+            # Prepare a collection to hold exception context
+            context = collection.Collection()
+            context.exception = ex
+            context.env = deepcopy(self.controller.env)
+            context.form = deepcopy(self.controller.form)
 
-                # Try the error controller (and set an exception
-                # attribute in the model)
-                self.controller = self.mapper.map(500)
-                self.controller.model.exception = context
+            # Try the error controller (and set an exception
+            # attribute in the model)
+            self.controller = self.mapper.map(500)
+            self.controller.model.exception = context
 
-                # Don't yield yet, need to replace to add chula stuff
-                html = self.controller.execute()
+            # Don't yield yet, need to replace to add chula stuff
+            html = self.controller.execute()
 
         # Write the returned html to the request object.
         # We're manually casting the view as a string because Cheetah

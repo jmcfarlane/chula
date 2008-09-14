@@ -67,15 +67,16 @@ class BaseMapper(object):
         try:
             module = __import__(path, globals(), locals(), [class_name])
         except ImportError, ex:
+            #TODO: Log this:
+            #msg = '%s - %s' % (path, ex)
+            #msg += ' [Route being used: %s]' % self.route
+            #raise error.ControllerModuleNotFoundError(msg)
+
             # Reconstruct the route from the route_error we
             # made earlier, and let its e404 method handle things
-            if self.config.debug:
-                msg = '%s - %s' % (path, ex)
-                msg += ' [Route being used: %s]' % self.route
-                raise error.ControllerModuleNotFoundError(msg)
-            else:
-                self.route = self.route_404
-                module = self.import_module()
+            self.route = self.route_404
+            module = self.import_module()
+
         except Exception:
             raise
 
@@ -123,17 +124,17 @@ class BaseMapper(object):
 
         # If we still don't have a method something is very wrong
         if method is None:
-            if self.config.debug:
-                msg = '%(class_name)s.%(method)s()' % self.route
-                msg += ' => Route: %s' % self.route
-                msg += ' => Controller: %s' % self.controller
-                raise error.ControllerMethodNotFoundError(msg)
-            else:
-                self.route = self.route_404
-                module = self.import_module()
-                controller = getattr(module, self.route.class_name, None)
-                self.controller = controller(self.env, self.config)
-                method = getattr(self.controller, self.route.method, None)
+            # TODO: Log this:
+            #msg = '%(class_name)s.%(method)s()' % self.route
+            #msg += ' => Route: %s' % self.route
+            #msg += ' => Controller: %s' % self.controller
+            #raise error.ControllerMethodNotFoundError(msg)
+
+            self.route = self.route_404
+            module = self.import_module()
+            controller = getattr(module, self.route.class_name, None)
+            self.controller = controller(self.env, self.config)
+            method = getattr(self.controller, self.route.method, None)
 
         self.controller.execute = method
         self.update_env()
