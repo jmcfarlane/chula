@@ -8,6 +8,11 @@
         <log>Improved env to hold GET, POST (previously only a combo)</log>
         <log>Improved support for copy.deepcopy on chula.collection</log>
         <log>Improved error.e404 used when method resolution fails</log>
+        <log>
+            Changed behavior to always call the error controller on
+            error.  This is slightly more inconvienent, but it forces
+            you to give your error handling code path(s) more mileage.
+        </log>
         <log>Added initial support for WSGI</log>
     </release>
     <release date="8/19/2008" version="0.0.4">
