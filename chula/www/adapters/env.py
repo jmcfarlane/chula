@@ -73,6 +73,7 @@ class BaseEnv(collection.RestrictedCollection):
                 'route',
                 'server_hostname',
                 'status',
+                'under_construction'
                )
 
     def __defaults__(self):
@@ -129,6 +130,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.form_post = collection.UNSET
         self.server_hostname = None
         self.status = 200
+        self.under_construction = False
 
     def __deepcopy__(self, memo={}):
         """

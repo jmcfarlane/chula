@@ -12,6 +12,7 @@ class StandardMapper(base.BaseMapper):
         if not self.construction.trigger is None:
             if os.path.exists(self.construction.trigger):
                 self.route.update(self.construction.route)
+                self.env.under_construction = True
                 return str(self)
         
         # Parse the uri (excluding the querystring)

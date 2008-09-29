@@ -120,7 +120,7 @@ class Session(dict):
             self.connect_db()
             self._cursor.execute(sql)
             self._record = self._cursor.fetchone()
-        except self._conn.error.OperationalError, ex:
+        except: #self._conn.error.OperationalError, ex:
             return {'SESSION-ERROR':'DATABASE UNAVAILABLE!'}
 
         if self._record is None:

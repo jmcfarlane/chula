@@ -81,18 +81,23 @@ class BaseAdapter(object):
         # Add the cookies to the headers
         self.env.headers.extend(self.env.cookies.headers())
 
-        # Persist session and perform garbage collection
-        try:
-            self.controller._pre_session_persist()
-            self.controller.session.persist()
-        except error.SessionUnableToPersistError():
-            # Need to assign an error controller method to call here
-            raise
-        except Exception:
-            # This is a downstream exception, let them handle it
-            raise
-        finally:
-            self.controller._gc()
+        # If this is an under construction page do not try to persist
+        # session, avoid as many dependencies as possible
+        if self.env.under_construction:
+            self.env.status = 503
+        else:
+            # Persist session and perform garbage collection
+            try:
+                self.controller._pre_session_persist()
+                self.controller.session.persist()
+            except error.SessionUnableToPersistError():
+                # Need to assign an error controller method to call here
+                raise
+            except Exception:
+                # This is a downstream exception, let them handle it
+                raise
+            finally:
+                self.controller._gc()
 
     def timer_start(self):
         if self.config.add_timer:
