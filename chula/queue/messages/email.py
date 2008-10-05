@@ -47,14 +47,15 @@ class Contract(collection.RestrictedCollection):
 
         return ('body',
                 'from_addy',
+                'reply_to_addy',
                 'smtp',
                 'subject',
                 'to_addy')
 
-
     def __defaults__(self):
         self.body = collection.UNSET
         self.from_addy = collection.UNSET
+        self.reply_to_addy = None
         self.smtp = collection.UNSET
         self.subject = collection.UNSET
         self.to_addy = collection.UNSET
