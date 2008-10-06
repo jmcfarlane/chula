@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
-    <release date="" version="0.0.5">
+    <release date="" version="0.0.5_alpha_06">
         <log>Improved chula.collection adding an add() method</log>
         <log>Improved chula.webservice removing dependency on mod_python</log>
         <log>Improved chula.www.cookie removing dependency on mod_python</log>
         <log>Improved env to hold GET, POST (previously only a combo)</log>
         <log>Improved support for copy.deepcopy on chula.collection</log>
         <log>Improved error.e404 used when method resolution fails</log>
+        <log>Improved "under construction" flow by removing dependency
+             on session
+        </log>
         <log>
             Changed behavior to always call the error controller on
-            error.  This is slightly more inconvienent, but it forces
-            you to give your error handling code path(s) more mileage.
+            exception.  This is slightly less convienent, but encourages
+            better testing of error handling code paths for apps using
+            Chula.
         </log>
         <log>Added initial support for WSGI</log>
     </release>
@@ -29,35 +33,30 @@
         <log>Added chula.system</log>
         <log>Added support for an "under construction" controller</log>
         <log>Added support for sqlite to chula.db.datastore</log>
-        <log>
-            Added tcp based message queue (<i>working, but very much
-            not ready to be used</i>)
+        <log>Added tcp based message queue (<i>working, but very much
+             not ready to be used</i>)
         </log>
     </release>
 
     <release date="6/15/2008" version="0.0.3">
-        <log>
-            Add module for working with caching services, currently
-            only Memcache is supported.
+        <log>Add module for working with caching services, currently
+             only Memcache is supported.
         </log>
-        <log>
-            Add support for controllers inside of packages, previously
-            only a single namespace was supported.
-            <br/>
-            <i>Note that this
-            feature is probably going to be moved into a FileMapper so
-            the StandardMapper can move to more of a map based
-            model.</i>
+        <log>Add support for controllers inside of packages, previously
+             only a single namespace was supported.
+             <br/>
+             <i>Note that this
+             feature is probably going to be moved into a FileMapper so
+             the StandardMapper can move to more of a map based
+             model.</i>
         </log>
-        <log>
-            Add render method to pager.Pager for those that want to
-            subclass the output.  The base method simply returns the
-            pager unmodified.
+        <log>Add render method to pager.Pager for those that want to
+             subclass the output.  The base method simply returns the
+             pager unmodified.
         </log>
-        <log>
-            Remove "danger" logic from db.py as it's best left up to
-            the consumer to handle that type of logic.  It was poorly
-            implemented anyway  :)
+        <log>Remove "danger" logic from db.py as it's best left up to
+             the consumer to handle that type of logic.  It was poorly
+             implemented anyway  :)
         </log>
     </release>
 
@@ -67,10 +66,9 @@
 		<log>Fixed defect where request_uri of: "/?" was loading e404</log>
         <log>Fixed defect where session not deleted on logout</log>
 		<log>More gracefully handle clients lacking cookie support</log>
-        <log>
-            Allow the controller to have direct access to the cookie
-            object.  This provides access to it's destroy() method, useful
-            for logout pages.
+        <log>Allow the controller to have direct access to the cookie
+             object.  This provides access to it's destroy() method, useful
+             for logout pages.
         </log>
         <log>Tweaks to improve support for static content</log>
         <log>Improve reliability/accuracy of session</log>
