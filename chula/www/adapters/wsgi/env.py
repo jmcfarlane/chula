@@ -20,6 +20,12 @@ class Environment(env.BaseEnv):
         if 'REDIRECT_QUERY_STRING' in environ:
             self.QUERY_STRING = environ.get('REDIRECT_QUERY_STRING')
 
+        # Make sure REQUEST_URI is set
+        if not 'REQUEST_URI' in environ:
+            parts = []
+            parts.append(environ.get('PATH_INFO', ''))
+            self.REQUEST_URI = ''.join(parts)
+
         # Set http get or post variables
         self.form = FieldStorage(fp=self.wsgi_input,
                                  environ=environ,

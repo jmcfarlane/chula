@@ -74,6 +74,7 @@ class BaseMapper(object):
 
             # Reconstruct the route from the route_error we
             # made earlier, and let its e404 method handle things
+            # TODO: Make sure we can't recurse forever here
             self.route = self.route_404
             module = self.import_module()
 
