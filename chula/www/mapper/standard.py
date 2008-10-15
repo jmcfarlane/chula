@@ -13,6 +13,11 @@ class StandardMapper(base.BaseMapper):
             if os.path.exists(self.construction.trigger):
                 self.route.update(self.construction.route)
                 self.env.under_construction = True
+
+                # TODO: Fix defect that occurs when an exception is
+                # raised when trying to import the under construction
+                # controller, as what happens is the e404 gets used
+                # and it should use e500
                 return str(self)
         
         # Parse the uri (excluding the querystring)

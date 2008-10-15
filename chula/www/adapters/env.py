@@ -8,6 +8,7 @@ import re
 import socket
 
 from chula import error, collection
+from chula.www import http
 
 class BaseEnv(collection.RestrictedCollection):
     """
@@ -129,7 +130,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.form_get = collection.UNSET
         self.form_post = collection.UNSET
         self.server_hostname = None
-        self.status = 200
+        self.status = http.HTTP_OK
         self.under_construction = False
 
     def __deepcopy__(self, memo={}):
