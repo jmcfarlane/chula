@@ -162,6 +162,21 @@ class BaseEnv(collection.RestrictedCollection):
 
         return self.get('HTTP_COOKIE', {})
 
+    def _downcast_cgi_vars(self):
+        """
+        When mod_python.util.FieldStorage or cgi.FieldStorage
+        encounter array types (think html checkboxes) it winds up
+        being a Field() or MiniFieldStorage() object for mod_python or
+        cgi respectively.  Both are intended to be accessed via a
+        "value" attribute.  This method casts these objects so the
+        actual value is held and thus can be referenced directly.
+        """
+
+        for key in self.form.keys():
+            if isinstance(self.form[key], list):
+                for i in xrange(len(self.form[key])):
+                    self.form[key][i] = self.form[key][i].value
+
     def _server_hostname(self):
         return socket.gethostname()
 
@@ -176,7 +191,6 @@ class BaseEnv(collection.RestrictedCollection):
             else:
                 self.form_get[key] = self.form_get[key]
                 
-
         # Create an object to hold only HTTP POST variables
         self.form_post = {}
         for key in passed.keys():
@@ -215,3 +229,4 @@ class BaseEnv(collection.RestrictedCollection):
 
         # Make sure get/post variables are handled correctly
         self._clean_http_vars()
+        self._downcast_cgi_vars()
