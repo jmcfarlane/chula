@@ -20,6 +20,7 @@ EMAIL = (r'^[a-z0-9_\-]+(\.[_a-z0-9\-]+)*'
          r'|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil'
          r'|museum|name|nato|net|org|pro|travel)$')
 
-SINGLETAG = r'[a-zA-Z0-9-_]+'
-TAG  = r'^%s$' % SINGLETAG
-TAGS = r'^%s((, ?| )+%s)*$' % (SINGLETAG, SINGLETAG)
+TAG_CHARS = r'a-zA-Z0-9-_'
+TAG_MATCH = r'[%s]+' % TAG_CHARS
+TAG  = r'^%s$' % TAG_MATCH
+TAGS = r'^%s((, ?| )+%s)*$' % (TAG_MATCH, TAG_MATCH)
