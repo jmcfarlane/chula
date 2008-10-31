@@ -2,7 +2,9 @@
 Chula message queue
 """
 
+import cPickle
 import os
+import shutil
 
 from chula import collection
 from chula.queue.messages import message
@@ -22,13 +24,14 @@ class MessageQueue(object):
         self.msg_result_store = collection.UboundCollection(1024)
 
         # Make sure the db dir exists, creating it if necessary
-        try:
-            os.makedirs(self.msg_store)
-        except OSError, er:
-            if str(er).startswith('[Errno 17] File exists'):
-                pass
-            else:
-                raise
+        for directory in ['', 'processed', 'failures']:
+            try:
+                os.makedirs(os.path.join(self.msg_store, directory))
+            except OSError, er:
+                if str(er).startswith('[Errno 17] File exists'):
+                    pass
+                else:
+                    raise
 
     def add(self, msg):
         self.persist(msg)
@@ -69,9 +72,19 @@ class MessageQueue(object):
 
         return msg
 
-    def purge(self, msg):
+    def purge(self, msg, ex=None):
+        if ex is None:
+            folder = 'processed'
+        else:
+            folder = 'failures'
+            elog = os.path.join(self.msg_store, folder, msg.name + '.cpickle')
+            elog = open(elog, 'w')
+            cPickle.dump(ex, elog)
+            elog.close()
         try:
-            os.remove(self.msg_path(msg.name + '.inprocess'))
-        except OSError, er:
-            msg = 'The messagage was not marked as being processed'
+            fpath = self.msg_path(msg.name + '.inprocess')
+            dest = os.path.join(self.msg_store, folder, msg.name)
+            shutil.move(fpath, dest)
+        except IOError, er:
+            msg = 'The message was not marked as being processed'
             raise message.CannotPurgeUnprocessedError(msg)

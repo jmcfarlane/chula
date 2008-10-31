@@ -28,9 +28,13 @@ class MessageQueueServer(object):
         self.thread_max = self.system.procs + 1
 
     def consumer(self, msg):
-        result = msg.process()
-        self.queue.persist_result(msg, result)
-        self.queue.purge(msg)
+        try:
+            result = msg.process()
+            self.queue.persist_result(msg, result)
+            self.queue.purge(msg)
+        except Exception, ex:
+            self.queue.purge(msg, ex)
+
         self.log('%s was processed' % msg.name)
         if self.debug:
             print ' >>> %s processed by: %s' % (msg.name, thread.get_ident())
