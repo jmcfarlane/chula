@@ -30,8 +30,8 @@ class Message(message.Message):
         try:
             email.send()
             return 'Mail Sent'
-        except Exception, er:
-            return er
+        except:
+            raise
 
     def validate(self):
         for key, value in self.message.iteritems():

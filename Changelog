@@ -11,6 +11,9 @@
         <log>Improved "under construction" flow by removing dependency
              on session
         </log>
+        <log>Improved chula.queue to keep processed/failed
+             messages for later review
+        </log>
         <log>
             Changed behavior to always call the error controller on
             exception.  This is slightly less convienent, but encourages
