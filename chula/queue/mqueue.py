@@ -37,10 +37,11 @@ class MessageQueue(object):
         self.persist(msg)
         self.persist_result(msg, None)
 
-    def fetch_msg_store_iter(self, suffix='.msg'):
-        for f in os.listdir(self.msg_store):
+    def fetch_msg_store_iter(self, subdir='', suffix='.msg'):
+        directory = os.path.join(self.msg_store, subdir)
+        for f in os.listdir(directory):
             if f.endswith(suffix):
-                yield self.msg_path(f)
+                yield os.path.join(directory, f)
 
     def fetch(self, name):
         return self.msg_result_store.get(name, None)
