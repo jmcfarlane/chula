@@ -92,6 +92,8 @@ class BaseMapper(object):
         if status is None:
             self.default_route()
             self.parse()
+        elif status == 404:
+            self.route = self.route_404
         elif status == 500:
             self.route.module = self.config.error_controller
             self.route.method = 'e500'
@@ -102,9 +104,10 @@ class BaseMapper(object):
         # Instantiate the controller class from the module
         controller = getattr(module, self.route.class_name, None)
 
+        # If no controller found, raise exception
         if controller is None:
-            msg = '%(module)s.%(class_name)s' % self.route
-            msg += ' => Route: %s' % self.route
+            msg = '%(package)s.%(module)s.%(class_name)s' % self.route
+            msg += ' [Using Route: %s]' % self.route
             raise error.ControllerClassNotFoundError(msg)
         
         self.controller = controller(self.env, self.config)

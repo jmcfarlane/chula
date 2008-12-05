@@ -128,7 +128,13 @@ class BaseAdapter(object):
 
     def fetch_controller(self):
         self.mapper = StandardMapper(self.config, self.env)
-        controller = self.mapper.map()
+
+        # Load the controller, using e404 if not found
+        try:
+            controller = self.mapper.map()
+        except error.ControllerClassNotFoundError:
+            controller = self.mapper.map(404)
+
         controller.env.route = self.mapper.route
 
         return controller
