@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
-    <release date="" version="0.0.5_alpha_07">
+    <release date="12/11/2008" version="0.0.5">
         <log>Improved chula.collection adding an add() method</log>
         <log>Improved chula.webservice removing dependency on mod_python</log>
         <log>Improved chula.www.cookie removing dependency on mod_python</log>
@@ -19,6 +19,10 @@
             exception.  This is slightly less convienent, but encourages
             better testing of error handling code paths for apps using
             Chula.
+        </log>
+        <log>
+            Changed behavior to call e404 when the controller
+            requested isn't found
         </log>
         <log>Added initial support for WSGI</log>
         <log>Added initial suport for the Python simple_server</log>
