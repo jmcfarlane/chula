@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
+    <release date="" version="0.0.6">
+        <log>
+            Fixed defect where error controller not found when using
+            controller packages
+        </log>
+        <log>Improved the timer to not break xhtml compliance</log>
+    </release>
+
     <release date="12/11/2008" version="0.0.5">
         <log>Improved chula.collection adding an add() method</log>
         <log>Improved chula.webservice removing dependency on mod_python</log>

@@ -95,6 +95,7 @@ class BaseMapper(object):
         elif status == 404:
             self.route = self.route_404
         elif status == 500:
+            self.route.package = self.config.classpath
             self.route.module = self.config.error_controller
             self.route.method = 'e500'
 

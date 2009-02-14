@@ -2,13 +2,16 @@
 Chula base adapter for all supported web adapters
 """
 
-import time
 from copy import deepcopy
+import re
+import time
 
 import chula
 from chula import collection, error, guid
 from chula.www import cookie
 from chula.www.mapper.standard import StandardMapper
+
+RE_HTML = re.compile(r"</body>\s*</html>\s*$", re.IGNORECASE)
 
 class BaseAdapter(object):
     def __init__(self, config):
@@ -51,24 +54,20 @@ class BaseAdapter(object):
 
             # Add info about server info and processing time
             if self.config.add_timer:
-                end = html[-8:].strip()
-                for node in ('</html>', '</HTML>'):
-                    if end == node:
-                        cost = (time.time() - self.timer) * 1000
-                        yield html.replace(node, """
-                            <div style="display:none;">
-                                <div id="CHULA_ADAPTER">%s</div>
-                                <div id="CHULA_SERVER">%s</div>
-                                <div id="CHULA_VERSION">%s</div>
-                                <div id="CHULA_COST">%f ms</div>
-                            </div>
-                            """ % (self.controller.env.chula_adapter,
-                                   self.controller.env.server_hostname,
-                                   self.controller.env.chula_version,
-                                   cost))
-                        yield node
-                        written = True
-                        break
+                timer = """
+                    <div style="display:none;">
+                        <div id="CHULA_ADAPTER">%s</div>
+                        <div id="CHULA_SERVER">%s</div>
+                        <div id="CHULA_VERSION">%s</div>
+                        <div id="CHULA_COST">%f ms</div>
+                    </div></body></html>
+                    """ % (self.controller.env.chula_adapter,
+                           self.controller.env.server_hostname,
+                           self.controller.env.chula_version,
+                           (time.time() - self.timer) * 1000)
+
+                yield RE_HTML.sub(timer, html)
+                written = True
 
             if not written:
                 yield html
