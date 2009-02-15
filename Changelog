@@ -2,6 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.0.6">
+        <log>Added support for FasgCGI</log>
         <log>
             Fixed defect where error controller not found when using
             controller packages
