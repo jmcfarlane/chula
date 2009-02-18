@@ -6,12 +6,14 @@ from cgi import FieldStorage
 
 from chula.www.adapters import env
 
+WSGI = 'WSGI'
+
 class Environment(env.BaseEnv):
     def __init__(self, environ):
         super(Environment, self).__init__()
         
         # Indicate what type of adapter this is
-        self.chula_adapter = 'wsgi'
+        self.chula_adapter = WSGI
 
         # Set the required variables from the wsgi environ object
         self.fill(environ)
@@ -25,6 +27,15 @@ class Environment(env.BaseEnv):
             parts = []
             parts.append(environ.get('PATH_INFO', ''))
             self.REQUEST_URI = ''.join(parts)
+
+        # Be nice to the Python wsiref simple_server
+        if self.SERVER_SOFTWARE.startswith('WSGIServer/0.1 Python'):
+            self.DOCUMENT_ROOT = None
+            self.REMOTE_PORT = None
+            self.SCRIPT_FILENAME = None
+            self.SERVER_ADDR = None
+            self.SERVER_ADMIN = None
+            self.SERVER_SIGNATURE = None
 
         # Set http get or post variables
         self.form = FieldStorage(fp=self.wsgi_input,

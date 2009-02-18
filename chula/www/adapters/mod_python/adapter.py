@@ -7,7 +7,7 @@ from mod_python import apache as APACHE
 from chula.www.adapters import base
 from chula.www.adapters.mod_python import env
 
-def _handler(req, config):
+def configured_handler(req, config):
     adapter = base.BaseAdapter(config)
     adapter.set_environment(env.Environment(req))
 
@@ -39,6 +39,6 @@ def _handler(req, config):
 def handler(fcn):
     def wrapper(req):
         config = fcn()
-        return _handler(req, config)
+        return configured_handler(req, config)
 
     return wrapper

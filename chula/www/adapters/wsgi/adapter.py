@@ -5,7 +5,7 @@ Chula wsgi adapter
 from chula.www.adapters import base
 from chula.www.adapters.wsgi import env
 
-def _application(environ, start_response, config):
+def configured_app(environ, start_response, config):
     adapter = base.BaseAdapter(config)
     adapter.set_environment(env.Environment(environ))
 
@@ -25,6 +25,6 @@ def _application(environ, start_response, config):
 def wsgi(fcn):
     def wrapper(environ, start_response):
         config = fcn()
-        return _application(environ, start_response, config)
+        return configured_app(environ, start_response, config)
 
     return wrapper

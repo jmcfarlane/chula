@@ -6,12 +6,14 @@ from mod_python import util
 
 from chula.www.adapters import env
 
+MOD_PYTHON = 'MOD_PYTHON'
+
 class Environment(env.BaseEnv):
     def __init__(self, req):
         super(Environment, self).__init__()
 
         # Indicate what type of adapter this is
-        self.chula_adapter = 'mod_python'
+        self.chula_adapter = MOD_PYTHON
 
         # Fetch additional mod_python environment variables
         req.add_common_vars()
