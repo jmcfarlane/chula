@@ -93,7 +93,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.PATH_INFO = ''
         self.QUERY_STRING = ''
         self.REMOTE_ADDR = collection.UNSET
-        self.REMOTE_HOST = collection.UNSET
+        self.REMOTE_HOST = None
         self.REMOTE_PORT = collection.UNSET
         self.REQUEST_METHOD = collection.UNSET
         self.REQUEST_URI = collection.UNSET
