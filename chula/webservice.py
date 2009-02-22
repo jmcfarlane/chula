@@ -55,3 +55,22 @@ class JSON(Transport):
         self.env.headers.append(('X-JSON', json.encode(self.strip())))
 
         return '<X-JSON Object>'
+
+class ASCII(Transport):
+    """
+    Webservice that uses ascii as the transport layer
+    """
+
+    def encode(self):
+        """
+        Encode the transport into an acii string
+        """
+        
+        self.env.content_type = 'text/plain'
+
+        # With ascii we don't have any structure, so either return the
+        # data or an exception if caught
+        if not self.exception is None:
+            return str(self.exception)
+        else:
+            return str(self.data)
