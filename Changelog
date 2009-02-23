@@ -4,6 +4,7 @@
     <release date="" version="0.0.6">
         <log>Added support for FasgCGI</log>
         <log>Added an ASCII transport to chula.webservice</log>
+        <log>Added a webservice decorator: chula.webservice.expose</log>
         <log>
             Fixed defect where error controller not found when using
             controller packages
