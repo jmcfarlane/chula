@@ -118,16 +118,23 @@ def expose(**kwargs):
     Decorator for exposing a method as a web service.  It takes a list
     of keyword arguments which are passed to the webservice encoding()
     method for use with making decisions.  For example:
-    @webservice.handler(x_header=False) will cause services using JSON
-    as a transport to include the payload in the actual body, rather
-    than using the X-JSON HTTP header.  You can also set these via
-    HTTP GET arguments. See chula.webservice.Transport.__fetch_arg__()
-    for more information.
+
+        @webservice.expose(x_header=False)
+        def foo(self):
+            pass
+    
+    will cause services using JSON as a transport to include the
+    payload in the actual body, rather than using the X-JSON HTTP
+    header.  You can also set these via HTTP GET arguments. See
+    chula.webservice.Transport.__fetch_arg__() for more information.
     """
 
     def decorator(fcn): 
         def wrapper(self):
-            transport = self.form.get('transport').upper()
+            # Fetch the requested transport
+            transport = self.form.get('transport', '').upper()
+
+            # Reference the actual transport object, JSON is default
             ws = getattr(Transports, transport, JSON)(self)
 
             try:
