@@ -1,11 +1,12 @@
 import unittest
-import doctest
 
 from chula import config
 from chula.www.adapters.mod_python import fakerequest
 from chula.www.mapper import standard
 
 class Test_standard(unittest.TestCase):
+    doctest = standard
+
     def setUp(self):
         req = fakerequest.FakeRequest()
         cfg = config.Config()
@@ -47,16 +48,3 @@ class Test_standard(unittest.TestCase):
         self.assertEquals('module', self.mapper.route.module)
         self.assertEquals('Module', self.mapper.route.class_name)
         self.assertEquals('method', self.mapper.route.method)
-
-def run_unittest():
-    # Never change this, leave as is
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_standard)
-    tests.addTest(doctest.DocTestSuite(standard))
-    return tests
-
-if __name__ == '__main__':
-    # Never change this, leave as is
-    run_unittest()

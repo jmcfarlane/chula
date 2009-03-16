@@ -1,11 +1,12 @@
 import unittest
-import doctest
 
 from chula import collection
 from chula.collection import ubound
 from chula.error import *
 
 class Test_ubound_collection(unittest.TestCase):
+    doctest = ubound
+
     def _fetch_by_key(self, key):
         return self.collection[key]
 
@@ -39,17 +40,3 @@ class Test_ubound_collection(unittest.TestCase):
         
         self.assertEquals(5, len(self.collection))
         self.assertRaises(KeyError, self._fetch_by_key, 'a')
-
-def run_unittest():
-    # Never change this, leave as is
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    # Replace "example" with the name of your test class and module name
-    tests = unittest.makeSuite(Test_ubound_collection)
-    tests.addTest(doctest.DocTestSuite(ubound))
-    return tests
-
-if __name__ == '__main__':
-    # Never change this, leave as is
-    run_unittest()

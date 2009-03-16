@@ -1,8 +1,9 @@
 import unittest
-import doctest
 from chula import pager
 
 class Test_pager(unittest.TestCase):
+    doctest = pager
+
     def callable(self, a, b, c, d):
         page = pager.Pager(a, b, c, d)
 
@@ -94,14 +95,3 @@ class Test_pager(unittest.TestCase):
         self.assertEquals(True, self.is_well_formed(p, 2))
         self.assertEquals(0, p[0]['offset'])
         self.assertEquals(10, p[-1]['offset'])
-    
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_pager)
-    tests.addTest(doctest.DocTestSuite(pager))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

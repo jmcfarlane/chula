@@ -1,11 +1,12 @@
 import unittest
-import doctest
 import copy
 
 from chula import collection
 from chula.collection import base
 
 class Test_base_collection(unittest.TestCase):
+    doctest = base
+
     def _get(self, key):
         return self.col[key]
 
@@ -92,14 +93,3 @@ class Test_base_collection(unittest.TestCase):
         self.assertEquals(freshcopy.location, 'bar')
         self.assertEquals(freshcopy.age, 25)
         self.assertEquals(True, isinstance(freshcopy, collection.Collection))
-
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_base_collection)
-    tests.addTest(doctest.DocTestSuite(base))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

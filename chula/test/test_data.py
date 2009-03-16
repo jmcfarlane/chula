@@ -21,13 +21,14 @@
 #
 
 import unittest
-import doctest
 import datetime
 from chula import data
 from chula.error import *
 
 class Test_data(unittest.TestCase):
     """A test class for the data module"""
+    
+    doctest = data
     
     def setUp(self):
         self.int = 7
@@ -295,14 +296,3 @@ class Test_data(unittest.TestCase):
         self.assertRaises(ValueError, data.tags2str, ('a','b'))
         self.assertRaises(TypeConversionError, data.tags2str, ['a','!'])
         self.assertRaises(TypeConversionError, data.tags2str, ['-','*'])
-    
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_data)
-    tests.addTest(doctest.DocTestSuite(data))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

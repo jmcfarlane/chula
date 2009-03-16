@@ -22,7 +22,6 @@ db functions unit tests
 #
 
 import unittest
-import doctest
 import datetime
 
 from chula.db import functions as fcn
@@ -32,6 +31,8 @@ from chula.error import *
 
 class Test_functions(unittest.TestCase):
     """A test class for the db module"""
+
+    doctest = fcn
     
     def _DS(self, conn):
         return DataStoreFactory(conn)
@@ -212,14 +213,3 @@ class Test_functions(unittest.TestCase):
         self.assertEqual(fcn.unquote(None), None)
         self.assertEqual(fcn.unquote(5), 5)
         self.assertEqual(fcn.unquote('5'), '5')
-            
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_functions)
-    tests.addTest(doctest.DocTestSuite(fcn))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

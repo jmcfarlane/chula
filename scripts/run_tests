@@ -1,78 +1,17 @@
 #!/usr/bin/env python
+#
+# Run all Chula unit tests (including doctests)
 
-"""
-Runs all unit tests in a directory tree, sequentially
-"""
 import os
-import re
 import sys
 
-import chula
-
-def get_tests(path):
-    """
-    Creates and returns a list of all tests in a directory tree
-    List items are tuples of the form (Path, Filename)
-    """
-    tests = []
-    tree = os.walk(path.rstrip(os.sep))
-    regex = re.compile(r'^.*/test(_[a-z]+)?$')
-    for directory in tree:
-        if not re.match(regex, directory[0]) is None:
-            for file in directory[2]:
-                if file.startswith("test_") and file.endswith(".py"):
-                    tests.append((directory[0] + "/", file))
-
-    return tests
-
-def run_tests(tests):
-    """
-    Runs all unittests in tests
-    tests is a list where each item is a tuple of the form:
-        (Path, Filename)
-    """
-    import copy, unittest
-    pathorig = copy.copy(sys.path)
-
-    suite = unittest.TestSuite()
-    for test in tests:
-        print "Adding test: " + test[0] + test[1]
-        sys.path = copy.copy(pathorig)
-        sys.path.append(test[0])
-
-        md = __import__(test[1][:-3])
-        tests = []
-        try:
-            tests = md.get_tests()
-        except AttributeError, ex:
-            print "FAILURE: %s has no get_tests function!" % (test[0] +
-                test[1],)
-        
-        suite.addTests(tests)
-
-    print
-    unittest.TextTestRunner(verbosity=2).run(suite)
+from chula import testutils
 
 if __name__ == "__main__":
-    argv = sys.argv[1:]
-
-    # Grab start path from first argument or current directory
-    try:
-        path = argv[0]
-    except IndexError, ex:
+    # Search the passed paths, or the current working directory
+    path = sys.argv[1:]
+    if len(path) == 0:
         path = os.getcwd()
 
-        # Compensate for the fact that the scripts directory is
-        # parallel to the source directory
-        if not path.endswith(chula.package_dir.capitalize()):
-            path = path.split(os.sep)[:-1]
-            path.append(chula.package_dir)
-            path = os.sep.join(path)
-
-    #print 'Path used:', path
-    #sys.exit(1)
-
-    # Run the tests
-    tests = get_tests(path)
-    run_tests(tests)
-
+    tests = testutils.TestFinder(path)
+    tests.run()

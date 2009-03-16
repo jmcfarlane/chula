@@ -8,6 +8,25 @@ from copy import deepcopy
 from chula import error
 
 class Collection(dict):
+    """
+    Example usage:
+    >>> from chula import collection
+    >>> person = collection.Collection()
+    >>> person.name = 'Mr. Smith'
+    >>> person.age = 20
+    >>> person.timezone = 'PST'
+    >>>
+    >>> print person.age
+    20
+    
+    >>> print person['timezone']
+    PST
+
+    >>> print person
+    {'timezone': 'PST', 'age': 20, 'name': 'Mr. Smith'}
+
+    """
+
     def __delattr__(self, key):
         """
         Allow attribute style deletion
@@ -83,5 +102,3 @@ class Collection(dict):
         """
 
         self.__delitem__(key)
-
-

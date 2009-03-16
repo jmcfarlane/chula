@@ -1,9 +1,11 @@
-import unittest
-import doctest
-from chula import guid
 import time
+import unittest
+
+from chula import guid
 
 class Test_guid(unittest.TestCase):
+    doctest = guid
+
     def msg(self):
         msg = 'Guid generation was too slow: %s ms > %s ms'
         return msg % (round(self.speed / self.tests, 5),
@@ -37,14 +39,3 @@ class Test_guid(unittest.TestCase):
         self.assertEqual(self.tests, self.unique(self.tests), self.uv)        
         self.speed = time.time() - self.start
         self.assertTrue(self.fast_enough(), self.msg())
-
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_guid)
-    tests.addTest(doctest.DocTestSuite(guid))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

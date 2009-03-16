@@ -1,5 +1,4 @@
 import unittest
-import doctest
 import copy
 
 from chula import collection
@@ -30,6 +29,8 @@ class Human(collection.RestrictedCollection):
         self.foot = 'smell'
 
 class Test_restricted_collection(unittest.TestCase):
+    doctest = restricted
+
     def setUp(self):
         self.human = Human()
 
@@ -84,14 +85,3 @@ class Test_restricted_collection(unittest.TestCase):
         # TODO: This needs to pass
         self.assertEquals(True, isinstance(person,
                                            collection.RestrictedCollection))
-        
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_restricted_collection)
-    tests.addTest(doctest.DocTestSuite(restricted))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

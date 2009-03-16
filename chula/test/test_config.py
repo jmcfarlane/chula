@@ -1,9 +1,10 @@
 import unittest
-import doctest
 from chula import config
 from chula.error import *
 
 class Test_config(unittest.TestCase):
+    doctest = config
+
     def d_set(self, key, value):
         self.config[key] = value 
 
@@ -46,14 +47,3 @@ class Test_config(unittest.TestCase):
     def test_default_value_inforced_when_UNSET(self):
         error = RestrictecCollectionMissingDefaultAttrError
         self.assertRaises(error, self.d_get, 'classpath')
-
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_config)
-    tests.addTest(doctest.DocTestSuite(config))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

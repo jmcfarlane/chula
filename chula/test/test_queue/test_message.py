@@ -1,5 +1,4 @@
 import unittest
-import doctest
 
 from chula import config
 from chula.queue import mqueue
@@ -8,6 +7,8 @@ from chula.queue.messages import message, email
 config = config.Config()
 
 class Test_mqueue(unittest.TestCase):
+    doctest = message
+
     def _add(self, mtype='echo'):
         msg = message.MessageFactory(mtype)
         msg.message = 'payload'
@@ -93,17 +94,3 @@ class Test_mqueue(unittest.TestCase):
     #    msg = self.mqueue.purge(msg)
     #    msg = self.mqueue.pop()
     #    self.assertEquals(None, msg)
-
-def run_unittest():
-    # Never change this, leave as is
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    # Replace "example" with the name of your test class and module name
-    tests = unittest.makeSuite(Test_mqueue)
-    tests.addTest(doctest.DocTestSuite(message))
-    return tests
-
-if __name__ == '__main__':
-    # Never change this, leave as is
-    run_unittest()

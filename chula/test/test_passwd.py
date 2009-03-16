@@ -1,5 +1,4 @@
 import unittest
-import doctest
 from chula import passwd
 from chula.error import *
 
@@ -8,6 +7,8 @@ sha1 = 'NcA_puae9ca8739ddfd7db27c153015d39bc5d8c47b345'
 salt = sha1[:passwd.SALT_LENGTH]
 
 class Test_passwd(unittest.TestCase):
+    doctest = passwd
+
     def test_new_password_with_known_hash(self):
         self.assertEquals(sha1, passwd.hash(password, salt=salt))
 
@@ -27,14 +28,3 @@ class Test_passwd(unittest.TestCase):
 
     def test_new_matches_without_positive_match(self):
         self.assertFalse(passwd.matches('badpasswd', sha1))
-
-def run_unittest():
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    tests = unittest.makeSuite(Test_passwd)
-    tests.addTest(doctest.DocTestSuite(passwd))
-    return tests
-
-if __name__ == '__main__':
-    run_unittest()

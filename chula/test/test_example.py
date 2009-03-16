@@ -1,9 +1,10 @@
 import unittest
-import doctest
 
 from chula import example
 
 class Test_example(unittest.TestCase):
+    doctest = example
+
     def setUp(self):
         self.something = 'This gets reset at the start of every test'
         self.db = 'Sometimes you will set a db and cursor here'
@@ -21,17 +22,3 @@ class Test_example(unittest.TestCase):
 
     def test_awesome(self):
         self.failIf(not self.example.awesome())
-
-def run_unittest():
-    # Never change this, leave as is
-    unittest.TextTestRunner(verbosity=2).run(get_tests())
-
-def get_tests():
-    # Replace "example" with the name of your test class and module name
-    tests = unittest.makeSuite(Test_example)
-    tests.addTest(doctest.DocTestSuite(example))
-    return tests
-
-if __name__ == '__main__':
-    # Never change this, leave as is
-    run_unittest()
