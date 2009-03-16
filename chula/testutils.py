@@ -1,6 +1,7 @@
 """Module for working with unit tests"""
 
 import doctest
+import imp
 import os
 import re
 import sys
@@ -101,10 +102,21 @@ class TestFinder(set):
         self.suite = unittest.TestSuite()
         sys.path.insert(0, None)
         for test in self:
-            sys.path[0] = os.path.dirname(test)
+            dir_name = os.path.dirname(test)
             module_name = os.path.basename(test)[:-3]
+
+            # Add the module to the front of the python path and
+            # generate a fully unique [module] name
+            sys.path[0] = dir_name
+            u_name = os.path.join(dir_name, module_name).replace(os.sep, '_')
+
             try:
-                module = __import__(module_name)
+                # Import the module using imp rather than __import__
+                # as imp allows us to specify the name of the module.
+                # This allows us to have tests with the same name in
+                # different directories - and avoid namespace clashes.
+                f, filename, descr = imp.find_module(module_name)
+                module = imp.load_module(u_name, f, filename, descr)
             except ImportError, ex:
                 print 'Unable to import', test
                 raise
