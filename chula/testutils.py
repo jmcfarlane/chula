@@ -156,4 +156,4 @@ class TestFinder(set):
         Run the unit tests found, with a default verbosity of 2.
         """
         
-        unittest.TextTestRunner(verbosity=verbosity).run(self.suite)
+        return unittest.TextTestRunner(verbosity=verbosity).run(self.suite)
