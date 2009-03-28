@@ -41,6 +41,7 @@ class Test_data(unittest.TestCase):
         self.assertEqual(data.commaify("1"), "1")
         self.assertEqual(data.commaify("1.20"), "1.20")
         self.assertEqual(data.commaify("10"), "10")
+        self.assertEqual(data.commaify("10.1"), "10.10")
         self.assertEqual(data.commaify("10.10"), "10.10")
         self.assertEqual(data.commaify("100"), "100")
         self.assertEqual(data.commaify("100.00"), "100.00")
