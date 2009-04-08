@@ -31,11 +31,14 @@ def commaify(input_):
     if formatted.endswith(','):
         formatted = formatted[:-1]
 
-    # Add the decimal value(s) back on if they exist
+    # Add the decimal back on if it exists
     try:
-        output = formatted[::-1] + '.' + parts[1]
-    except:
+        output = formatted[::-1] + '.' + parts[1].ljust(2, '0')
+    except IndexError:
         output = formatted[::-1]
+    except:
+        print 'Unable to format number:', input_
+        raise
 
     return output.replace('-,', '-')
 

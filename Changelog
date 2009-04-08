@@ -10,6 +10,7 @@
             Fixed defect where error controller not found when using
             controller packages
         </log>
+        <log>Fixed defect in data.commaify with less than 2 decimals</log>
         <log>Improved the timer to not break xhtml compliance</log>
     </release>
 
