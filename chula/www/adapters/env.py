@@ -169,13 +169,19 @@ class BaseEnv(collection.RestrictedCollection):
         being a Field() or MiniFieldStorage() object for mod_python or
         cgi respectively.  Both are intended to be accessed via a
         "value" attribute.  This method casts these objects so the
-        actual value is held and thus can be referenced directly.
+        actual value is held and thus can be referenced directly.  In
+        the event the object doesn't have a "value" attribute it's
+        left alone (not sure how this can happen, but it does).
         """
 
         for key in self.form.keys():
             if isinstance(self.form[key], list):
                 for i in xrange(len(self.form[key])):
-                    self.form[key][i] = self.form[key][i].value
+                    if not getattr(self.form[key][i], 'value', None) is None:
+                        self.form[key][i] = self.form[key][i].value
+                    else:
+                        # Let me know if you can make this get called :)
+                        pass
 
     def _server_hostname(self):
         return socket.gethostname()

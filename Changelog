@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.1.0">
-        <log></log>
+        <log>Fixed corner case in FieldStorage array structures</log>
     </release>
 
     <release date="04/11/2009" version="0.0.6">
