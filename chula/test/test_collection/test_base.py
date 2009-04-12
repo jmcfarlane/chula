@@ -1,7 +1,8 @@
-import unittest
 import copy
+import cPickle
+import unittest
 
-from chula import collection
+from chula import collection, json
 from chula.collection import base
 
 class Test_base_collection(unittest.TestCase):
@@ -33,6 +34,30 @@ class Test_base_collection(unittest.TestCase):
         data.sort()
         expected = ['age:25', 'location:bar', 'name:foo']
         self.assertEquals(data, expected)
+
+    def test_encode_by_cpickle(self):
+        encoded = cPickle.dumps(self.col)
+        self.assertEquals(type(encoded), type('string'))
+
+    def test_decode_by_cpickle(self):
+        encoded = cPickle.dumps(self.col)
+        decoded = cPickle.loads(encoded)
+        self.assertEquals(decoded.age, self.col.age)
+        self.assertEquals(decoded.location, self.col.location)
+        self.assertEquals(decoded.name, self.col.name)
+        self.assertEquals(type(decoded), type(collection.Collection()))
+        
+    def test_encode_by_json(self):
+        encoded = json.encode(self.col)
+        self.assertEquals(type(encoded), type('string'))
+
+    def test_decode_by_json(self):
+        encoded = json.encode(self.col)
+        decoded = json.decode(encoded)
+        self.assertEquals(decoded['age'], self.col.age)
+        self.assertEquals(decoded['location'], self.col.location)
+        self.assertEquals(decoded['name'], self.col.name)
+        self.assertEquals(type(decoded), type({}))
 
     def test_is_iterable_by_keys(self):
         i = 0

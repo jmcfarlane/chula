@@ -67,7 +67,10 @@ class Collection(dict):
         @return: Attribute
         """
 
-        return self.__getitem__(key)
+        try:
+            return self.__getitem__(key)
+        except KeyError:
+            raise AttributeError('Attribute not found: %s' % key)
 
     def __setattr__(self, key, value):
         """
