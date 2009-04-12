@@ -2,19 +2,22 @@
 Class to manage user session.  It is designed to be generic in nature.
 """
 
+import cPickle
 import hashlib
 
 from chula import db, error, guid, json, memcache
 from chula.db import datastore
 
-stale_count = 'REQUESTS-BETWEEN-DB-PERSIST'
+CPICKLE = 'cPickle'
+JSON = 'json'
+STALE_COUNT = 'REQUESTS-BETWEEN-DB-PERSIST'
 
 class Session(dict):
     """
     The Session class keeps track of user session.
     """
     
-    def __init__(self, config, existing_guid=None):
+    def __init__(self, config, existing_guid=None, transport=CPICKLE):
         """
         Create a user session object
 
@@ -29,6 +32,7 @@ class Session(dict):
         self._cache = self._config.session_memcache
         self._timeout = self._config.session_timeout
         self._expired = False
+        self._transport = transport
 
         if existing_guid is None:
             self._guid = guid.guid()
@@ -64,6 +68,20 @@ class Session(dict):
         finally:
             self._conn = None
 
+    def decode(self, data):
+        """
+        Decode the session using the specified transport (cPickle by
+        default).
+
+        @param data: Session data to be decoded
+        @type data: str
+        @return: Dict
+        """
+        if self._transport == CPICKLE:
+            return cPickle.loads(data)
+        else:
+            return json.decode(data)
+
     def destroy(self):
         """
         Expire a user's session now.  This does persist to the database
@@ -89,6 +107,23 @@ class Session(dict):
         # Ensure the data still in memory (self) is not persisted back
         self._expired = True
 
+    def encode(self, data):
+        """
+        Encode the session using the specified transport (cPickle by
+        default).
+
+        @param data: Session data to be encoded
+        @type data: Instance of chula.session.Session object
+        @return: str
+        """
+
+        if self._transport == CPICKLE:
+            # Since cPickle actually pickles the entire object we need
+            # to exclude all of the private variables prior to encoding:
+            return cPickle.dumps(dict(self))
+        else:
+            return json.encode(data)
+
     def fetch_from_cache(self):
         """
         Fetch a user's session from cache.  If the session isn't found,
@@ -101,7 +136,7 @@ class Session(dict):
         if values is None:
             return None
         else:
-            return json.decode(values)
+            return self.decode(values)
 
     def fetch_from_db(self):
         """
@@ -127,9 +162,9 @@ class Session(dict):
             return {}
         else:
             try:
-                return json.decode(self._record['values'])
+                return self.decode(self._record['values'])
             except ValueError, ex:
-                raise "Unable to json.decode session", ex
+                raise "Unable to self.decode session", ex
    
     def flush_next_persist(self):
         """
@@ -197,13 +232,13 @@ class Session(dict):
         if self._expired:
             return
 
-        self[stale_count] = self.get(stale_count, -1) + 1
+        self[STALE_COUNT] = self.get(STALE_COUNT, -1) + 1
 
         # Persist to the session state to the database if this is a new
-        # session (the stale_count won't be set) or the age (requests between
+        # session (the STALE_COUNT won't be set) or the age (requests between
         # database persists) is greater than a constant value, 10 for
         # now. 
-        if self[stale_count] == 0 or self[stale_count] > 10:
+        if self[STALE_COUNT] == 0 or self[STALE_COUNT] > 10:
             self.flush_next_persist()
         
         # Forces a write to the database on the next go
@@ -227,7 +262,7 @@ class Session(dict):
 
         if isinstance(self._cache, memcache.Client):
             result = self._cache.set(self.mkey(),
-                                     json.encode(self),
+                                     self.encode(self),
                                      timeout * 60)
             # Non zero status is success
             if result != 0:
@@ -246,12 +281,12 @@ class Session(dict):
         waspersisted = False
         
         # Indicate a successfull db persist [rollback if necessary]
-        current_stale_count = self[stale_count]
-        self[stale_count] = 0
+        current_stale_count = self[STALE_COUNT]
+        self[STALE_COUNT] = 0
 
         # Prepare the sql
         sql = "SELECT session_set(%s, %s, TRUE);"
-        sql = sql % (db.cstr(self._guid), db.cstr(json.encode(self)))
+        sql = sql % (db.cstr(self._guid), db.cstr(self.encode(self)))
 
         # Attempt the persist
         try:
@@ -266,7 +301,7 @@ class Session(dict):
                 pass
 
             self.flush_next_persist()
-            self[stale_count] = current_stale_count
+            self[STALE_COUNT] = current_stale_count
         finally:
             # Because persistance is always at the end of the process
             # flow (actually called by apache.handler) we can safely
