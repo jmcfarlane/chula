@@ -2,6 +2,8 @@
 Chula helper module for working with web services
 """
 
+import cPickle
+
 from chula import error, json, collection
 
 class Transport(collection.RestrictedCollection):
@@ -41,17 +43,14 @@ class Transport(collection.RestrictedCollection):
         self.msg = None
         self.success = False
 
-    def __fetch_arg__(self, kwargs, arg, default):
+    @staticmethod
+    def __default__(controller, kwargs, arg, default):
         """
-        Fetch a keyword argument from the passed list.
+        Return a default value of the specified arg for use in the
+        creation or calling of a webservice.  This method allows the
+        webservice usage to be controlled either at creation or
+        runtime (kwargs, http args).
 
-        @param kwargs: The collection of key=value arguments
-        @type key: Dict
-        @param arg: The specific argument to be used
-        @type arg: String
-        @param default: The default value
-        @type: arg: Boolean
-        
         The algorithm used is:
             1. Fetch from HTTP GET variables
             2. Fetch from HTTP POST variables
@@ -61,9 +60,27 @@ class Transport(collection.RestrictedCollection):
         Currently supported keyword arguments:
             - x_header: Should the HTTP X-JSON header be used for payload
 
+        @param kwargs: The collection of key=value arguments
+        @type keyargs: Dict
+        @param arg: The specific argument to be used
+        @type arg: String
+        @param default: The default value
+        @type: default: Boolean
         """
 
-        return self.controller.form.get(arg, kwargs.get(arg, default))
+        # The default then update with the desired algorithm
+        retval = default
+
+        # Use kwargs passed to the controller's decorator if available
+        retval = kwargs.get(arg, retval)
+
+        # Use HTTP POST if available
+        retval = controller.env.form.get(arg, retval)
+
+        # Use HTTP GET if available
+        retval = controller.env.form_get.get(arg, retval)
+
+        return retval
 
 class JSON(Transport):
     """
@@ -75,7 +92,7 @@ class JSON(Transport):
         Encode the transport into a json string and return X-JSON
         """
 
-        if self.__fetch_arg__(kwargs, 'x_header', True):
+        if self.__default__(self.controller, kwargs, 'x_header', False):
             self.controller.content_type = 'application/x-json'
             self.controller.env.headers.append(('X-JSON',
                                                 json.encode(self.strip())))
@@ -84,6 +101,19 @@ class JSON(Transport):
         else:
             self.controller.content_type = 'text/plain'
             return json.encode(self.strip())
+
+class PICKLE(Transport):
+    """
+    Webservice that uses Python pickling as the transport layer
+    """
+
+    def encode(self, **kwargs):
+        """
+        Encode the transport into a Python pickled string
+        """
+        
+        self.controller.content_type = 'text/plain'
+        return cPickle.dumps(dict(self.strip()))
 
 class ASCII(Transport):
     """
@@ -112,6 +142,7 @@ class Transports(object):
 
     JSON = JSON
     ASCII = ASCII
+    PICKLE = PICKLE
 
 def expose(**kwargs):
     """
@@ -119,24 +150,32 @@ def expose(**kwargs):
     of keyword arguments which are passed to the webservice encoding()
     method for use with making decisions.  For example:
 
-        @webservice.expose(x_header=False)
+        @webservice.expose(x_header=True)
         def foo(self):
             pass
     
     will cause services using JSON as a transport to include the
-    payload in the actual body, rather than using the X-JSON HTTP
-    header.  You can also set these via HTTP GET arguments. See
-    chula.webservice.Transport.__fetch_arg__() for more information.
+    payload in a X-JSON HTTP header rather than the actual body.  You
+    can also set these via HTTP GET arguments. See
+    chula.webservice.Transport.__default__() for more information.
     """
 
     def decorator(fcn): 
         def wrapper(self):
-            # Fetch the requested transport
-            transport = self.form.get('transport', '').upper()
+            transport = Transport.__default__(self,
+                                              kwargs,
+                                              'transport',
+                                              'JSON').upper()
 
             # Reference the actual transport object, JSON is default
-            ws = getattr(Transports, transport, JSON)(self)
+            webservice_callable = getattr(Transports, transport, None)
+            if webservice_callable is None:
+                raise error.WebserviceUnknownTransportError(transport)
 
+            # Instantiate the web servie
+            ws = webservice_callable(self)
+
+            # Execute the controller and fill the webservice
             try:
                 ws.data = fcn(self)
                 ws.success = True

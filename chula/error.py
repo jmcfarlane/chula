@@ -213,3 +213,13 @@ class SessionUnableToPersistError(ChulaException):
 
     def msg(self):
         return 'Unable to persist session, all backends failed'
+
+class WebserviceUnknownTransportError(ChulaException):
+    """
+    Exception indicating that the specified webservice transport is
+    either unknown or unsupported.
+    """
+
+    def __init__(self, key, append=None):
+        self.message = 'Unknown transport: "%s"' % key
+        self.append = append

@@ -1,7 +1,8 @@
-import unittest
 import copy
+import cPickle
+import unittest
 
-from chula import collection
+from chula import collection, json
 from chula.collection import restricted
 from chula.error import *
 
@@ -85,3 +86,16 @@ class Test_restricted_collection(unittest.TestCase):
         # TODO: This needs to pass
         self.assertEquals(True, isinstance(person,
                                            collection.RestrictedCollection))
+
+    def test_json_encoding(self):
+        encoded = json.encode(self.human)
+        decoded = json.decode(encoded)
+        self.assertEquals(decoded['foot'], self.human.foot)
+        self.assertEquals(decoded['head'], self.human.head)
+
+    def test_cpickle_encoding(self):
+        encoded = cPickle.dumps(self.human)
+        # TODO: Fix things so the following pass:
+        #decoded = cPickle.loads(encoded)
+        #self.assertEquals(decoded['foot'], self.human.foot)
+        #self.assertEquals(decoded['head'], self.human.head)

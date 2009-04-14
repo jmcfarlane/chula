@@ -94,6 +94,9 @@ class RestrictedCollection(base.Collection):
     def __getattr__(self, key):
         return self.__getitem__(key)
 
+    def __getstate__(self):
+        return self
+
     def __setattr__(self, key, value):
         self.__setitem__(key, value)
 
