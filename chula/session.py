@@ -6,7 +6,7 @@ import cPickle
 import hashlib
 
 from chula import db, error, guid, json, memcache
-from chula.db import datastore
+from chula.db.datastore import DataStoreFactory
 
 CPICKLE = 'cPickle'
 JSON = 'json'
@@ -182,12 +182,9 @@ class Session(dict):
         """
 
         if getattr(self, 'conn', None) is None:
-            #TODO: Fix Collection() to support '%(foo)s'
-            config = {}
-            config['session_host'] = self._config.session_host
-            config['session_db'] = self._config.session_db
-            uri = 'pg:chula@%(session_host)s/%(session_db)s' % config
-            self._conn = datastore.DataStoreFactory(uri)
+            uri = 'pg:%(session_username)s@%(session_host)s/%(session_db)s'
+            uri = uri % self._config
+            self._conn = DataStoreFactory(uri, self._config.session_password)
             self._cursor = self._conn.cursor()
 
     def load(self):
@@ -279,6 +276,7 @@ class Session(dict):
 
         # Keep track of what happens
         waspersisted = False
+        persist_exception = None
         
         # Indicate a successfull db persist [rollback if necessary]
         current_stale_count = self[STALE_COUNT]
@@ -294,7 +292,8 @@ class Session(dict):
             self._cursor.execute(sql)
             self._conn.commit()
             waspersisted = True
-        except:
+        except Exception, ex:
+            persist_exception = ex
             try:
                 self._conn.rollback()
             except:
@@ -317,4 +316,5 @@ class Session(dict):
 
         # Raise if we can't persist
         if not waspersisted:
-            raise error.SessionUnableToPersistError()
+            msg = persist_exception
+            raise error.SessionUnableToPersistError(msg)

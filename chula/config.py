@@ -32,13 +32,16 @@ class Config(collection.RestrictedCollection):
                 'mqueue_poll',
                 'mqueue_port',
                 'session_db',
-                'session_host',
-                'session_port',
-                'session_name',
-                'session_memcache',
-                'session_timeout',
                 'session_encryption_key',
-                'strict_method_resolution')
+                'session_host',
+                'session_memcache',
+                'session_name',
+                'session_password',
+                'session_port',
+                'session_timeout',
+                'session_username',
+                'strict_method_resolution',
+                )
 
     def __defaults__(self):
         self.add_timer = True
@@ -57,7 +60,9 @@ class Config(collection.RestrictedCollection):
         self.session_host = 'localhost'
         self.session_memcache = [('localhost:11211', 1)]
         self.session_name = 'chula-session'
+        self.session_password = 'chula'
         self.session_port = 5432
         self.session_timeout = 30
+        self.session_username = 'chula'
         self.strict_method_resolution = False
 
