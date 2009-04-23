@@ -449,9 +449,12 @@ def str2date(input_):
     regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s$') 
 
     # 2007-09-25 00:00:00-04:00
-    regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s-\d\d:\d\d$') 
+    regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s[+-]\d\d:\d\d$')
+
     # 2005-10-4 21:01:00.970532-04:00 
-    regs.append('^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s\.[0-9]+-\d\d:\d\d$') 
+    # 2009-04-16 23:16:34.953368+00:00
+    exp = r'^%(Y)s\D%(m)s\D%(d)s\D%(I)s\D%(M)s\D%(S)s\.[0-9]+[+-]\d\d:\d\d$'
+    regs.append(exp)
 
     for regexp in regs:
         match = re.match(regexp % parts, input_)

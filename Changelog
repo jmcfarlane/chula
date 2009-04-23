@@ -3,6 +3,7 @@
 <project name="Chula">
     <release date="" version="0.1.0">
         <log>Fixed corner case in FieldStorage array structures</log>
+        <log>Fixed defect in chula.date.str2date() with UTC +n</log>
     </release>
 
     <release date="04/11/2009" version="0.0.6">
