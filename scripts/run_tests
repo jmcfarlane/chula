@@ -5,6 +5,9 @@
 import os
 import sys
 
+# For those running tests without Chula actually installed
+sys.path.insert(0, os.path.dirname(sys.path[0]))
+
 from chula import testutils
 
 if __name__ == "__main__":
