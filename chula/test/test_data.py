@@ -265,7 +265,6 @@ class Test_data(unittest.TestCase):
         self.assertEqual(cv("10042005"), d(2005, 10, 4, 0, 00, 00))
         self.assertEqual(cv("10.04.2005"), d(2005, 10, 4, 0, 00, 00))
         self.assertRaises(TypeConversionError, cv, '2005-10')
-        self.assertRaises(TypeConversionError, cv, '1005/10/21')
         self.assertRaises(TypeConversionError, cv, '2005/21/5')
         self.assertRaises(TypeConversionError, cv, '2005/10/40')
         self.assertRaises(TypeConversionError, cv, '2005/10/21 90:10:00')
