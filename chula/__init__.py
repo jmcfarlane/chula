@@ -1,7 +1,9 @@
-"""Chula is a lightweight web framework written in Python
+"""Chula is a lightweight toolkit for writing web applications in Python
 
-Chula is an MVC style framework that works by routing web requests
-thru mod_python to native Python objects"""
+It's designed to work with WSGI, FastCGI, or mod_python.  Chula only
+handles the nuts and bolts - meaning there isn't any ORM layer, and no
+code generation.
+"""
 
 __VERSION__ = '0.1.0_dev'
 version = __VERSION__

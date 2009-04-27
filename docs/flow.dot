@@ -1,34 +1,48 @@
 digraph chula {
-    apache [label="Apache 2"]
-    browser [label="Web Browser" style=filled fillcolor=orange]
-    config [label="Configuration" style=filled fillcolor=green]
-    controller [label="Controller" style=filled fillcolor=green]
-    handler [label="Apache Handler"]
-    json [label="JSON"]
-    memcache [label="Memcached"]
-    mod_python [label="Mod_python"]
-    model [label="Model" style=filled]
-    postgres [label="PostgreSQL"]
-    session [label="Session Cluster"]
-    view [label="View (Cheetah, Kid, etc.)" style=filled]
-    web [label="Internet"]
+  ADAPTER [label="Chula Adapter" style="filled" fillcolor="yellow"]
+  apache [label="Apache"]
+  browser [label="Web Browser" style=filled fillcolor=orange]
+  cheetah [label="Cheetah"]
+  config [label="Chula Config" style=filled fillcolor="#91cdfb"]
+  controller [label="Chula Controller" style=filled fillcolor=green]
+  data [label="Your data"]
+  fastcgi [label="FastCGI"]
+  kid [label="Kid"]
+  lighttpd [label="Lighttpd"]
+  mako [label="Mako"]
+  memcache [label="Memcached"]
+  model [label="Chula Model" style="filled" fillcolor="#ffcd85"]
+  mod_python [label="Mod_python"]
+  nginx [label="Nginx"]
+  postgres [label="PostgreSQL"]
+  session [label="Session Cluster"]
+  wsgi [label="WSGI"]
 
-    /* Main stack */
-    browser
-    ->web
-    ->apache
-    ->mod_python
-    ->config
-    ->handler
-    ->controller
-    ->model
-    ->view
-    ->web
-    ->browser
+  /* Controller */
+  controller->model
+  controller->session
+  controller->cheetah
+  controller->mako
+  controller->kid
 
-    /* Session stack */
-    handler->session
-    session->json
-    json->postgres
-    json->memcache
+  /* Web Servers */
+  HTTP->apache->ADAPTER
+  HTTP->lighttpd->ADAPTER
+  HTTP->nginx->ADAPTER
+
+  /* Adapter */
+  ADAPTER->mod_python->controller
+  ADAPTER->wsgi->controller
+  ADAPTER->fastcgi->controller
+
+  /* Session */
+  session->postgres
+  session->memcache
+
+  /* Glue */
+  model->data
+  browser->HTTP
+  model->controller
+  config->ADAPTER
+  
 }
