@@ -12,6 +12,8 @@ from chula import error, regex
 TRUE = ['1', 't', 'true', 'yes', 'y', 'on']
 FALSE = ['0', 'f', 'false', 'no', 'n', 'off']
 
+RE_UNIX_TIMESTAMP = re.compile(r'[0-9]{10}(\.[0-9]+)?')
+
 def commaify(input_):
     """
     Generate a number with commas for pretty printing
@@ -425,9 +427,11 @@ def str2date(input_):
         return None
     elif not isinstance(input_, basestring):
         msg = 'Value passed must be of type string.'
-        raise error.TypeConversionError(input_,
-                                                 'datetime.datetime',
-                                                 append=msg)
+        raise error.TypeConversionError(input_, 'datetime.datetime', append=msg)
+
+    # Consume a unix timestamp if possible
+    if not RE_UNIX_TIMESTAMP.match(input_) is None:
+        return datetime.datetime.fromtimestamp(float(input_))
 
     from time import strptime
     ptime = {'I':'00', 'M':'00', 'S':'00'}

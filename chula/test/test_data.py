@@ -241,29 +241,34 @@ class Test_data(unittest.TestCase):
     def test_str2date(self):
         d = datetime.datetime
         cv = data.str2date
-        self.assertEqual(cv("10/4/2005"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(cv("10-4-2005"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(cv("10-04-2005"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(cv("2005-10-4"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(cv("2005-10-04"), d(2005, 10, 4, 0, 0))
-        self.assertEqual(cv("10/4/2005 21:35"), d(2005, 10, 4, 21, 35))
-        self.assertEqual(cv("10/4/2005 21:35:45"), d(2005, 10, 4, 21, 35, 45))
-        self.assertEqual(cv("10/4/2005 21:35:00"), d(2005, 10, 4, 21, 35, 00))
-        self.assertEqual(cv("10/4/2005 21:01:00"), d(2005, 10, 4, 21, 01, 00))
-        self.assertEqual(cv("2005-10-4 21:01"), d(2005, 10, 4, 21, 01, 00))
-        self.assertEqual(cv("2005-10-4 21:01:00.970532-04:00"),
+        self.assertEqual(cv('10/4/2005'), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv('10-4-2005'), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv('10-04-2005'), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv('2005-10-4'), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv('2005-10-04'), d(2005, 10, 4, 0, 0))
+        self.assertEqual(cv('10/4/2005 21:35'), d(2005, 10, 4, 21, 35))
+        self.assertEqual(cv('10/4/2005 21:35:45'), d(2005, 10, 4, 21, 35, 45))
+        self.assertEqual(cv('10/4/2005 21:35:00'), d(2005, 10, 4, 21, 35, 00))
+        self.assertEqual(cv('10/4/2005 21:01:00'), d(2005, 10, 4, 21, 01, 00))
+        self.assertEqual(cv('2005-10-4 21:01'), d(2005, 10, 4, 21, 01, 00))
+        self.assertEqual(cv('2005-10-4 21:01:00.970532-04:00'),
                             d(2005, 10, 4, 21, 01, 00))
-        self.assertEqual(cv("2009-04-16 23:16:34.953368+00:00"),
+        self.assertEqual(cv('2009-04-16 23:16:34.953368+00:00'),
                             d(2009, 4, 16, 23, 16, 34))
-        self.assertEqual(cv("2005-10-4 21:01:00-04:00"),
+        self.assertEqual(cv('2005-10-4 21:01:00-04:00'),
                             d(2005, 10, 4, 21, 01, 00))
-        self.assertEqual(cv("2005-10-4 21:01:00+04:00"),
+        self.assertEqual(cv('2005-10-4 21:01:00+04:00'),
                             d(2005, 10, 4, 21, 01, 00))
-        self.assertEqual(cv("2005-10-4 21:01:00"), d(2005, 10, 4, 21, 01, 00))
-        self.assertEqual(cv("20051004"), d(2005, 10, 4, 0, 00, 00))
-        self.assertEqual(cv("20051004"), d(2005, 10, 4, 0, 00, 00))
-        self.assertEqual(cv("10042005"), d(2005, 10, 4, 0, 00, 00))
-        self.assertEqual(cv("10.04.2005"), d(2005, 10, 4, 0, 00, 00))
+        self.assertEqual(cv('2005-10-4 21:01:00'), d(2005, 10, 4, 21, 01, 00))
+        self.assertEqual(cv('20051004'), d(2005, 10, 4, 0, 00, 00))
+        self.assertEqual(cv('20051004'), d(2005, 10, 4, 0, 00, 00))
+        self.assertEqual(cv('10042005'), d(2005, 10, 4, 0, 00, 00))
+        self.assertEqual(cv('10.04.2005'), d(2005, 10, 4, 0, 00, 00))
+        self.assertEqual(cv('1241579419'), d(2009, 5, 5, 20, 10, 19))
+        self.assertEqual(cv('1241579419.'), d(2009, 5, 5, 20, 10, 19))
+        self.assertEqual(cv('1241579419.0'), d(2009, 5, 5, 20, 10, 19))
+        self.assertEqual(cv('1241579419.00'), d(2009, 5, 5, 20, 10, 19))
+
         self.assertRaises(TypeConversionError, cv, '2005-10')
         self.assertRaises(TypeConversionError, cv, '2005/21/5')
         self.assertRaises(TypeConversionError, cv, '2005/10/40')
@@ -272,6 +277,7 @@ class Test_data(unittest.TestCase):
         self.assertRaises(TypeConversionError, cv, '2005/10/21 10:20:61')
         self.assertRaises(TypeConversionError, cv, '2005/10/21 10:00:00:00')
         self.assertRaises(TypeConversionError, cv, 'abc')
+        self.assertRaises(TypeConversionError, cv, '124157941')
 
     def test_str2tags(self):
         self.assertEqual(data.str2tags(''), [])
