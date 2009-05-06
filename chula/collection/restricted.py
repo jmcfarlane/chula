@@ -100,6 +100,10 @@ class RestrictedCollection(base.Collection):
     def __setattr__(self, key, value):
         self.__setitem__(key, value)
 
+    def __setstate__(self, dict_):
+        self.__dict__['validkeys'] = dict_.keys()
+        self.update(dict_)
+
     def strip(self):
         """
         Purge I{privatekeys} from the collection.  This is useful when

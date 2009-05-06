@@ -82,8 +82,6 @@ class Test_restricted_collection(unittest.TestCase):
         self.assertEquals(person.head, 'wears hat')
         self.assertEquals(person.foot, 'smell')
         self.assertEquals(True, isinstance(person, collection.Collection))
-
-        # TODO: This needs to pass
         self.assertEquals(True, isinstance(person,
                                            collection.RestrictedCollection))
 
@@ -95,7 +93,6 @@ class Test_restricted_collection(unittest.TestCase):
 
     def test_cpickle_encoding(self):
         encoded = cPickle.dumps(self.human)
-        # TODO: Fix things so the following pass:
-        #decoded = cPickle.loads(encoded)
-        #self.assertEquals(decoded['foot'], self.human.foot)
-        #self.assertEquals(decoded['head'], self.human.head)
+        decoded = cPickle.loads(encoded)
+        self.assertEquals(decoded['foot'], self.human.foot)
+        self.assertEquals(decoded['head'], self.human.head)
