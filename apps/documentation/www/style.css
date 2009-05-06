@@ -1,0 +1,44 @@
+BODY {
+  margin: 0px;
+  font-family: sans-serif;
+}
+
+#banner {
+  float: left;
+  color: silver;
+  margin: 6px 0 0 5px;
+  font-weight: bold;
+}
+
+#body {
+  padding: 20px;
+}
+
+#toolbar {
+	list-style: none;
+	background: #2E3436;
+	text-align: right;
+	padding: 0 1ex;
+	margin: 0;
+	font-size: 70%;
+}
+
+#toolbar li {
+	display: inline;
+	padding-top: 10px;
+	padding-bottom: 8px;
+	margin-left: 0px;
+	margin-top: 0px;
+}
+
+#toolbar li a {
+	font-weight: bold;
+	color: #FFFFFF;
+	margin: 0 2ex;
+	text-decoration: none;
+	line-height: 30px;
+}
+
+#toolbar li a:hover {
+	text-decoration: underline;
+}

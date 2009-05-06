@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
+    <title>${self.title()}</title>
+  </head>
+
+  <body>
+    <div id="page">
+      <div id="banner">Chula v${model.version}</div>
+      <ul id="toolbar">
+        <li><a href="/">Home</a></li>
+        <li><a href="/examples">Examples</a></li>
+      </ul>
+    </div>
+    <div id="body">
+      ${self.body()}
+    </div>
+  </body>
+</html>
+
+## Overloadable functions
+<%def name="title()">
+  Chula Example App
+</%def>
+

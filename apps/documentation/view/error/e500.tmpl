@@ -1,0 +1,26 @@
+<%inherit file="/lib/base.tmpl"/>
+
+<h1>Trapped Error: 500</h1>
+
+<h2>Exception</h2>
+<i>${model.exception.exception | h}</i>
+
+<h2>Form Variables</h2>
+<table border="1">
+% for key, value in model.exception.form.iteritems():
+  <tr>
+    <th>${key}</th>
+    <td>${value | h}</td>
+  </tr>
+% endfor
+</table>
+
+<h2>Env Variables</h2>
+<table>
+% for key, value in model.exception.env.iteritems():
+  <tr>
+    <th>${key}</th>
+    <td>${value | h}</td>
+  </tr>
+% endfor
+</table>
