@@ -27,21 +27,24 @@ class Controller(object):
         self.env = env
         self.form = env.form
 
-        # Start up session using the cookie's guid (or a fake one)
-        if self.config.session_name in self.env.cookies:
-            guid_ = self.env.cookies[self.config.session_name].value
-            self.session = session.Session(self.config, guid_)
-        else:
-            # Create a new guid create a cookie
-            guid_ = guid.guid()
-            self.session = session.Session(self.config, guid_)
-            self.env.cookies[self.config.session_name] = guid_
-
         # Create a default model. This object is optionally populated by the
         # controller, or it can do it's own thing.
         self.model = collection.Collection()
-        self.model.session = self.session
         self.model.env = self.env
+
+        # Start up session using the cookie's guid (or a fake one)
+        if self.config.session:
+            if self.config.session_name in self.env.cookies:
+                guid_ = self.env.cookies[self.config.session_name].value
+                self.session = session.Session(self.config, guid_)
+            else:
+                # Create a new guid create a cookie
+                guid_ = guid.guid()
+                self.session = session.Session(self.config, guid_)
+                self.env.cookies[self.config.session_name] = guid_
+
+            # Expose session to the model
+            self.model.session = self.session
 
     def _gc(self):
         """

@@ -31,6 +31,7 @@ class Config(collection.RestrictedCollection):
                 'mqueue_host',
                 'mqueue_poll',
                 'mqueue_port',
+                'session',
                 'session_db',
                 'session_encryption_key',
                 'session_host',
@@ -55,8 +56,9 @@ class Config(collection.RestrictedCollection):
         self.mqueue_host = 'localhost'
         self.mqueue_poll = 5
         self.mqueue_port = 8001
+        self.session = True
         self.session_db = 'chula_session'
-        self.session_encryption_key = collection.UNSET
+        self.session_encryption_key = 'chula-session-key'
         self.session_host = 'localhost'
         self.session_memcache = [('localhost:11211', 1)]
         self.session_name = 'chula-session'

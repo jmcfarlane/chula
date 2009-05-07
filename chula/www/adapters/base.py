@@ -84,7 +84,7 @@ class BaseAdapter(object):
         # session, avoid as many dependencies as possible
         if self.env.under_construction:
             self.env.status = 503
-        else:
+        elif self.config.session:
             # Persist session and perform garbage collection
             try:
                 self.controller._pre_session_persist()
