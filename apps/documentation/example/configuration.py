@@ -9,8 +9,8 @@ prod.construction_controller = 'construction'
 prod.construction_trigger = '/tmp/chula_example.stop'
 prod.debug = False
 prod.error_controller = 'error'
-prod.session_encryption_key = 'abcd'
 prod.local.view_cache = None
+prod.session = False
 
 # Dev config
 dev = copy.deepcopy(prod)

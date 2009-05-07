@@ -57,7 +57,7 @@ class Error(base.Base):
 
         view = self.template('/error/e404.tmpl')
         return view.render(model=self.model)
-    
+
     def e500(self):
         view = self.template('/error/e500.tmpl')
         return view.render(model=self.model)

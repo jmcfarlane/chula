@@ -20,7 +20,7 @@ def application():
 port = 8080
 httpd = make_server('', port, application)
 try:
-    print 'Starting server on: http://localhost:%s' % port 
+    print 'Starting server on: http://localhost:%s' % port
     httpd.serve_forever()
 except KeyboardInterrupt:
     sys.exit()

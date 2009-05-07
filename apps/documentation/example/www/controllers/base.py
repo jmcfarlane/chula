@@ -12,7 +12,7 @@ class Base(controller.Controller):
 
         super(Base, self).__init__(env, config)
         self.model.version = chula.version
-        
+
     def template(self, view):
         src = self.config.local.root + '/view'
         lookup = TemplateLookup(directories=[src])
