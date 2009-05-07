@@ -1,15 +1,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="http://yui.yahooapis.com/2.7.0/build/reset/reset-min.css"
+          rel="stylesheet" type="text/css" />
+    <link href="/style.css" rel="stylesheet" type="text/css" />
     <title>${self.title()}</title>
   </head>
 
   <body>
     <div id="page">
-      <div id="banner">Chula v${model.version}</div>
+      <div id="banner">
+        <a href="http://www.rockfloat.com/projects/chula">
+          Chula v${model.version}
+        </a>
+      </div>
       <ul id="toolbar">
         <li><a href="/">Home</a></li>
-        <li><a href="/examples">Examples</a></li>
+        <li><a href="/env">Environment</a></li>
+        <li><a href="/start">Getting Started</a></li>
       </ul>
     </div>
     <div id="body">

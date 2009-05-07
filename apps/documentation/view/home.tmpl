@@ -1,7 +1,22 @@
 <%inherit file="/lib/base.tmpl"/>
 
-Example template
-
 <%def name="title()">
   ${parent.title()} - homepage
 </%def>
+
+<h1>Chula Documentation</h1>
+This application serves both as the official Chula documentation, and
+one of two sample applications that demonstrate how a web application
+can be created using Chula.
+
+<%
+  upstream = 'http://www.rockfloat.com/projects/chula'
+  gh = 'http://github.com/jmcfarlane/chula'
+%>
+
+<h1>Useful Links</h1>
+<ol>
+  <li><a href="${upstream}?show=changelog">Release notes</a></li>
+  <li><a href="${gh}/tree/master">Source Code</a></li>
+  <li><a href="${gh}/issues">Issue Tracker</a></li>
+</ol>

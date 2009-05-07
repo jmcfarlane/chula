@@ -3,15 +3,65 @@ BODY {
   font-family: sans-serif;
 }
 
-#banner {
+A {
+
+}
+
+CODE {
+  display: block;
+  white-space: pre;
+  border: 1px solid #4a4a4a;
+  background: #dddddd;
+  margin: .5em;
+  width: 90%;
+}
+
+H1, H2, H3, H4 {
+  font-weight: bold;
+  margin: 1em 0 .5em 0;
+}
+
+H1 {
+  font-size: 1.5em;
+}
+
+H2 {
+  font-size: 1.2em;
+}
+
+P {
+  margin-bottom: 2em;
+}
+
+TABLE * {
+  border: 1px solid #dddddd;
+  padding: 4px;
+}
+
+TABLE TH {
+  border: 1px solid #4a4a4a;
+  background-color: #dddddd;
+}
+
+OL {
+  margin-left: 1em;
+}
+
+LI {
+  list-style: decimal inside;
+}
+
+#banner, #banner A, #banner A:visited {
   float: left;
   color: silver;
-  margin: 6px 0 0 5px;
+  margin: 3px 0 0 5px;
   font-weight: bold;
+  text-decoration: none;
 }
 
 #body {
   padding: 20px;
+  padding-top: 0;
 }
 
 #toolbar {
@@ -41,4 +91,9 @@ BODY {
 
 #toolbar li a:hover {
 	text-decoration: underline;
+}
+
+.comment {
+  font-style: italic;
+  color: green;
 }
