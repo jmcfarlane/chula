@@ -1,61 +1,73 @@
 BODY {
-  margin: 0px;
   font-family: sans-serif;
+  margin: 0px;
 }
 
 A {
-
+  color: #3465a4;
 }
 
 CODE {
-  display: block;
-  white-space: pre;
-  border: 1px solid #4a4a4a;
   background: #dddddd;
+  border: 1px solid #4a4a4a;
+  display: block;
   margin: .5em;
+  white-space: pre;
   width: 90%;
 }
 
+EM {
+  font-style: italic;
+}
+
 H1, H2, H3, H4 {
+  font-size: 1.6em;
   font-weight: bold;
   margin: 1em 0 .5em 0;
 }
 
-H1 {
-  font-size: 1.5em;
+OL, UL {
+  margin-bottom: 1em;
+  margin-left: 1em;
+  margin-top: 0;
 }
 
-H2 {
-  font-size: 1.2em;
+OL LI {
+  list-style: decimal inside;
 }
 
 P {
   margin-bottom: 2em;
 }
 
-TABLE * {
-  border: 1px solid #dddddd;
+TABLE TH {
   padding: 4px;
+  font-weight: bold;
+}
+
+TABLE TD {
+  padding: 2px;
+}
+
+TABLE TR TH TD {
+  border: 1px solid #dddddd;
 }
 
 TABLE TH {
-  border: 1px solid #4a4a4a;
   background-color: #dddddd;
+  border: 1px solid #4a4a4a;
 }
 
-OL, UL {
-  margin-left: 1em;
-}
-
-LI {
-  list-style: decimal inside;
+UL LI {
+  list-style: disc inside;
+  margin-left: .2em;
 }
 
 #banner, #banner A, #banner A:visited {
-  float: left;
   color: silver;
-  margin: 3px 0 0 5px;
+  float: left;
   font-weight: bold;
+  margin: 3px 0 0 5px;
   text-decoration: none;
 }
 
@@ -65,28 +77,28 @@ LI {
 }
 
 #toolbar {
-	list-style: none;
 	background: #2E3436;
-	text-align: right;
-	padding: 0 1ex;
-	margin: 0;
 	font-size: 70%;
+	list-style: none;
+	margin: 0;
+	padding: 0 1ex;
+	text-align: right;
 }
 
 #toolbar LI {
 	display: inline;
-	padding-top: 10px;
-	padding-bottom: 8px;
 	margin-left: 0px;
 	margin-top: 0px;
+	padding-bottom: 8px;
+	padding-top: 10px;
 }
 
 #toolbar LI a {
-	font-weight: bold;
 	color: #FFFFFF;
+	font-weight: bold;
+	line-height: 30px;
 	margin: 0 2ex;
 	text-decoration: none;
-	line-height: 30px;
 }
 
 #toolbar LI A:hover {
@@ -99,6 +111,6 @@ LI {
 }
 
 .comment {
-  font-style: italic;
   color: green;
+  font-style: italic;
 }

@@ -1,0 +1,30 @@
+=======================
+This is the page header
+=======================
+
+.. include:: rst/lib/toc.rst
+
+Main text under the header
+
+This is the first main header
++++++++++++++++++++++++++++++
+
+Text under the first section
+
+The second header
+-----------------
+
+Text under the second section
+
+The third header
+~~~~~~~~~~~~~~~~
+
+Text under the third header
+
+Here's a list, that *includes* a link:
+
+ 1. `Getting Started`_ is a linked page
+ 2. A another element
+
+.. include:: rst/lib/links.rst
+.. include:: rst/lib/extras.rst

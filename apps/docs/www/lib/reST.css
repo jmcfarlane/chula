@@ -1,0 +1,41 @@
+#table-of-contents {
+  font-size: 1.2em;
+  margin-bottom: 0;
+}
+
+.section H1 {
+  font-size: 1.3em;
+}
+
+.topic-title {
+  margin-bottom: .5em;
+}
+
+.topic UL {
+  padding-top: 0;
+}
+
+UL.auto-toc LI {
+  list-style-type: none;
+}
+
+P.first {
+  margin-bottom: .9em;
+}
+
+PRE.literal-block {
+  background: #dddddd;
+  border: 1px solid black;
+  margin-bottom: 1em;
+  padding: .9em;
+}
+
+SPAN.pre {
+  border: 1px solid #dddddd;
+  color: green;
+  font-size: .9em;
+  padding: 0 2px;
+  position: relative;
+  top: -1px;
+}
+
