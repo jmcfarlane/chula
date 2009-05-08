@@ -2,7 +2,7 @@
   <head>
     <link href="http://yui.yahooapis.com/2.7.0/build/reset/reset-min.css"
           rel="stylesheet" type="text/css" />
-    <link href="/style.css" rel="stylesheet" type="text/css" />
+    <link href="/lib/style.css" rel="stylesheet" type="text/css" />
     <title>${self.title()}</title>
   </head>
 
@@ -22,11 +22,17 @@
     <div id="body">
       ${self.body()}
     </div>
+    ${self.add_js()}
   </body>
 </html>
 
 ## Overloadable functions
 <%def name="title()">
   Chula Example App
+</%def>
+
+<%def name="add_js()">
+  <script type="text/javascript" src="/lib/common.js"></script>
+  <script type="text/javascript" src="/lib/github.js"></script>
 </%def>
 

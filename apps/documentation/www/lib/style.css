@@ -43,7 +43,7 @@ TABLE TH {
   background-color: #dddddd;
 }
 
-OL {
+OL, UL {
   margin-left: 1em;
 }
 
@@ -73,7 +73,7 @@ LI {
 	font-size: 70%;
 }
 
-#toolbar li {
+#toolbar LI {
 	display: inline;
 	padding-top: 10px;
 	padding-bottom: 8px;
@@ -81,7 +81,7 @@ LI {
 	margin-top: 0px;
 }
 
-#toolbar li a {
+#toolbar LI a {
 	font-weight: bold;
 	color: #FFFFFF;
 	margin: 0 2ex;
@@ -89,8 +89,13 @@ LI {
 	line-height: 30px;
 }
 
-#toolbar li a:hover {
+#toolbar LI A:hover {
 	text-decoration: underline;
+}
+
+#commits LI {
+  list-style-image:url(/img/bullit.gif);
+  margin-left: .4em;
 }
 
 .comment {

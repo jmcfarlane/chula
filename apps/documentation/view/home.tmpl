@@ -4,6 +4,14 @@
   ${parent.title()} - homepage
 </%def>
 
+<%def name="add_js()">
+  ${parent.add_js()}
+  <script type="text/javascript">
+      var github = new RF.Github('jmcfarlane', 'chula');
+      github.commits('master', 'github.commits_cb', 10);
+  </script>
+</%def>
+
 <h1>Chula Documentation</h1>
 This application serves both as the official Chula documentation, and
 one of two sample applications that demonstrate how a web application
@@ -20,3 +28,7 @@ can be created using Chula.
   <li><a href="${gh}/tree/master">Source Code</a></li>
   <li><a href="${gh}/issues">Issue Tracker</a></li>
 </ol>
+
+<h1>Recent Activity</h1>
+<div id="commits"><img src="/img/spinner.gif" /></div>
+
