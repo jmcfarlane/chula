@@ -11,6 +11,8 @@
         </log>
         <log>Improved chula.data.str2date to support a unix timetamp</log>
         <log>Made session optional, but enabled by default</log>
+        <log>Added two sample applications</log>
+        <log>Added documentation (one of the sample apps)</log>
     </release>
 
     <release date="04/11/2009" version="0.0.6">
