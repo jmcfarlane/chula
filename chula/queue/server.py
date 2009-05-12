@@ -16,9 +16,8 @@ from chula.queue.messages import message
 
 class MessageQueueServer(object):
     def __init__(self, config):
-        self.debug = True
         self.config = config
-        self.lock = thread.allocate_lock()
+        self.debug = True
         self.log_file = os.path.join(self.config.mqueue_db, 'log')
         self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
         self.poll = self.config.mqueue_poll
@@ -27,20 +26,21 @@ class MessageQueueServer(object):
         self.thread_count = 0
         self.thread_max = self.system.procs + 1
 
-    def consumer(self, msg):
-        try:
-            result = msg.process()
-            self.queue.persist_result(msg, result)
-            self.queue.purge(msg)
-        except Exception, ex:
-            self.queue.purge(msg, ex)
+    def worker(self):
+        thread_id = thread.get_ident()
+        self.log('Worker thread started: %s' % thread_id) 
+        while True:
+            msg = self.queue.get()
+            try:
+                result = msg.process()
+                self.queue.persist_result(msg, result)
+                self.queue.purge(msg)
+            except Exception, ex:
+                self.queue.purge(msg, ex)
 
-        self.log('%s was processed' % msg.name)
-        if self.debug:
-            print ' >>> %s processed by: %s' % (msg.name, thread.get_ident())
-
-        with self.lock:
-            self.thread_count -= 1
+            self.log('%s was processed' % msg.name)
+            if self.debug:
+                print ' >>> %s processed by: %s' % (msg.name, thread_id)
 
     def log(self, msg):
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -48,22 +48,7 @@ class MessageQueueServer(object):
         log.write('%s: %s\n' % (now, msg))
         log.close()
 
-    def poller(self):
-        while True:
-            # Only check for work if we have available threads
-            if self.thread_count < self.thread_max:
-                msg = self.queue.pop()
-                if msg is None:
-                    time.sleep(self.poll)
-                else:
-                    with self.lock:
-                        self.thread_count += 1
-                    thread.start_new_thread(self.consumer, (msg, ))
-            else:
-                time.sleep(0.01)
-                
-
-    def producer(self, client):
+    def receive_message(self, client):
         chars_left = 1
         msg = ['']
         msg_length = None
@@ -139,14 +124,15 @@ class MessageQueueServer(object):
         s.bind((self.config.mqueue_host, self.config.mqueue_port))
         s.listen(5)
 
-        # Startup the poller thread
-        thread.start_new_thread(self.poller, ())
+        # Startup worker threads
+        for t in xrange(self.thread_max):
+            thread.start_new_thread(self.worker, ())
 
         # Serve forever
         while True:
             try:
                 (clientsocket, address) = s.accept()
-                thread.start_new_thread(self.producer, (clientsocket,))
+                thread.start_new_thread(self.receive_message, (clientsocket,))
             except KeyboardInterrupt:
                 os.remove(self.pid_file)
                 print

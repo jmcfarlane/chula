@@ -2,6 +2,7 @@
 Chula message queue
 """
 
+import Queue
 import cPickle
 import os
 import shutil
@@ -9,8 +10,10 @@ import shutil
 from chula import collection
 from chula.queue.messages import message
 
-class MessageQueue(object):
+class MessageQueue(Queue.Queue, object):
     def __init__(self, config, db=None):
+        super(MessageQueue, self).__init__()
+
         self._msg_store_iter = None
         if db is None:
             self.db = config.mqueue_db
@@ -36,6 +39,7 @@ class MessageQueue(object):
     def add(self, msg):
         self.persist(msg)
         self.persist_result(msg, None)
+        self.put(msg)
 
     def fetch_msg_store_iter(self, subdir='', suffix='.msg'):
         directory = os.path.join(self.msg_store, subdir)
@@ -57,21 +61,18 @@ class MessageQueue(object):
     def persist_result(self, msg, result):
         self.msg_result_store[msg.name] = result
 
-    def pop(self):
-        # If necessary fetch a fresh file iterator
-        if self._msg_store_iter is None:
-            self._msg_store_iter = self.fetch_msg_store_iter()
-
-        try:
-            f = self._msg_store_iter.next()
-            after = f + '.inprocess'
-            os.rename(f, after)
-            msg = message.MessageFactory(open(after, 'r'))
-        except StopIteration:
-            self._msg_store_iter = None
-            msg = None
+    def process(self, msg):
+        before = os.path.join(self.msg_store, msg['name'])
+        after = before + '.inprocess'
+        os.rename(before, after)
+        msg = message.MessageFactory(open(after, 'r'))
 
         return msg
+        
+    def get(self):
+        msg = super(MessageQueue, self).get()
+
+        return self.process(msg)
 
     def purge(self, msg, ex=None):
         if ex is None:
