@@ -40,7 +40,7 @@ class MessageQueueServer(object):
 
             self.log('%s was processed' % msg.name)
             if self.debug:
-                print ' >>> %s processed by: %s' % (msg.name, thread_id)
+                print '%s processed by: %s' % (msg.name, thread_id)
 
     def log(self, msg):
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -127,6 +127,12 @@ class MessageQueueServer(object):
         # Startup worker threads
         for t in xrange(self.thread_max):
             thread.start_new_thread(self.worker, ())
+
+        # Before starting the server add any unprocessed msgs to the queue
+        for msg in self.queue.unprocessed_messages():
+            info = 'Found message out of band, adding to queue: %s'
+            self.log(info % msg)
+            self.queue.add(msg)
 
         # Serve forever
         while True:

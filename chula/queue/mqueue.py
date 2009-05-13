@@ -41,11 +41,12 @@ class MessageQueue(Queue.Queue, object):
         self.persist_result(msg, None)
         self.put(msg)
 
-    def fetch_msg_store_iter(self, subdir='', suffix='.msg'):
+    def unprocessed_messages(self, subdir='', suffix='.msg'):
         directory = os.path.join(self.msg_store, subdir)
         for f in os.listdir(directory):
             if f.endswith(suffix):
-                yield os.path.join(directory, f)
+                msg = message.MessageFactory(open(os.path.join(directory, f)))
+                yield msg
 
     def fetch(self, name):
         return self.msg_result_store.get(name, None)
