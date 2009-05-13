@@ -15,7 +15,17 @@ from chula.queue import mqueue
 from chula.queue.messages import message
 
 class MessageQueueServer(object):
+    """
+    Multithreaded server for processing messages in an asynchronous
+    fashion.  Communication with the server happens via TCP sockets.
+    """
+
     def __init__(self, config):
+        """
+        @param config: Chula configuration
+        @type config: chula.config.Config
+        """
+
         self.config = config
         self.debug = True
         self.log_file = os.path.join(self.config.mqueue_db, 'log')
@@ -27,6 +37,11 @@ class MessageQueueServer(object):
         self.thread_max = self.system.procs + 1
 
     def worker(self):
+        """
+        Method to process messages in the queue.  The number of worker
+        threads that are spawned at startup are configurable.
+        """
+
         thread_id = thread.get_ident()
         self.log('Worker thread started: %s' % thread_id) 
         while True:
@@ -43,12 +58,28 @@ class MessageQueueServer(object):
                 print '%s processed by: %s' % (msg.name, thread_id)
 
     def log(self, msg):
+        """
+        Log writer (this needs to be switched to logging.Logger)
+
+        @param msg: Message to log
+        @type msg: str
+        @return: None
+        """
+
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         log = open(self.log_file, 'a')
         log.write('%s: %s\n' % (now, msg))
         log.close()
 
     def receive_message(self, client):
+        """
+        Receive a message from a chula.queue.client or anything else
+        really.
+
+        @param client: TCP Socket
+        @type client: socket._socketobject
+        """
+
         chars_left = 1
         msg = ['']
         msg_length = None
@@ -114,6 +145,10 @@ class MessageQueueServer(object):
                 pass
 
     def start(self):
+        """
+        Start the mqueue server
+        """
+
         # Create a pid file
         pid = open(self.pid_file, 'w')
         pid.write(str(os.getpid()))
