@@ -24,13 +24,14 @@ View        The view is responsible for presentation.  Examples of
 
             * Mako_
             * Cheetah_
-Controller  The controller is the main code path that controlls
+Controller  The controller is the main class responsible for coordinating 
             everything.  The controller is responsible for capturing
             user input, calling the model for processing, invoking the
-            template, and returning something to the browser.
+            view, passing the model to the view, and returning
+            view to the client (usually a browser).
 ========== ====================================================================
 
-Application Structure
+Application structure
 +++++++++++++++++++++
 
 Here is an example file structure of a bare bones Chula application::
@@ -52,53 +53,20 @@ configuration, and a webserver.  The webserver is not specific
 to Chula really, but rather a quick and dirty way to launch a Chula
 application without needing a webserver installed and configured.
 Technically speaking this is all you need to run a Chula application.
+
+Run your first Chula application
+++++++++++++++++++++++++++++++++
+
 If you would like to try the above application right now, you'd type
 this in your terminal::
 
   user# cd wherever_you_unpacked_the_chula_tarball
-  user# cd apps/basic
+  user# pushd apps/basic
   user# ./webserver
 
 At this point you should be able to point your browser at
 http://localhost:8080 and browse a really fancy Chula app :)
 
-Configuration
-+++++++++++++
-
-Chula applications read all configurations from a configuration file
-which holds a reference to a Chula *config* object.  Here's an example
-configuration file::
-
-  import copy
-
-  from chula import config
-
-  # Prod config
-  prod = config.Config()
-  prod.classpath = 'example.www.controllers'
-  prod.construction_controller = 'construction'
-  prod.construction_trigger = '/tmp/chula_example.stop'
-  prod.debug = False
-  prod.error_controller = 'error'
-  prod.local.view_cache = None
-  prod.session = False
-
-Of the configuration options above, the only two that you need to
-understand now are the ``classpath`` and ``construction_controller`` options.
-
-Classpath
----------
-
-The ``classpath`` option specifies which namespace in your code holds
-the controllers.  The convention typicall used is
-``project.www.controllers``.
-
-Construction Controller
------------------------
-
-The ``construction_controller`` specifies the controller to be called
-in the event the application is marked "under construction".  For now
-this isn't super important - but it'll be handy when you need it.
 
 .. include:: rst/lib/links.rst
 .. include:: rst/lib/extras.rst
