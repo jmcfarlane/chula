@@ -1,0 +1,16 @@
+<%inherit file="/lib/base.tmpl"/>
+
+<%def name="title()">
+  ${parent.title()} - ${model.code_path}
+</%def>
+
+<h1>Source Code Browser</h1>
+
+% if not model.fragment is None:
+  Location: <i class="literal">${model.code_path}</i>
+  <hr/>
+
+  <pre>${model.fragment | h}</pre>
+% else:
+  ${model.error | h}
+% endif

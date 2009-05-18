@@ -24,6 +24,9 @@ View        The view is responsible for presentation.  Examples of
 
             * Mako_
             * Cheetah_
+            * reST_ (restructured text)
+            * Old school (print statements)
+
 Controller  The controller is the main class responsible for coordinating 
             everything.  The controller is responsible for capturing
             user input, calling the model for processing, invoking the
@@ -47,12 +50,13 @@ Here is an example file structure of a bare bones Chula application::
   |           `-- home.py
   `-- webserver
 
-In the list of files there is a Python package_ named *example* that
-holds the entire application.  Inside it there are two controllers, a
-configuration, and a webserver.  The webserver is not specific
-to Chula really, but rather a quick and dirty way to launch a Chula
-application without needing a webserver installed and configured.
-Technically speaking this is all you need to run a Chula application.
+In the list of files above there is a Python package_ named ``example``
+that holds the entire application.  Inside it there are two
+controllers, a configuration, and a webserver.  The webserver is not
+specific to Chula really, but rather a quick and dirty way to launch a
+Chula application without needing a webserver installed and
+configured.  Technically speaking this is all you need to run a Chula
+application.
 
 Run your first Chula application
 ++++++++++++++++++++++++++++++++
@@ -67,6 +71,14 @@ this in your terminal::
 At this point you should be able to point your browser at
 http://localhost:8080 and browse a really fancy Chula app :)
 
+What's next
++++++++++++
+
+When creating your own application is's going to be important that you
+understand the configuration options available.  You'll also want to
+learn more about featues available, and how to use them.
+
+`Next <?doc=configuration>`_
 
 .. include:: rst/lib/links.rst
 .. include:: rst/lib/extras.rst

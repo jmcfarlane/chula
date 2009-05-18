@@ -9,7 +9,7 @@
 % else:
   <h1>Documentation Error</h1>
   % if model.error:
-    ${model.error}
+    ${model.error | h}
   % else:
     Sorry, but that page doesn't seem to exist
   % endif

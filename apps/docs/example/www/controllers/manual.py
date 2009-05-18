@@ -13,15 +13,26 @@ from example.www.controllers import base
 writer = Writer()
 
 class Manual(base.Base):
-
-    def index(self):
+    def _code(self, path):
         """
         """
         
-        doc = self.env.form_get.get('doc', 'index')
-        path = os.path.join(self.config.local.root, 'rst', doc + '.rst')
-        self.model.error = False
-        self.model.fragment = None
+        path = os.path.join(self.config.local.root, path)
+        self.model.code_path = path
+
+        try:
+            self.model.fragment = open(path).read()
+        except Exception, ex:
+            self.model.error = str(ex)
+
+        view = self.template('/code.tmpl')
+        return view.render(model=self.model)
+
+    def _rst(self, path):
+        """
+        """
+        
+        path = os.path.join(self.config.local.root, 'rst', path + '.rst')
 
         if os.path.exists(path):
             try:
@@ -34,3 +45,16 @@ class Manual(base.Base):
         view = self.template('/manual.tmpl')
         return view.render(model=self.model)
 
+    def index(self):
+        """
+        """
+
+        self.model.error = False
+        self.model.fragment = None
+        
+        if 'doc' in self.env.form_get:
+            doc = self.env.form_get.get('doc', 'index')
+            return self._rst(doc)
+        elif 'code' in self.env.form_get:
+            code = self.env.form_get.get('code', 'index')
+            return self._code(code)
