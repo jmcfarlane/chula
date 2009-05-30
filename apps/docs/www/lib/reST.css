@@ -4,7 +4,15 @@
 }
 
 .section H1 {
+  font-size: 1.4em;
+}
+
+.section H2 {
   font-size: 1.3em;
+}
+
+.section H3 {
+  font-size: 1.2em;
 }
 
 .topic-title {
@@ -29,13 +37,3 @@ PRE.literal-block {
   margin-bottom: 1em;
   padding: .9em;
 }
-
-SPAN.pre {
-  border: 1px solid #dddddd;
-  color: green;
-  font-size: .9em;
-  padding: 0 2px;
-  position: relative;
-  top: -1px;
-}
-

@@ -21,7 +21,7 @@ EM {
 }
 
 H1, H2, H3, H4 {
-  font-size: 1.6em;
+  font-size: 1.3em;
   font-weight: bold;
   margin: 1em 0 .5em 0;
 }
@@ -37,7 +37,7 @@ OL LI {
 }
 
 P {
-  margin-bottom: 2em;
+  margin-bottom: 1em;
 }
 
 TABLE TH {
@@ -113,4 +113,13 @@ UL LI {
 .comment {
   color: green;
   font-style: italic;
+}
+
+.literal {
+  border: 1px solid #dddddd;
+  color: green;
+  font-size: .9em;
+  padding: 0 2px;
+  position: relative;
+  top: -1px;
 }
