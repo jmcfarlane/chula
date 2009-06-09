@@ -4,6 +4,7 @@ Class to manage user session.  It is designed to be generic in nature.
 
 import cPickle
 import hashlib
+import sys
 
 from chula import db, error, guid, json, memcache
 from chula.db.datastore import DataStoreFactory
@@ -39,7 +40,7 @@ class Session(dict):
         else:
             self._guid = existing_guid
 
-        # Initialize memache client
+        # Initialize memcached client
         if not isinstance(self._cache, memcache.Client):
             self._cache = memcache.Client(self._cache, debug=0)
         
@@ -61,12 +62,26 @@ class Session(dict):
         database connections B{(maybe move this elsewhere)}.
         """
         
+        # Close db connection
         try:
             self._conn.close()
         except:
             pass
         finally:
             self._conn = None
+
+        # Close memcached connection
+        try:
+            self._cache.disconnect_all()
+
+            # Prevent _Host from endlessly increasing in refcount
+            for module in sys.modules:
+                if module == 'chula.memcache':
+                    sys.modules.pop(module)
+        except:
+            pass
+        finally:
+            self._cache = None
 
     def decode(self, data):
         """

@@ -22,6 +22,9 @@ def configured_app(environ, start_response, config):
     for chunk in chunks:
         yield chunk
 
+    # Clean house
+    adapter._gc()
+
 def fcgi(fcn):
     def wrapper(environ, start_response):
         config = fcn()

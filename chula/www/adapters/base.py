@@ -21,6 +21,13 @@ class BaseAdapter(object):
         self.controller = None
         self.mapper = None
 
+    def _gc(self):
+        del self.config
+        del self.controller
+        del self.env
+        del self.mapper
+        del self.timer
+
     def execute(self):
         self.controller = self.fetch_controller()
 
@@ -89,7 +96,7 @@ class BaseAdapter(object):
             try:
                 self.controller._pre_session_persist()
                 self.controller.session.persist()
-            except error.SessionUnableToPersistError():
+            except error.SessionUnableToPersistError:
                 # Need to assign an error controller method to call here
                 raise
             except Exception:

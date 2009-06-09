@@ -54,7 +54,12 @@ class Controller(object):
         sending data to the browser.
         """
 
-        pass
+        self.session._gc()
+        del self.config
+        del self.env
+        del self.form
+        del self.model
+        del self.session
 
     def _pre_session_persist(self):
         """
