@@ -154,8 +154,8 @@ class Client(local):
         Useful for cPickle since subclassing isn't allowed.
         """
         local.__init__(self)
-        self.set_servers(servers)
         self.debug = debug
+        self.set_servers(servers)
         self.stats = {}
 
         # Allow users to modify pickling/unpickling behavior
@@ -183,7 +183,7 @@ class Client(local):
             2. Tuples of the form C{("host:port", weight)}, where C{weight} is
             an integer weight value.
         """
-        self.servers = [_Host(s, self.debuglog) for s in servers]
+        self.servers = [_Host(s, self.debug) for s in servers]
         self._init_buckets()
 
     def get_stats(self):
@@ -839,7 +839,8 @@ class _Host:
     _DEAD_RETRY = 30  # number of seconds before retrying a dead server.
     _SOCKET_TIMEOUT = 3  #  number of seconds before sockets timeout.
 
-    def __init__(self, host, debugfunc=None):
+    def __init__(self, host, debug=0):
+        self.debug = debug
         if isinstance(host, types.TupleType):
             host, self.weight = host
         else:
@@ -864,14 +865,14 @@ class _Host:
             self.port = int(hostData.get('port', 11211))
             self.address = ( self.ip, self.port )
 
-        if not debugfunc:
-            debugfunc = lambda x: x
-        self.debuglog = debugfunc
-
         self.deaduntil = 0
         self.socket = None
 
         self.buffer = ''
+
+    def debuglog(self, str):
+        if self.debug:
+            sys.stderr.write("MemCached: %s\n" % str)
 
     def _check_dead(self):
         if self.deaduntil and self.deaduntil > time.time():
