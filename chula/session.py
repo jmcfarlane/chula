@@ -73,11 +73,6 @@ class Session(dict):
         # Close memcached connection
         try:
             self._cache.disconnect_all()
-
-            # Prevent _Host from endlessly increasing in refcount
-            for module in sys.modules:
-                if module == 'chula.memcache':
-                    sys.modules.pop(module)
         except:
             pass
         finally:
