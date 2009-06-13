@@ -37,6 +37,10 @@ class Environment(env.BaseEnv):
             self.SERVER_ADMIN = None
             self.SERVER_SIGNATURE = None
 
+        # Make sure SCRIPT_NAME is set
+        if not self.SCRIPT_NAME:
+            self.SCRIPT_NAME = self.PATH_INFO
+
         # Set http get or post variables
         self.form = FieldStorage(fp=self.wsgi_input,
                                  environ=environ,
