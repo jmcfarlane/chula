@@ -9,6 +9,7 @@ import sys
 from chula import db, error, guid, json, memcache
 from chula.db.datastore import DataStoreFactory
 
+DEBUG = False
 CPICKLE = 'cPickle'
 JSON = 'json'
 STALE_COUNT = 'REQUESTS-BETWEEN-DB-PERSIST'
@@ -27,12 +28,19 @@ class Session(dict):
         @param existing_guid: Used to attach to an existing user's session
         @type existing_guid: chula.guid.guid()
         """
-        
-        self._persist_immediately = False
+
+        # If not debugging, make logging a noop
+        if not DEBUG:
+            self.__dict__['log'] = lambda x: x
+
+        self.log('Constructor called')
+
+        self._cache = config.session_memcache
         self._config = config
-        self._cache = self._config.session_memcache
-        self._timeout = self._config.session_timeout
         self._expired = False
+        self._max_stale_count = config.session_max_stale_count
+        self._persist_immediately = False
+        self._timeout = config.session_timeout
         self._transport = transport
 
         if existing_guid is None:
@@ -76,7 +84,9 @@ class Session(dict):
         except:
             pass
         finally:
-            self._cache = None
+            del self._cache
+
+        self.log('session._gc() called\n')
 
     def decode(self, data):
         """
@@ -107,8 +117,6 @@ class Session(dict):
         except:
             self._conn.rollback()
             raise
-        finally:
-            self._gc()
 
         # Delete from cache
         if not self._cache is None:
@@ -142,10 +150,13 @@ class Session(dict):
         @return: Native Python object, or None if not found
         """
 
+        self.log('fetching data from cache')
         values = self._cache.get(self.mkey())
         if values is None:
             return None
+            self.log('`--> did not find any data in the cache')
         else:
+            self.log('`--> length of string in cache: %s' % len(values))
             return self.decode(values)
 
     def fetch_from_db(self):
@@ -155,12 +166,14 @@ class Session(dict):
         @return: Native Python object, or None if none found
         """
 
+        self.log('fetching data from the db')
+
         sql = \
         """
         SELECT values FROM session
         WHERE guid = %s AND active = TRUE;
         """ % (db.cstr(self._guid))
-        
+
         try:
             self.connect_db()
             self._cursor.execute(sql)
@@ -183,6 +196,8 @@ class Session(dict):
         write to the database.  Use this when important session data
         changes and you don't want to risk it being lost.
         """
+        
+        self.log('flush_next_persist called')
 
         self._persist_immediately = True
 
@@ -211,10 +226,14 @@ class Session(dict):
         # persist to the database as we can't trust the cache currently
         if data is None:
             data = self.fetch_from_db()
-            self.flush_next_persist()
+            self.log('data not found in cache during loading')
+            self.log('`-> stale_count: %s' % self.get(STALE_COUNT))
 
         if not data is None:
             self.update(data)
+    
+    def log(self, msg):
+        print '>>> ', msg
 
     def mkey(self):
         """
@@ -241,11 +260,14 @@ class Session(dict):
 
         self[STALE_COUNT] = self.get(STALE_COUNT, -1) + 1
 
+        self.log('current stale_count in persist(): %s' % self[STALE_COUNT])
+
         # Persist to the session state to the database if this is a new
         # session (the STALE_COUNT won't be set) or the age (requests between
         # database persists) is greater than a constant value, 10 for
         # now. 
-        if self[STALE_COUNT] == 0 or self[STALE_COUNT] > 10:
+        if self[STALE_COUNT] == 0 or self[STALE_COUNT] > self._max_stale_count:
+            self.log('decision made to call flush_next_persist')
             self.flush_next_persist()
         
         # Forces a write to the database on the next go
@@ -279,10 +301,10 @@ class Session(dict):
 
     def persist_db(self):
         """
-        Persist the session state to the database.  This method will
-        call _gc() to garbage collect the session specific database
-        connection if it exists.
+        Persist the session state to the database
         """
+
+        self.log('persist_db called')
 
         # Keep track of what happens
         waspersisted = False
@@ -311,12 +333,6 @@ class Session(dict):
 
             self.flush_next_persist()
             self[STALE_COUNT] = current_stale_count
-        finally:
-            # Because persistance is always at the end of the process
-            # flow (actually called by apache.handler) we can safely
-            # close the database connection now, this is the last db
-            # work to be done.
-            self._gc()
 
         # If the db persist failed for whatever reason, try to
         # failover on the cache till it comes back up.
