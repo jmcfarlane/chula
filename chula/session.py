@@ -153,8 +153,8 @@ class Session(dict):
         self.log('fetching data from cache')
         values = self._cache.get(self.mkey())
         if values is None:
-            return None
             self.log('`--> did not find any data in the cache')
+            return None
         else:
             self.log('`--> length of string in cache: %s' % len(values))
             return self.decode(values)
@@ -182,6 +182,8 @@ class Session(dict):
             return {'SESSION-ERROR':'DATABASE UNAVAILABLE!'}
 
         if self._record is None:
+            self.log('`--> did not find any data in the db')
+            self.log('`--> setting session = {}')
             return {}
         else:
             try:
@@ -225,9 +227,8 @@ class Session(dict):
         # If the cache is unavailable fetch from the db and be sure to
         # persist to the database as we can't trust the cache currently
         if data is None:
+            self.log('`--> stale_count: %s' % self.get(STALE_COUNT))
             data = self.fetch_from_db()
-            self.log('data not found in cache during loading')
-            self.log('`-> stale_count: %s' % self.get(STALE_COUNT))
 
         if not data is None:
             self.update(data)
@@ -258,7 +259,12 @@ class Session(dict):
         if self._expired:
             return
 
-        self[STALE_COUNT] = self.get(STALE_COUNT, -1) + 1
+        # Set and increment the stale count.  If unset, it's inital
+        # value is set to -2, then incremented so it winds up being
+        # set to -1 if initially unset.  A value of -1 results in the
+        # first commit of session hitting the cache, the second hits
+        # the db - after that it's based on the max_stale_count.
+        self[STALE_COUNT] = self.get(STALE_COUNT, -2) + 1
 
         self.log('current stale_count in persist(): %s' % self[STALE_COUNT])
 
