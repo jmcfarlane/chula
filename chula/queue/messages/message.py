@@ -39,10 +39,11 @@ class Message(collection.Collection):
             raise TypeError(msg)
 
     def fill(self, msg):
-        if not msg is None:
-            if isinstance(msg, dict):
-                pass
+        self.type = '%s.%s' % (self.__class__.__module__,
+                               self.__class__.__name__)
 
+        if not msg is None:
+            # Fill from the decoded message values
             for key in self.keys():
                 self[key] = msg[key]
 
@@ -61,38 +62,49 @@ class Message(collection.Collection):
         pass
 
 class MessageFactory(object):
+    """
+    Transform the passed object into it's native type
+    """
+
     def __new__(self, msg):
-        if isinstance(msg, basestring):
-            mtype = msg
-            msg = None
-        elif isinstance(msg, Message):
-            mtype = msg.type
-        elif isinstance(msg, dict):
-            mtype = msg['type']
-        elif isinstance(msg, file):
-            f = msg
-            msg = ''.join(f.readlines())
-            msg = Message.decode(msg)
-            mtype = msg['type']
+        """
+        Construct a new message of any subclass of Message()
+
+        @param msg: Message to be created
+        @type msg: file or dict
+        @return: chula.queue.messages.message.Message or subclass of
+        """
+
+        if isinstance(msg, file):
+            msg = Message.decode(''.join(msg.readlines()))
 
             # Currently not persisting "inprocess" to the file so go
             # by the name of the actual file, not it's contents
             if f.name.endswith('.inprocess'):
                 msg['inprocess'] = True
-
+        elif isinstance(msg, dict):
+            pass
         else:
             msg = 'Invalid message: %s' % msg
             raise Exception(msg)
+            
+        try:
+            # Pull out the exact type of message and import the module
+            module_path, class_name = msg['type'].rsplit('.', 1)
+            module = __import__(module_path, globals(), locals(), [class_name])
 
-        if mtype == 'email':
-            from chula.queue.messages import email as message
-        elif mtype == 'echo':
-            from chula.queue.messages import echo as message
-        else:
-            msg = 'Invalid message type: %s' % mtype
+            # Instantiate an instance of the actual type (subclass of Message)
+            msg = module.Message(msg)
+        except Exception, ex:
+            msg = 'Error detail: %s' % ex
+            raise InvalidMessageEncodingError(msg)
+
+        # Some sanity checking
+        if not isinstance(msg, Message):
+            msg = '[%s] must subclass chula.queue.messages.Message' % msg
             raise Exception(msg)
-
-        return message.Message(msg)
+        else:
+            return msg
 
 class CannotPurgeUnprocessedError(error.ChulaException):
     """

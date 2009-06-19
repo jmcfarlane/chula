@@ -2,15 +2,15 @@ import unittest
 
 from chula import config
 from chula.queue import mqueue
-from chula.queue.messages import message, email
+from chula.queue.messages import echo, mail, message
 
 config = config.Config()
 
 class Test_mqueue(unittest.TestCase):
     doctest = message
 
-    def _add(self, mtype='echo'):
-        msg = message.MessageFactory(mtype)
+    def _add(self, module=echo):
+        msg = module.Message()
         msg.message = 'payload'
         self.mqueue.add(msg)
 

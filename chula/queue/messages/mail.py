@@ -2,14 +2,11 @@
 Chula email message object
 """
 
-from chula import collection, mail
+from chula import collection
+from chula.mail import Mail
 from chula.queue.messages import message
 
 class Message(message.Message):
-    def __init__(self, msg):
-        super(Message, self).__init__(msg)
-        self.type = 'email'
-
     def fill(self, msg):
         super(Message, self).fill(msg)
         self.message = Contract()
@@ -21,7 +18,7 @@ class Message(message.Message):
                     self.message[key] = value
 
     def process(self):
-        email = mail.Mail(self.message.smtp)
+        email = Mail(self.message.smtp)
         email.from_addy = self.message.from_addy
         email.to_addy = self.message.to_addy
         email.body = self.message.body
@@ -59,3 +56,17 @@ class Contract(collection.RestrictedCollection):
         self.smtp = collection.UNSET
         self.subject = collection.UNSET
         self.to_addy = collection.UNSET
+
+if __name__ == '__main__':
+    from chula.queue.messages.mail import Message
+    from chula.queue.tester import Tester
+
+    msg = Message() 
+    msg.message.body = 'Hello world'
+    msg.message.subject = 'Testing message queue with email message'
+    msg.message.from_addy = 'john.mcfarlane+chula@gmail.com'
+    msg.message.to_addy = msg.message.from_addy
+    msg.message.smtp = 'smtp.comcast.net'
+
+    tester = Tester()
+    tester.test(msg)
