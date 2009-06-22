@@ -8,7 +8,7 @@ from chula.config import Config
 from chula.queue import client
 
 class Tester(object):
-    def __init__(self, config=None, debug=True, wait=100):
+    def __init__(self, config=None, debug=True, wait=500):
         self.client = client.MessageQueueClient(Config())
         self.debug = debug
         self.wait = wait
@@ -23,7 +23,7 @@ class Tester(object):
     def get_response(self, id):
         print '>>> Waiting for response...'
         for x in xrange(self.wait):
-            time.sleep(1 / 1000)
+            time.sleep(0.001)
             response = self.client.fetch(id)
             if not response is None:
                 print '>>> Response:', response

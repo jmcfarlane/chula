@@ -80,7 +80,7 @@ class MessageFactory(object):
 
             # Currently not persisting "inprocess" to the file so go
             # by the name of the actual file, not it's contents
-            if f.name.endswith('.inprocess'):
+            if str(file.name).endswith('.inprocess'):
                 msg['inprocess'] = True
         elif isinstance(msg, dict):
             pass
