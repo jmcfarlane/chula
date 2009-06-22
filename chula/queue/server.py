@@ -30,7 +30,6 @@ class MessageQueueServer(object):
         self.debug = True
         self.log_file = os.path.join(self.config.mqueue_db, 'log')
         self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
-        self.poll = self.config.mqueue_poll
         self.queue = mqueue.MessageQueue(self.config)
         self.system = system.System()
         self.thread_count = 0
