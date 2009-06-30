@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
-    <release date="" version="0.1.0">
+    <release date="06/29/2009" version="0.1.0">
         <log>Fixed corner case in FieldStorage array structures</log>
         <log>Fixed defect in chula.date.str2date() with UTC +n</log>
         <log>Fixed run_tests so it works without Chula being installed</log>
