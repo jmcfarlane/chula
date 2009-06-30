@@ -55,6 +55,15 @@ class ControllerClassNotFoundError(ChulaException):
         self.message = 'Unable to find the following class: %s' % _pkg
         self.append = append
 
+class ControllerImportError(ChulaException):
+    """
+    Exception while trying to import the controller.
+    """
+
+    def __init__(self, _pkg, append=None):
+        self.message = 'Error while trying to import: %s' % _pkg
+        self.append = append
+
 class ControllerMethodNotFoundError(ChulaException):
     """
     Exception indicating the requested controller method not found.

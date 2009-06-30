@@ -64,28 +64,23 @@ class BaseMapper(object):
         path = '%s.%s' %  (self.route.package, self.route.module)
         class_name = self.route.module.capitalize()
         self.route.class_name = class_name
+        msg = "%s - %s [Route being used: %s]"
+
         try:
-            module = __import__(path, globals(), locals(), [class_name])
+            return __import__(path, globals(), locals(), [class_name])
         except ImportError, ex:
-            #TODO: Log this:
-            #msg = '%s - %s' % (path, ex)
-            #msg += ' [Route being used: %s]' % self.route
-            #raise error.ControllerModuleNotFoundError(msg)
+            msg = msg % (path, ex, self.route)
 
-            # Reconstruct the route from the route_error we
-            # made earlier, and let its e404 method handle things
-            # TODO: Make sure we can't recurse forever here
-            # TODO: Somehow detect missing controller vs exception
-            #       inside a controller that prevents it from being
-            #       imported.  Currently ImportError isn't enough.
-            self.route = self.route_404
-            module = self.import_module()
-
-        except Exception:
-            raise
-
-        return module
-            
+            # Distinguish between the following:
+            #  1. controller module not found (ImportError) [HTTP 404]
+            #  2. controller found, but raises an ImportError [HTTP 500]
+            if class_name == ex.args[0].split()[-1].capitalize():
+                raise error.ControllerClassNotFoundError(msg)
+            else:
+                raise error.ControllerImportError(msg)
+        except Exception, ex:
+            msg = msg % (path, ex, self.route)
+            raise error.ControllerImportError(msg)
 
     def map(self, status=None):
         """

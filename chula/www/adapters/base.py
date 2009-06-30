@@ -28,6 +28,15 @@ class BaseAdapter(object):
         del self.mapper
         del self.timer
 
+    def exception(self, controller, ex):
+        # Prepare a collection to hold exception context
+        context = collection.Collection()
+        context.exception = ex
+        context.env = deepcopy(controller.env)
+        context.form = deepcopy(controller.form)
+
+        return context
+
     def execute(self):
         self.controller = self.fetch_controller()
 
@@ -37,16 +46,14 @@ class BaseAdapter(object):
         try:
             html = self.controller.execute()
         except Exception, ex:
-            # Prepare a collection to hold exception context
-            context = collection.Collection()
-            context.exception = ex
-            context.env = deepcopy(self.controller.env)
-            context.form = deepcopy(self.controller.form)
+
+            # Save off the exception before re-mapping the controller
+            exception = self.exception(self.controller, ex)
 
             # Try the error controller (and set an exception
             # attribute in the model)
             self.controller = self.mapper.map(500)
-            self.controller.model.exception = context
+            self.controller.model.exception = exception
 
             # Don't yield yet, need to replace to add chula stuff
             html = self.controller.execute()
@@ -138,6 +145,9 @@ class BaseAdapter(object):
         # Load the controller, using e404 if not found
         try:
             controller = self.mapper.map()
+        except error.ControllerImportError, ex:
+            controller = self.mapper.map(500)
+            controller.model.exception = self.exception(controller, ex)
         except error.ControllerClassNotFoundError:
             controller = self.mapper.map(404)
 
