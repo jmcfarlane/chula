@@ -82,12 +82,12 @@ class BaseMapper(object):
             msg = msg % (path, ex, self.route)
             raise error.ControllerImportError(msg)
 
-    def map(self, status=None):
+    def map(self, status=200):
         """
         Return a reference to the controller module?
         """
 
-        if status is None:
+        if status is 200:
             self.default_route()
             self.parse()
         elif status == 404:
@@ -108,9 +108,13 @@ class BaseMapper(object):
             msg = '%(package)s.%(module)s.%(class_name)s' % self.route
             msg += ' [Using Route: %s]' % self.route
             raise error.ControllerClassNotFoundError(msg)
-        
+
         self.controller = controller(self.env, self.config)
         self.bind()
+
+        # Set the http status
+        self.controller.env.status = status
+
         return self.controller
 
     def bind(self):
