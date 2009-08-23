@@ -498,6 +498,33 @@ def str2tags(input_):
     
     raise error.TypeConversionError(input_, 'list of tags')
 
+def str2unicode(retval, encoding='utf8', errors='ignore'):
+    """
+    Convert a string into a unicode encoded string.  If the character
+    set is not specified, utf-8 will be used.  If errors are
+    encountered during conversion, by default they will be ignored.
+    This means the invalid characters will be removed.
+
+    @param retval: String
+    @type retval: str, unicode
+    @param encoding: Desired encoding, utf8 by default
+    @type encoding: str
+    @param errors: How to handle unicode conversion errors
+    @type: str (valid values: 'strict', 'replace', 'ignore')
+    @return: str
+
+    >>> print str2unicode('abc')
+    abc
+
+    >>> print str2unicode('\x80abc')
+    abc
+    """
+
+    if not isinstance(retval, unicode):
+        retval = unicode(retval, errors=errors)
+
+    return retval.encode(encoding)
+
 def wrap(input_, wrap):
     """
     Wrap a string with something

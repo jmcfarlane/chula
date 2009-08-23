@@ -2,9 +2,11 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.2.0">
-        <log>Improve handling of exceptions during controller import</log>
+        <log>Added chula.data.str2unicode</log>
+        <log>Added initial bat tests</log>
+        <log>Improved handling of exceptions during controller import</log>
+        <log>Improved chula.mail to properly handle unicode</log>
         <log>Moved unit tests out of the source tree</log>
-        <log>Initial bat tests</log>
     </release>
 
     <release date="06/29/2009" version="0.1.0">

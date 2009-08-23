@@ -5,7 +5,7 @@ Simple utility class to send emails
 import smtplib
 import socket
 
-from chula import regex
+from chula import data, regex
 
 class Mail(object):
     def __init__(self, server):
@@ -20,6 +20,14 @@ class Mail(object):
         self.subject = None
         self.to_addy = None
 
+    def _validate_encoding(self):
+        self.body = data.str2unicode(self.body)
+        self.from_addy = data.str2unicode(self.from_addy)
+        self.reply_to_addy = data.str2unicode(self.reply_to_addy)
+        self.server = data.str2unicode(self.server)
+        self.subject = data.str2unicode(self.subject)
+        self.to_addy = data.str2unicode(self.to_addy)
+
     def send(self):
         """
         Send the requested mail using smtplib
@@ -27,6 +35,8 @@ class Mail(object):
 
         if not regex.match(regex.EMAIL, str(self.reply_to_addy)):
             self.reply_to_addy = self.from_addy
+
+        self._validate_encoding()
 
         headers = []
         headers.append('From: %s' % self.from_addy)
