@@ -6,6 +6,7 @@ CREATE DATABASE chula_session WITH
     ENCODING = 'UTF-8';
 
 CREATE USER chula;
+ALTER USER chula WITH PASSWORD 'chula';
 
 \c chula_session
 

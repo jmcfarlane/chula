@@ -105,7 +105,7 @@ class Test_functions(unittest.TestCase):
         self.assertRaises(TypeConversionError, fcn.cint, '35a')
     
     def test_connection_factory_postgresql(self):
-        conn = self._DS('pg:chula@localhost/chula_test')
+        conn = DataStoreFactory('pg:chula@localhost/chula_test', 'chula')
         self.assertEquals(True, isinstance(conn, postgresql.DataStore))
 
     def test_connection_factory_sqlite(self):
@@ -169,7 +169,7 @@ class Test_functions(unittest.TestCase):
         self.assertRaises(TypeConversionError, fcn.ctags, 4)
     
     def test_datatore_basic(self):
-        conn = DataStoreFactory('pg:chula@localhost/chula_test')
+        conn = DataStoreFactory('pg:chula@localhost/chula_test', 'chula')
         cursor = conn.cursor()
         try:
             cursor.execute('SELECT * FROM cars LIMIT 1;')
@@ -181,7 +181,7 @@ class Test_functions(unittest.TestCase):
             conn.close()
 
     def test_datatore_tuple(self):
-        conn = DataStoreFactory('pg:chula@localhost/chula_test')
+        conn = DataStoreFactory('pg:chula@localhost/chula_test', 'chula')
         cursor = conn.cursor(type='tuple')
         try:
             cursor.execute('SELECT * FROM cars LIMIT 1;')
@@ -198,7 +198,7 @@ class Test_functions(unittest.TestCase):
         self.assertEqual(fcn.empty2null(2), 2)
 
     def test_invalid_cursor(self):
-        conn = DataStoreFactory('pg:chula@localhost/chula_test')
+        conn = DataStoreFactory('pg:chula@localhost/chula_test', 'chula')
         self.assertRaises(UnsupportedUsageError, conn.cursor, type='list')
         conn.close()
 

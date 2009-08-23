@@ -6,6 +6,8 @@ CREATE DATABASE chula_test WITH
     ENCODING = 'UTF-8';
 
 CREATE USER chula;
+ALTER USER chula WITH PASSWORD 'chula';
+
 
 \c chula_test
 
@@ -18,3 +20,5 @@ CREATE TABLE cars (
 
 GRANT ALL ON cars TO chula;
 GRANT ALL ON cars_uid_seq TO chula;
+
+INSERT INTO cars (make, model) VALUES('Honda', 'Civic');
