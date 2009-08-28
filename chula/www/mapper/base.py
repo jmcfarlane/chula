@@ -74,7 +74,8 @@ class BaseMapper(object):
             # Distinguish between the following:
             #  1. controller module not found (ImportError) [HTTP 404]
             #  2. controller found, but raises an ImportError [HTTP 500]
-            if class_name == ex.args[0].split()[-1].capitalize():
+            classpath_in_excecption = ex.args[0].split()[-1]
+            if path.endswith(classpath_in_excecption):
                 raise error.ControllerClassNotFoundError(msg)
             else:
                 raise error.ControllerImportError(msg)
