@@ -14,7 +14,7 @@ class TestCase(unittest.TestCase):
 
         # Member variables
         self.browser = '*firefox'
-        self.max_wait = 15
+        self.max_wait = 15 * 1000
         self.remote_control_port = 4444
         self.remote_control = 'localhost'
         self.speed = 0
