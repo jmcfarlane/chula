@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
+    <release date="" version="0.3.0">
+        <log>More unit and bat tests</log>
+    </release>
+
     <release date="09/27/2009" version="0.2.0">
         <log>Added chula.data.str2unicode</log>
         <log>Added initial bat tests</log>
