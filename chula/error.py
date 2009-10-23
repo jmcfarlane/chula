@@ -18,8 +18,31 @@ class ChulaException(Exception):
         @type append: String
         """
 
-        self.message = msg
+        self._message = None
         self.append = append
+
+    def _get_message(self):
+        """
+        Getter for a message property, to avoid using an attribute
+        named "message" which will raise deprecation errors in
+        Python-2.6.
+        """
+
+        return self._message
+
+    def _set_message(self, msg):
+        """
+        Getter for a message property, to avoid using an attribute
+        named "message" which will raise deprecation errors in
+        Python-2.6.
+
+        @param msg: Error message to be used
+        @type msg: str
+        """
+
+        self._message = msg
+
+    message = property(_get_message, _set_message)
 
     def __str__(self, append=None):
         """

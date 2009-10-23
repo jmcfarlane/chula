@@ -3,6 +3,7 @@
 <project name="Chula">
     <release date="" version="0.3.0">
         <log>More unit and bat tests</log>
+        <log>Work around Python-2.6 deprecation of Exception.message</log>
     </release>
 
     <release date="09/27/2009" version="0.2.0">
