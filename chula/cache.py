@@ -4,13 +4,16 @@ Wrapper class for the Memcache client
 
 from chula import error, memcache
 
+ENCODING = 'ascii'
+SANITIZE = False
+
 class Cache(object):
     def __init__(self, servers):
         self.servers = servers
         self.cache = memcache.Client(self.servers, debug=0)
 
     @staticmethod
-    def clean_key(key):
+    def clean_key(key, sanitize=SANITIZE):
         if not isinstance(key, basestring):
             msg = 'Cache keys must be of type: str'
             raise error.InvalidCacheKeyError(msg)
@@ -18,20 +21,24 @@ class Cache(object):
         key = list(key)
         for char in key:
             if ord(char) < 33 or ord(char) == 127:
-                key.remove(char)
+                if sanitize:
+                    key.remove(char)
+                else:
+                    msg = "Memcache doesn't support ORD < 33 or == 127"
+                    raise error.InvalidCacheKeyError(msg)
 
         key = ''.join(key)
         if len(key) > memcache.SERVER_MAX_KEY_LENGTH:
-            msg = 'Key must <= %s chars' % memcache.SERVER_MAX_KEY_LENGTH
+            msg = 'Key must be <= %s chars' % memcache.SERVER_MAX_KEY_LENGTH
             raise error.InvalidCacheKeyError(msg)
         else:
-            return key
+            return key.encode(ENCODING)
 
     def close(self):
         self.cache.disconnect_all()
 
     def delete(self, key):
-        deleted = self.cache.delete(key)
+        deleted = self.cache.delete(self.clean_key(key))
 
         # Non zero status is success
         if deleted != 0:
@@ -40,16 +47,14 @@ class Cache(object):
             return False
 
     def get(self, key):
-        value = self.cache.get(key)
+        value = self.cache.get(self.clean_key(key))
         return value
 
     def purge(self, key):
-        return self.delete(key)
+        return self.delete(self.clean_key(key))
 
     def set(self, key, value, minutes=1):
-        if key != self.clean_key(key):
-            msg = "Memcache doesn't support ord < 33 or == 127"
-            raise error.InvalidCacheKeyError(msg)
+        key = self.clean_key(key)
 
         saved = self.cache.set(key, value, round(minutes * 60))
 
