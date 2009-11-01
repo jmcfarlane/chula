@@ -2,8 +2,9 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.3.0">
-        <log>More unit and bat tests</log>
+        <log>Improve cookie handling (better RFC compliance)</log>
         <log>Work around Python-2.6 deprecation of Exception.message</log>
+        <log>More unit and bat tests</log>
         <log>Enforce str key types with memcached</log>
         <log>Disable memcached key sanitization by default</log>
     </release>

@@ -124,9 +124,9 @@ class BaseAdapter(object):
 
         # Initialize cookies
         self.env.cookies = cookie.CookieCollection()
-        self.env.cookies.timeout = self.config.session_timeout
-        self.env.cookies.key = self.config.session_encryption_key
         self.env.cookies.domain = self.env.HTTP_HOST
+        self.env.cookies.key = self.config.session_encryption_key
+        self.env.cookies.timeout = self.config.session_timeout
 
         # Make sure the domain gets set
         if self.env.cookies.domain is None:

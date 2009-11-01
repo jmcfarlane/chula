@@ -33,16 +33,36 @@ class CookieCollection(SimpleCookie):
             # Don't write out cookies that are prefixed with underbars
             # as they are considered private. This also has the side
             # effect of not writing out Urchin cookies like crazy :)
-            if not key.startswith('_'):
-                header = []
-                header.append('%s=%s' % (key, cookie.value))
-                header.append('expires=%s' % expires)
-                header.append('path=%s' % self.path)
-                header.append('domain=%s' % self.domain)
-                cookies.append(('Set-Cookie', '; '.join(header)))
+            if key.startswith('_'):
+                # TODO: find a better way to avoid writing Urchin cookies
+                continue
+
+            if not self.domain is None:
+                # Domain must be prefixed with "." and exclude the port
+                # REFERENCE: RFC 2109, RFC 2965
+                self.domain = '.' + self.domain.split(':')[0]
+
+                # If the domain doesn't look to be a real FQDN, remove:
+                if not self.domain.count('.') > 1:
+                    self.domain = None
+
+            # Always include the name of the cookie first
+            header = []
+            header.append('%s=%s' % (key, cookie.value))
+
+            # Supported cookie attributes
+            header.append('Expires=%s' % expires)
+            header.append('Path=%s' % self.path)
+
+            # Don't include the domain for sites that only use hostnames
+            # eg: http://wiki/foo/bar/file.html
+            if not self.domain is None:
+                header.append('Domain=%s' % self.domain)
+
+            # Create the full header tuple
+            cookies.append(('Set-Cookie', '; '.join(header)))
 
         return cookies
 
     def destroy(self):
         self.timeout = -10000
-        #self['expired'] = True
