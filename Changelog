@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
+    <release date="" version="0.4.0">
+        <log>Planning...</log>
+    </release>
+
     <release date="11/03/2009" version="0.3.0">
         <log>Improve cookie handling (better RFC compliance)</log>
         <log>Work around Python-2.6 deprecation of Exception.message</log>
