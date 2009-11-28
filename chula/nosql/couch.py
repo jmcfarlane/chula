@@ -13,7 +13,7 @@ ENV = 'CHULA_COUCHDB_SERVER'
 VALID_ID = r'^[-a-zA-Z0-9_.]+$'
 VALID_ID_RE = re.compile(VALID_ID)
 
-def connect(db, server=None):
+def connect(db, server=None, shard=None):
     futon = None
 
     if server is None:
@@ -21,7 +21,10 @@ def connect(db, server=None):
 
     if not server is None:
         futon = datastore.DataStoreFactory('couchdb:%s' % server)
-        return futon.db(db)
+        if shard is None:
+            return futon.db(db)
+        else:
+            return futon.db(os.path.join(db, shard))
     else:
         msg = 'Server uri not specified'
         raise Exception(msg)
@@ -31,11 +34,11 @@ class Document(dict):
     CouchDB document abstraction class
     """
 
-    def __init__(self, id, document=None, server=None):
+    def __init__(self, id, document=None, server=None, shard=None):
         super(Document, self).__init__()
 
         id = self.sanitize_id(id)
-        self.db = connect(self.DB, server)
+        self.db = connect(self.DB, server=server, shard=shard)
 
         # If this is a couchdb document, just fill - don't fetch
         if isinstance(document, client.Document):
@@ -59,9 +62,9 @@ class Document(dict):
             return id.encode(ENCODING)
 
     @classmethod
-    def delete(self, id):
+    def delete(self, id, server=None, shard=None):
         id = self.sanitize_id(id)
-        db = connect(self.DB, server)
+        db = connect(self.DB, server=server, shard=shard)
 
         try:
             del db[id] 
@@ -110,9 +113,9 @@ class Document(dict):
         return self['_rev']
 
 class Documents(list):
-    def __init__(self, server=None):
+    def __init__(self, server=None, shard=None):
         super(Documents, self).__init__()
-        self.db = connect(self.DB, server)
+        self.db = connect(self.DB, server=server, shard=shard)
 
     def query(self, func, cls=None, sort=False, reverse=False):
         view = self.db.query(func)
