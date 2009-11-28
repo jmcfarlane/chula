@@ -36,12 +36,15 @@ class Controller(object):
         if self.config.session:
             if self.config.session_name in self.env.cookies:
                 guid_ = self.env.cookies[self.config.session_name].value
-                self.session = session.Session(self.config, guid_)
             else:
                 # Create a new guid create a cookie
                 guid_ = guid.guid()
-                self.session = session.Session(self.config, guid_)
                 self.env.cookies[self.config.session_name] = guid_
+
+            if self.config.session_nosql is None:
+                self.session = session.Session(self.config, guid_)
+            else:
+                self.session = session.SessionNoSQL(self.config, guid_)
 
             # Expose session to the model
             self.model.session = self.session

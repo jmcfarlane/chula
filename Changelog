@@ -3,6 +3,11 @@
 <project name="Chula">
     <release date="" version="0.4.0">
         <log>Added simple wrapper around couchdb-python</log>
+        <log>
+            Added support for couchdb session store.  This means you
+            now can choose between PostgreSQL/Memcached or
+            CouchDB/Memcached.
+        </log>
     </release>
 
     <release date="11/03/2009" version="0.3.0">

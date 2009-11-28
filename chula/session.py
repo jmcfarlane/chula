@@ -4,12 +4,14 @@ Class to manage user session.  It is designed to be generic in nature.
 
 import cPickle
 import hashlib
+import os
 import sys
 
-from chula import db, error, guid, json, memcache
+from chula import data, db, error, guid, json, memcache
 from chula.db.datastore import DataStoreFactory
+from chula.nosql import couch
 
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', False)
 CPICKLE = 'cPickle'
 JSON = 'json'
 STALE_COUNT = 'REQUESTS-BETWEEN-DB-PERSIST'
@@ -233,6 +235,10 @@ class Session(dict):
         if not data is None:
             self.update(data)
     
+        self.log('User session is now loaded')
+        for key, value in self.iteritems():
+            self.log('`--> %s: %s' % (key, value))
+
     def log(self, msg):
         print '>>> ', msg
 
@@ -350,3 +356,70 @@ class Session(dict):
         if not waspersisted:
             msg = persist_exception
             raise error.SessionUnableToPersistError(msg)
+
+class SessionDocument(couch.Document):
+    DB = 'chula/session'
+
+class SessionNoSQL(Session):
+    _key = 'PICKLE'
+
+    def shard(self):
+        date = data.str2date(self._guid.split('.')[0])
+        self._shard = os.path.join(str(date.year), str(date.month))
+
+        return self._shard
+
+    def connect(self):
+        shard = self.shard()
+        self.log('Connecting to nosql with shard: %s' % shard)
+
+        return SessionDocument(self._guid,
+                               server=self._config.session_nosql,
+                               shard=shard)
+
+    def destroy(self):
+        """
+        Expire a user's session now.  This does persist to the database
+        and cache immediately.
+        """
+
+        shard = self.shard()
+        SessionDocument.delete(self._guid,
+                               server=self._config.session_nosql,
+                               shard=shard)
+
+        # Delete from cache
+        if not self._cache is None:
+            self._cache.delete(self.mkey())
+
+        # Ensure the data still in memory (self) is not persisted back
+        self._expired = True
+
+    def persist_db(self):
+        self.log('persist_db called')
+
+        # Indicate a successfull db persist [rollback if necessary]
+        self[STALE_COUNT] = 0
+
+        doc = self.connect()
+        doc[self._key] = self.encode(self)
+        doc.persist()
+
+    def fetch_from_db(self):
+        self.log('fetching data from nosql')
+        doc = self.connect()
+
+        try:
+            return self.decode(doc[self._key])
+        except KeyError, ex:
+            self.log('`--> did not find any data in the db')
+            self.log('`--> setting session = {}')
+
+            # The sql function persists on select.  So here we need to
+            # make sure that a persist to the nosql db happens this
+            # request.
+            self.flush_next_persist()
+
+            return {}
+        except ValueError, ex:
+            raise "Unable to self.decode session", ex

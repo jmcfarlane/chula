@@ -37,6 +37,7 @@ class Config(collection.RestrictedCollection):
                 'session_max_stale_count',
                 'session_memcache',
                 'session_name',
+                'session_nosql',
                 'session_password',
                 'session_port',
                 'session_timeout',
@@ -61,6 +62,7 @@ class Config(collection.RestrictedCollection):
         self.session_max_stale_count = 10
         self.session_memcache = [('localhost:11211', 1)]
         self.session_name = 'chula-session'
+        self.session_nosql = None
         self.session_password = 'chula'
         self.session_port = 5432
         self.session_timeout = 30
