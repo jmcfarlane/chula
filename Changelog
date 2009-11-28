@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="xsl/project_changelog.xsl"?>
 <project name="Chula">
     <release date="" version="0.4.0">
-        <log>Planning...</log>
+        <log>Added simple wrapper around couchdb-python</log>
     </release>
 
     <release date="11/03/2009" version="0.3.0">

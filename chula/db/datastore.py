@@ -64,6 +64,8 @@ class DataStoreFactory(object):
 
         if engine == 'pg':
             from chula.db.engines import postgresql as engine
+        elif engine == 'couchdb':
+            from chula.db.engines import couch as engine
         elif engine == 'sqlite':
             from chula.db.engines import sqlite as engine
         else:
