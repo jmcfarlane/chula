@@ -7,11 +7,15 @@ import time
 from couchdb import client, ResourceNotFound
 
 from chula.db import datastore
+from chula import logger
 
+CONNECTION_CACHE = {}
 ENCODING = 'ascii'
 ENV = 'CHULA_COUCHDB_SERVER'
 VALID_ID = r'^[-a-zA-Z0-9_.]+$'
 VALID_ID_RE = re.compile(VALID_ID)
+
+LOG = logger.Logger().logger('chula.nosql.couch')
 
 def connect(db, server=None, shard=None):
     futon = None
@@ -19,15 +23,25 @@ def connect(db, server=None, shard=None):
     if server is None:
         server = os.environ.get(ENV, None)
 
-    if not server is None:
-        futon = datastore.DataStoreFactory('couchdb:%s' % server)
-        if shard is None:
-            return futon.db(db)
-        else:
-            return futon.db(os.path.join(db, shard))
-    else:
+    if server is None:
         msg = 'Server uri not specified'
         raise Exception(msg)
+
+    # Determine the cache key and serve from cache if possible
+    key = (server, shard)
+    if key in CONNECTION_CACHE:
+        return CONNECTION_CACHE[key]
+
+    # Create fresh connection to the db, and cache it
+    futon = datastore.DataStoreFactory('couchdb:%s' % server)
+    if shard is None:
+        conn = futon.db(db)
+    else:
+        conn = futon.db(os.path.join(db, shard))
+
+    CONNECTION_CACHE[key] = conn
+
+    return conn
 
 class Document(dict):
     """
@@ -41,14 +55,15 @@ class Document(dict):
         self.db = connect(self.DB, server=server, shard=shard)
 
         # If this is a couchdb document, just fill - don't fetch
-        if isinstance(document, client.Document):
+        try:
             self.fill(document['_id'], document)
-        else:
-            # Fetch if available, else create empty document
+        except TypeError:
             try:
                 self.fill(self.db[id]['_id'], self.db[id])
             except ResourceNotFound, ex:
                 self.fill(id, {})
+        except:
+            raise
 
         # Allow keeping track of is_dirty
         self._copy = copy.deepcopy(self)

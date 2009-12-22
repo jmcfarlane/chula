@@ -7,7 +7,7 @@ import hashlib
 import os
 import sys
 
-from chula import data, db, error, guid, json, memcache
+from chula import data, db, error, guid, json, logger, memcache
 from chula.db.datastore import DataStoreFactory
 from chula.nosql import couch
 
@@ -15,6 +15,8 @@ DEBUG = os.environ.get('DEBUG', False)
 CPICKLE = 'cPickle'
 JSON = 'json'
 STALE_COUNT = 'REQUESTS-BETWEEN-DB-PERSIST'
+
+LOG = logger.Logger().logger('chula.session')
 
 class Session(dict):
     """
