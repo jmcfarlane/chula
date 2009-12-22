@@ -8,6 +8,7 @@
             now can choose between PostgreSQL/Memcached or
             CouchDB/Memcached.
         </log>
+        <log>Updated memcache.py to version 1.45</log>
     </release>
 
     <release date="11/03/2009" version="0.3.0">
