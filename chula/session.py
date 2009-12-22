@@ -37,7 +37,7 @@ class Session(dict):
         if not DEBUG:
             self.__dict__['log'] = lambda x: x
 
-        self.log('Constructor called')
+        LOG.debug('Constructor called')
 
         self._cache = config.session_memcache
         self._config = config
@@ -90,7 +90,7 @@ class Session(dict):
         finally:
             del self._cache
 
-        self.log('session._gc() called\n')
+        LOG.debug('session._gc() called')
 
     def decode(self, data):
         """
@@ -154,13 +154,13 @@ class Session(dict):
         @return: Native Python object, or None if not found
         """
 
-        self.log('fetching data from cache')
+        LOG.debug('fetching data from cache')
         values = self._cache.get(self.mkey())
         if values is None:
-            self.log('`--> did not find any data in the cache')
+            LOG.debug('`--> did not find any data in the cache')
             return None
         else:
-            self.log('`--> length of string in cache: %s' % len(values))
+            LOG.debug('`--> length of string in cache: %s' % len(values))
             return self.decode(values)
 
     def fetch_from_db(self):
@@ -170,7 +170,7 @@ class Session(dict):
         @return: Native Python object, or None if none found
         """
 
-        self.log('fetching data from the db')
+        LOG.debug('fetching data from the db')
 
         sql = \
         """
@@ -186,8 +186,8 @@ class Session(dict):
             return {'SESSION-ERROR':'DATABASE UNAVAILABLE!'}
 
         if self._record is None:
-            self.log('`--> did not find any data in the db')
-            self.log('`--> setting session = {}')
+            LOG.debug('`--> did not find any data in the db')
+            LOG.debug('`--> setting session = {}')
             return {}
         else:
             try:
@@ -203,7 +203,7 @@ class Session(dict):
         changes and you don't want to risk it being lost.
         """
         
-        self.log('flush_next_persist called')
+        LOG.debug('flush_next_persist called')
 
         self._persist_immediately = True
 
@@ -231,15 +231,15 @@ class Session(dict):
         # If the cache is unavailable fetch from the db and be sure to
         # persist to the database as we can't trust the cache currently
         if data is None:
-            self.log('`--> stale_count: %s' % self.get(STALE_COUNT))
+            LOG.debug('`--> stale_count: %s' % self.get(STALE_COUNT))
             data = self.fetch_from_db()
 
         if not data is None:
             self.update(data)
     
-        self.log('User session is now loaded')
+        LOG.debug('User session is now loaded')
         for key, value in self.iteritems():
-            self.log('`--> %s: %s' % (key, value))
+            LOG.debug('`--> %s: %s' % (key, value))
 
     def log(self, msg):
         print '>>> ', msg
@@ -274,14 +274,14 @@ class Session(dict):
         # the db - after that it's based on the max_stale_count.
         self[STALE_COUNT] = self.get(STALE_COUNT, -2) + 1
 
-        self.log('current stale_count in persist(): %s' % self[STALE_COUNT])
+        LOG.debug('current stale_count in persist(): %s' % self[STALE_COUNT])
 
         # Persist to the session state to the database if this is a new
         # session (the STALE_COUNT won't be set) or the age (requests between
         # database persists) is greater than a constant value, 10 for
         # now. 
         if self[STALE_COUNT] == 0 or self[STALE_COUNT] > self._max_stale_count:
-            self.log('decision made to call flush_next_persist')
+            LOG.debug('decision made to call flush_next_persist')
             self.flush_next_persist()
         
         # Forces a write to the database on the next go
@@ -318,7 +318,7 @@ class Session(dict):
         Persist the session state to the database
         """
 
-        self.log('persist_db called')
+        LOG.debug('persist_db called')
 
         # Keep track of what happens
         waspersisted = False
@@ -351,8 +351,10 @@ class Session(dict):
         # If the db persist failed for whatever reason, try to
         # failover on the cache till it comes back up.
         if not waspersisted:
+            LOG.warning('persist to the sql db failed')
             if self.persist_cache():
                 waspersisted = True
+                LOG.warning('persist to the cache: OK')
 
         # Raise if we can't persist
         if not waspersisted:
@@ -373,7 +375,7 @@ class SessionNoSQL(Session):
 
     def connect(self):
         shard = self.shard()
-        self.log('Connecting to nosql with shard: %s' % shard)
+        LOG.debug('Connecting to nosql with shard: %s' % shard)
 
         return SessionDocument(self._guid,
                                server=self._config.session_nosql,
@@ -398,7 +400,7 @@ class SessionNoSQL(Session):
         self._expired = True
 
     def persist_db(self):
-        self.log('persist_db called')
+        LOG.debug('persist_db called')
 
         # Indicate a successfull db persist [rollback if necessary]
         self[STALE_COUNT] = 0
@@ -408,14 +410,14 @@ class SessionNoSQL(Session):
         doc.persist()
 
     def fetch_from_db(self):
-        self.log('fetching data from nosql')
+        LOG.debug('fetching data from nosql')
         doc = self.connect()
 
         try:
             return self.decode(doc[self._key])
         except KeyError, ex:
-            self.log('`--> did not find any data in the db')
-            self.log('`--> setting session = {}')
+            LOG.debug('`--> did not find any data in the db')
+            LOG.debug('`--> setting session = {}')
 
             # The sql function persists on select.  So here we need to
             # make sure that a persist to the nosql db happens this

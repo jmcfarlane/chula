@@ -15,11 +15,11 @@ class Logger(object):
             config = Config()
 
         # Create file handler for WARNING and above
-        fmt = ('%(asctime)s, '
-               '%(levelname)s, '
-               'pid:%(process)d, '
-               '%(name)s, '
-               '%(filename)s:%(lineno)d, '
+        fmt = ('%(asctime)s,'
+               '%(levelname)s,'
+               'pid:%(process)d,'
+               '%(name)s,'
+               '%(filename)s:%(lineno)d,'
                '%(message)s'
               )
         fh = RotatingFileHandler(config.log, maxBytes=104857600, backupCount=5)
