@@ -9,6 +9,7 @@
             CouchDB/Memcached.
         </log>
         <log>Added singleton decorator</log>
+        <log>Added initial logging support</log>
         <log>Updated memcache.py to version 1.45</log>
     </release>
 

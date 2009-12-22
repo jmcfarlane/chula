@@ -27,6 +27,7 @@ class Config(collection.RestrictedCollection):
                 'debug',
                 'error_controller',
                 'local',
+                'log',
                 'mqueue_db',
                 'mqueue_host',
                 'mqueue_port',
@@ -53,6 +54,7 @@ class Config(collection.RestrictedCollection):
         self.debug = True
         self.error_controller = collection.UNSET
         self.local = collection.Collection()
+        self.log = '/tmp/chula.log'
         self.mqueue_db = '/tmp/chula/mqueue'
         self.mqueue_host = 'localhost'
         self.mqueue_port = 8001
