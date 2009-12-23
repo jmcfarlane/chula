@@ -99,15 +99,27 @@ class TestFinder(set):
         Combine all the tests into a single unittest suite
         """
 
+        cwd = os.getcwd()
         self.suite = unittest.TestSuite()
         sys.path.insert(0, None)
         for test in self:
             dir_name = os.path.dirname(test)
             module_name = os.path.basename(test)[:-3]
 
-            # Add the module to the front of the python path and
-            # generate a fully unique [module] name
+            # Add the module to the front of the python path
             sys.path[0] = dir_name
+
+            # Generate a fully unique [module] name, but try to avoid
+            # including duplicate long strings on the front.  For
+            # example, we don't want: # _home_username_path_to_repo_tests
+            if dir_name.startswith(cwd):
+                dir_name = dir_name.rsplit(cwd)[1]
+
+            # Don't start with a slash either
+            if dir_name.startswith(os.sep):
+                dir_name = dir_name[1:]
+
+            # Finally generate the uniq [module] name
             u_name = os.path.join(dir_name, module_name).replace(os.sep, '_')
 
             try:
