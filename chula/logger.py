@@ -29,7 +29,8 @@ class Logger(object):
         # Create console handler for DEBUG and above (stderr)
         fmt = ('%(levelname)-9s'
                '%(name)-35s'
-               '%(filename)s:%(lineno)-4d'
+               '%(filename)-15s'
+               '%(lineno)-5d'
                '%(message)s'
               )
         ch = logging.StreamHandler()

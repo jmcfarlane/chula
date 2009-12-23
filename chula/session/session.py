@@ -2,7 +2,7 @@
 
 import cPickle
 
-from chula import logger, singleton
+from chula import json, logger, singleton
 from chula.session.backends import couchdb
 from chula.session.backends import memcached
 from chula.session.backends import postgresql
@@ -234,6 +234,3 @@ class Session(dict):
 
         # Always persist to cache
         persisted = self._cache.persist(encoded)
-
-if __name__ == '__main__':
-    from chula import session
