@@ -8,7 +8,7 @@ class Backend(dict):
 
     def connect(self):
         """
-        Obtain a datbase connection
+        Obtain a connection to the backend
         """
 
         raise NotImplementedError
@@ -26,7 +26,7 @@ class Backend(dict):
 
     def fetch_session(self):
         """
-        Fetch a user's session from the database.
+        Fetch a user's session from the backend
 
         @param guid: Session guid
         @type guid: chula.guid.guid()
