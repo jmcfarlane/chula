@@ -55,7 +55,7 @@ class Backend(base.Backend):
             self.cursor.execute(sql)
             row = self.cursor.fetchone()
         except Exception, ex: #self.conn.error.OperationalError, ex:
-            LOG.warning('Exception running SELECT, guid: %s, ex:%s' % (guid, ex))
+            LOG.warning('Exception running SELECT guid: %s, ex:%s' % (guid, ex))
             return None
 
         if row is None:
@@ -73,7 +73,8 @@ class Backend(base.Backend):
             self.conn = None
 
     def persist(self, guid, encoded):
-        sql = "SELECT session_set(%s, %s, TRUE);" % (db.cstr(guid), db.cstr(encoded))
+        sql = "SELECT session_set(%s, %s, TRUE);"
+        sql = sql % (db.cstr(guid), db.cstr(encoded))
 
         # Attempt the persist
         try:

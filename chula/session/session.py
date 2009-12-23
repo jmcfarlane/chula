@@ -14,7 +14,7 @@ SESSION_UNAVAILABLE = 'SESSION_IS_CURRENTLY_UNAVAILABLE'
 
 LOG = logger.Logger().logger('chula.session')
 
-@singleton.singleton
+#@singleton.singleton
 class Session(dict):
     """
     The Session class keeps track of user session.
@@ -165,8 +165,9 @@ class Session(dict):
             # as being unavailable (so the app can know) and we also
             # need to force a persist asap.
             self.flush_next_persist()
-            LOG.error('Unable to fetchfrom cache or backend, guid:%s' % self._guid)
-            self[SESSION_UNAVAILABLE] = True
+
+            msg = 'Active session not found in cache or backend, guid:%s'
+            LOG.debug(msg % self._guid)
         else:
             self.update(data)
     
