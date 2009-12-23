@@ -7,9 +7,11 @@ from chula.session.backends import base
 LOG = logger.Logger().logger('chula.session.backends.postgresql')
 
 class Backend(base.Backend):
-    def __init__(self, config):
-        super(Backend, self).__init__(config)
+    def __init__(self, config, guid):
+        super(Backend, self).__init__(config, guid)
         self.cursor = None
+
+        self.connect()
 
     def connect(self):
         if self.conn is None:
@@ -28,9 +30,8 @@ class Backend(base.Backend):
             if not self.conn is None and not self.cursor is None:
                 LOG.debug('Successfull connection to postgresql')
 
-    def destroy(self, guid):
-        sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(guid)
-        self.connect()
+    def destroy(self):
+        sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(self.guid)
 
         try:
             self.cursor.execute(sql)
@@ -42,24 +43,23 @@ class Backend(base.Backend):
 
         return False
 
-    def fetch_session(self, guid):
+    def fetch_session(self):
         LOG.debug('fetching data from postgresql')
 
         sql = "SELECT values FROM session WHERE guid = %s AND active = TRUE;"
-        sql = sql % db.cstr(guid)
+        sql = sql % db.cstr(self.guid)
 
         row = None
-        self.connect()
 
         try:
             self.cursor.execute(sql)
             row = self.cursor.fetchone()
         except Exception, ex: #self.conn.error.OperationalError, ex:
-            LOG.warning('Exception running SELECT guid: %s, ex:%s' % (guid, ex))
+            LOG.warning('SQL error guid: %s, ex:%s' % (self.guid, ex))
             return None
 
         if row is None:
-            LOG.debug('`--> did not find an active session, guid: %s' % guid)
+            LOG.debug('`--> No active session, guid: %s' % self.guid)
             return None
         else:
             LOG.debug('Session found: OK')
@@ -73,15 +73,17 @@ class Backend(base.Backend):
         finally:
             self.conn = None
 
-    def persist(self, guid, encoded):
+    def persist(self, encoded):
+        LOG.debug('persist() called')
+
         sql = "SELECT session_set(%s, %s, TRUE);"
-        sql = sql % (db.cstr(guid), db.cstr(encoded))
+        sql = sql % (db.cstr(self.guid), db.cstr(encoded))
 
         # Attempt the persist
         try:
-            self.connect()
             self.cursor.execute(sql)
             self.conn.commit()
+            LOG.debug('Persisted: OK')
             return True
         except Exception, ex:
             try:

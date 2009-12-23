@@ -8,6 +8,11 @@ from chula.session.backends import base
 LOG = logger.Logger().logger('chula.session.backends.memcached')
 
 class Backend(base.Backend):
+    def __init__(self, config, guid):
+        super(Backend, self).__init__(config, guid)
+        self.connect()
+        self.calculate_key()
+
     def gc(self):
         try:
             self.conn.disconnect_all()
@@ -20,26 +25,26 @@ class Backend(base.Backend):
         if not isinstance(self.conn, memcache.Client):
             self.conn = memcache.Client(self.config.session_memcache, debug=0)
 
-    def destroy(self, guid):
+    def destroy(self):
         self.connect()
 
         if not self.conn is None:
-            return self.conn.delete(self.mkey(guid))
+            return self.conn.delete(self.key)
 
         return False
 
-    def fetch_session(self, guid):
+    def fetch_session(self):
         self.connect()
 
-        values = self.conn.get(self.mkey(guid))
+        values = self.conn.get(self.key)
         if values is None:
-            LOG.debug('Did not find session, guid: %s' % guid)
+            LOG.debug('Did not find session, guid: %s' % self.guid)
             return None
         else:
             LOG.debug('Session found: OK')
             return values
    
-    def mkey(self, guid):
+    def calculate_key(self):
         """
         Hash the key to avoid character escaping and the >255 character
         limitation of cache keys.
@@ -47,15 +52,16 @@ class Backend(base.Backend):
         @return: SHA1 hash
         """
         
-        return hashlib.sha1('session:%s' % guid).hexdigest()
+        self.key = hashlib.sha1('session:%s' % self.guid).hexdigest()
+        return self.key
     
-    def persist(self, guid, encoded):
+    def persist(self, encoded):
         self.connect()
-        key = self.mkey(guid)
+        timeout = self.config.session_timeout * 60
 
         if isinstance(self.conn, memcache.Client):
             # Non zero status is success
-            if self.conn.set(key, encoded, self.config.session_timeout * 60) != 0:
+            if self.conn.set(self.key, encoded, timeout) != 0:
                 return True
 
         return False

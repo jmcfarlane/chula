@@ -1,18 +1,19 @@
 """Session backend abstract class"""
 
 class Backend(dict):
-    def __init__(self, config):
+    def __init__(self, config, guid):
         self.config = config
+        self.guid = guid
         self.conn = None
 
-    def connect(self, guid):
+    def connect(self):
         """
         Obtain a datbase connection
         """
 
         raise NotImplementedError
 
-    def destroy(self, guid):
+    def destroy(self):
         """
         Destroy user session
 
@@ -23,7 +24,7 @@ class Backend(dict):
 
         raise NotImplementedError
 
-    def fetch_session(self, guid):
+    def fetch_session(self):
         """
         Fetch a user's session from the database.
 
@@ -41,7 +42,7 @@ class Backend(dict):
 
         raise NotImplementedError
 
-    def persist(self, guid, encoded):
+    def persist(self, encoded):
         """
         Persist session
 

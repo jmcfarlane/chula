@@ -48,12 +48,12 @@ class Session(dict):
 
         # Determine the backend to use
         if not self._config.session_nosql is None:
-            self._backend =  couchdb.Backend(self._config)
+            self._backend =  couchdb.Backend(self._config, self._guid)
         else:
-            self._backend = postgresql.Backend(self._config)
+            self._backend = postgresql.Backend(self._config, self._guid)
 
         # Always use a memcached backend
-        self._cache = memcached.Backend(self._config)
+        self._cache = memcached.Backend(self._config, self._guid)
 
         # Set global session defaults
         self.isauthenticated = False
@@ -117,8 +117,8 @@ class Session(dict):
         and cache immediately.
         """
         
-        self._backend.destroy(self._guid)
-        self._cache.destroy(self._guid)
+        self._backend.destroy()
+        self._cache.destroy()
 
         # Ensure the data still in memory (self) is not persisted back
         self._expired = True
@@ -153,13 +153,13 @@ class Session(dict):
 
         # Fetch session from cache first
         if not self._cache is None:
-            data = self.decode(self._cache.fetch_session(self._guid))
+            data = self.decode(self._cache.fetch_session())
 
         # If the cache is unavailable fetch from the db and be sure to
         # persist to the database as we can't trust the cache currently
         if data is None:
             LOG.debug('`--> stale_count: %s' % self.get(STALE_COUNT))
-            data = self.decode(self._backend.fetch_session(self._guid))
+            data = self.decode(self._backend.fetch_session())
 
         if data is None:
             msg = 'Active session not found in cache or backend, guid:%s'
@@ -226,14 +226,14 @@ class Session(dict):
 
         # Persist to the backend if needed
         if self._persist_immediately:
-            if self._backend.persist(self._guid, encoded):
+            if self._backend.persist(encoded):
                 self._persist_immediately = False
             else:
                 self[STALE_COUNT] = current_stale_count
                 self.flush_next_persist()
 
         # Always persist to cache
-        persisted = self._cache.persist(self._guid, encoded)
+        persisted = self._cache.persist(encoded)
 
 if __name__ == '__main__':
     from chula import session
