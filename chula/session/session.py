@@ -14,7 +14,7 @@ SESSION_UNAVAILABLE = 'SESSION_IS_CURRENTLY_UNAVAILABLE'
 
 LOG = logger.Logger().logger('chula.session')
 
-#@singleton.singleton
+@singleton.singleton
 class Session(dict):
     """
     The Session class keeps track of user session.

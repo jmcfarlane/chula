@@ -51,8 +51,6 @@ class CookieCollection(SimpleCookie):
                 if not self.domain.count('.') > 1:
                     self.domain = None
 
-            LOG.debug('using domain name: %s' % self.domain)
-
             # Always include the name of the cookie first
             header = []
             header.append('%s=%s' % (key, cookie.value))
