@@ -62,6 +62,7 @@ class Backend(base.Backend):
             LOG.debug('`--> did not find an active session, guid: %s' % guid)
             return None
         else:
+            LOG.debug('Session found: OK')
             return row['values']
    
     def gc(self):

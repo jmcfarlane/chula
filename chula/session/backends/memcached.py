@@ -36,7 +36,7 @@ class Backend(base.Backend):
             LOG.debug('Did not find session, guid: %s' % guid)
             return None
         else:
-            LOG.debug('length of string in cache: %s' % len(values))
+            LOG.debug('Session found: OK')
             return values
    
     def mkey(self, guid):

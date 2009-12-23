@@ -146,6 +146,8 @@ class Session(dict):
         Fetch session data from cache first, then fall back to the
         backend if needed.
         """
+
+        LOG.debug('Fetching session, guid:%s' % self._guid)
         
         data = None
 
@@ -160,14 +162,12 @@ class Session(dict):
             data = self.decode(self._backend.fetch_session(self._guid))
 
         if data is None:
-            # Session being completely unavailable is an error
-            # condition.  If this happens we need to flag the session
-            # as being unavailable (so the app can know) and we also
-            # need to force a persist asap.
-            self.flush_next_persist()
-
             msg = 'Active session not found in cache or backend, guid:%s'
             LOG.debug(msg % self._guid)
+
+            # Either the backends are unavailable, or this is a brand
+            # new session, either way persist asap
+            self.flush_next_persist()
         else:
             self.update(data)
     
@@ -226,7 +226,9 @@ class Session(dict):
 
         # Persist to the backend if needed
         if self._persist_immediately:
-            if not self._backend.persist(self._guid, encoded):
+            if self._backend.persist(self._guid, encoded):
+                self._persist_immediately = False
+            else:
                 self[STALE_COUNT] = current_stale_count
                 self.flush_next_persist()
 

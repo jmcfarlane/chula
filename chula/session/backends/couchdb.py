@@ -17,12 +17,16 @@ class Backend(base.Backend):
 
     def fetch_session(self, guid):
         doc = self.connect(guid)
+        if doc == {}:
+            LOG.debug('Document not found: %s' % guid)
+            return None
 
         try:
-            return doc[self._key]
+            values = doc[self._key]
+            LOG.debug('Session found: OK')
+            return values
         except KeyError, ex:
-            LOG.debug('`--> did not find any data in the db')
-
+            LOG.debug('`--> Did not find session data in the document')
         except Exception, ex:
             LOG.error('Unable to fetch session, guid: %s, ex:%s' % (guid, ex))
 
@@ -49,7 +53,7 @@ class Backend(base.Backend):
         doc = self.connect(guid)
         doc[self._key] = encoded
         persisted = doc.persist()
-        LOG.debug('Persisted as revision: %s' % persisted)
+        LOG.debug('Persisted, guid:%s as revision: %s' % (guid, persisted))
 
         return True
 
