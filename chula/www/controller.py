@@ -41,12 +41,8 @@ class Controller(object):
                 guid_ = guid.guid()
                 self.env.cookies[self.config.session_name] = guid_
 
-            if self.config.session_nosql is None:
-                self.session = session.Session(self.config, guid_)
-            else:
-                self.session = session.SessionNoSQL(self.config, guid_)
-
-            # Expose session to the model
+            # Instantiate session and expose to the model
+            self.session = session.Session(self.config, guid_)
             self.model.session = self.session
 
     def _gc(self):

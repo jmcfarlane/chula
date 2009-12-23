@@ -28,7 +28,7 @@ class Logger(object):
 
         # Create console handler for DEBUG and above (stderr)
         fmt = ('%(levelname)-9s'
-               '%(name)-12s'
+               '%(name)-35s'
                '%(filename)s:%(lineno)-4d'
                '%(message)s'
               )

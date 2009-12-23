@@ -11,6 +11,14 @@
         <log>Added singleton decorator</log>
         <log>Added initial logging support</log>
         <log>Updated memcache.py to version 1.45</log>
+        <log>
+            Refactored session into a package.  When the couchdb
+            backend was added, not all of the failover logic was being
+            implemented.  To clean things up properly the session
+            logic had to be abstracted away from the backends.  Now
+            there is a single session class that supports n number of
+            backends that all use the same interface.
+        </log>
     </release>
 
     <release date="11/03/2009" version="0.3.0">
