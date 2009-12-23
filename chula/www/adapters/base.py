@@ -7,9 +7,11 @@ import re
 import time
 
 import chula
-from chula import collection, error, guid
+from chula import collection, error, guid, logger
 from chula.www import cookie
 from chula.www.mapper.standard import StandardMapper
+
+LOG = logger.Logger().logger('chula.www.adapters.base')
 
 RE_HTML = re.compile(r"</body>\s*</html>\s*$", re.IGNORECASE)
 
@@ -93,6 +95,8 @@ class BaseAdapter(object):
 
         # Add the cookies to the headers
         self.env.headers.extend(self.env.cookies.headers())
+        for c in self.env.cookies.headers():
+            LOG.debug('Added cookie: %s, %s' % c)
 
         # If this is an under construction page do not try to persist
         # session, avoid as many dependencies as possible

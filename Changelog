@@ -12,6 +12,11 @@
         <log>Added initial logging support</log>
         <log>Updated memcache.py to version 1.45</log>
         <log>
+            Fixed regression in chula.www.cookie where the cookie
+            domain was getting prefixed with "." once for every cookie
+            - oops.
+        </log>
+        <log>
             Refactored session into a package.  When the couchdb
             backend was added, not all of the failover logic was being
             implemented.  To clean things up properly the session

@@ -6,7 +6,9 @@ from Cookie import SimpleCookie
 from datetime import datetime
 import pytz
 
-from chula import data
+from chula import data, logger
+
+LOG = logger.Logger().logger('chula.www.cookie')
 
 class CookieCollection(SimpleCookie):
     def __init__(self, timeout=20, path='/', input=None):
@@ -38,13 +40,18 @@ class CookieCollection(SimpleCookie):
                 continue
 
             if not self.domain is None:
-                # Domain must be prefixed with "." and exclude the port
+                # Domain must be prefixed with "." and exclude the
+                # port.  If the domain already has a "." prefix we've
+                # already seen this domain name and can skip.
                 # REFERENCE: RFC 2109, RFC 2965
-                self.domain = '.' + self.domain.split(':')[0]
+                if not self.domain.startswith('.'):
+                    self.domain = '.' + self.domain.split(':')[0]
 
                 # If the domain doesn't look to be a real FQDN, remove:
                 if not self.domain.count('.') > 1:
                     self.domain = None
+
+            LOG.debug('using domain name: %s' % self.domain)
 
             # Always include the name of the cookie first
             header = []
