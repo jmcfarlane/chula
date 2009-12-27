@@ -9,3 +9,6 @@ from chula import collection, error
 
 DEFAULT_MODULE = 'home'
 DEFAULT_METHOD = 'index'
+
+# Include supported mappers
+from chula.www.mapper.classpath import StandardMapper

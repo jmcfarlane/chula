@@ -9,7 +9,7 @@ import time
 import chula
 from chula import collection, error, guid, logger
 from chula.www import cookie
-from chula.www.mapper.standard import StandardMapper
+from chula.www.mapper import StandardMapper
 
 LOG = logger.Logger().logger('chula.www.adapters.base')
 
