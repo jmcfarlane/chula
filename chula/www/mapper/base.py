@@ -3,6 +3,8 @@ Base class to convert HTTP url path into a Python object path.  This
 class can be subclassed to customize the url mapping behavior.
 """
 
+import os
+
 from chula.www.mapper import *
 
 class BaseMapper(object):
@@ -90,7 +92,19 @@ class BaseMapper(object):
 
         if status is 200:
             self.default_route()
-            self.parse()
+
+            # Determine if the site is under construction
+            if not self.construction.trigger is None and \
+            os.path.exists(self.construction.trigger):
+                self.route.update(self.construction.route)
+                self.env.under_construction = True
+
+                # TODO: Fix defect that occurs when an exception is
+                # raised when trying to import the under construction
+                # controller, as what happens is the e404 gets used
+                # and it should use e500
+            else:
+                self.parse()
         elif status == 404:
             self.route = self.route_404
         elif status == 500:

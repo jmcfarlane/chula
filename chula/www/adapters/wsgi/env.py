@@ -28,6 +28,12 @@ class Environment(env.BaseEnv):
             parts.append(environ.get('PATH_INFO', ''))
             self.REQUEST_URI = ''.join(parts)
 
+            # Include the querystring
+            if not '?' in self.REQUEST_URI:
+                qs = environ.get('QUERY_STRING', None)
+                if not qs is None and qs != '':
+                    self.REQUEST_URI += '?' + qs
+
         # Be nice to the Python wsiref simple_server
         if self.SERVER_SOFTWARE.startswith('WSGIServer/0.1 Python'):
             self.DOCUMENT_ROOT = None

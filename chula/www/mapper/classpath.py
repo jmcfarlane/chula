@@ -1,25 +1,11 @@
 """
-The standard Chula URL mapper
+Python classpath based Chula URL mapper
 """
-
-import os
 
 from chula.www.mapper import base
 
 class ClassPathMapper(base.BaseMapper):
     def parse(self):
-        # Determine if the site is under construction
-        if not self.construction.trigger is None:
-            if os.path.exists(self.construction.trigger):
-                self.route.update(self.construction.route)
-                self.env.under_construction = True
-
-                # TODO: Fix defect that occurs when an exception is
-                # raised when trying to import the under construction
-                # controller, as what happens is the e404 gets used
-                # and it should use e500
-                return str(self)
-        
         # Parse the uri (excluding the querystring)
         parts = self.uri.split('?')[0].split('/')
 

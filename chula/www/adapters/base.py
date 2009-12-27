@@ -10,6 +10,7 @@ import chula
 from chula import collection, error, guid, logger
 from chula.www import cookie
 from chula.www.mapper import ClassPathMapper
+from chula.www.mapper import RegexMapper
 
 LOG = logger.Logger().logger('chula.www.adapters.base')
 
@@ -147,6 +148,8 @@ class BaseAdapter(object):
         mapper = self.config.mapper
         if mapper == 'ClassPathMapper':
             self.mapper = ClassPathMapper(self.config, self.env)
+        elif isinstance(mapper, (tuple, frozenset, list, set)):
+            self.mapper = RegexMapper(self.config, self.env, mapper)
         else:
             raise error.UnsupportedMapperError(mapper)
 
