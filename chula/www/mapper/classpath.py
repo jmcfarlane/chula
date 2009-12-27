@@ -6,7 +6,7 @@ import os
 
 from chula.www.mapper import base
 
-class StandardMapper(base.BaseMapper):
+class ClassPathMapper(base.BaseMapper):
     def parse(self):
         # Determine if the site is under construction
         if not self.construction.trigger is None:

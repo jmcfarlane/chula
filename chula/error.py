@@ -200,6 +200,15 @@ class UnsupportedDatabaseEngineError(ChulaException):
         self.message = 'Unsupported db engine: %s' % engine
         self.append = append
 
+class UnsupportedMapperError(ChulaException):
+    """
+    Exception indicating an invalid mapper configuration
+    """
+
+    def __init__(self, _pkg, append=None):
+        self.message = 'Invalid chula.config.mapper class: %s' % _pkg
+        self.append = append
+
 class UnsupportedUsageError(ChulaException):
     """
     Exception indicating the chula api is being misused.

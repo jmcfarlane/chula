@@ -9,7 +9,7 @@ import time
 import chula
 from chula import collection, error, guid, logger
 from chula.www import cookie
-from chula.www.mapper import StandardMapper
+from chula.www.mapper import ClassPathMapper
 
 LOG = logger.Logger().logger('chula.www.adapters.base')
 
@@ -144,7 +144,11 @@ class BaseAdapter(object):
         self.env.headers.append(header)
 
     def fetch_controller(self):
-        self.mapper = StandardMapper(self.config, self.env)
+        mapper = self.config.mapper
+        if mapper == 'ClassPathMapper':
+            self.mapper = ClassPathMapper(self.config, self.env)
+        else:
+            raise error.UnsupportedMapperError(mapper)
 
         # Load the controller, using e404 if not found
         try:
