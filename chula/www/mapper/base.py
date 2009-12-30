@@ -5,7 +5,10 @@ class can be subclassed to customize the url mapping behavior.
 
 import os
 
+from chula import logger
 from chula.www.mapper import *
+
+LOG = logger.Logger().logger('chula.www.mapper.base')
 
 class BaseMapper(object):
     def __init__(self, config, env):
@@ -113,7 +116,9 @@ class BaseMapper(object):
             self.route.method = 'e500'
 
         # If after the mapper's parse() call the route is still 404
-        if self.route == self.route_404:
+        if self.route.method == self.route_404.method \
+        and self.route.module == self.route_404.module \
+        and self.route.package == self.route_404.package:
             status = 404
 
         # Import the controller module
