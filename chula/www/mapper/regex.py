@@ -37,4 +37,7 @@ class RegexMapper(base.BaseMapper):
             if not self._process_route(route) is None:
                 break
 
+        # The class name is always the capitalized module name
+        self.route.class_name = self.route.module.capitalize()
+
         return str(self)

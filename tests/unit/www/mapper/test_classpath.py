@@ -11,7 +11,7 @@ class Test_classpath(unittest.TestCase):
         req = fakerequest.FakeRequest()
         cfg = config.Config()
         cfg.classpath = 'package'
-        cfg.error_controller = 'e404'
+        cfg.error_controller = 'error'
         self.mapper = classpath.ClassPathMapper(cfg, req)
 
     def tearDown(self):
@@ -19,32 +19,36 @@ class Test_classpath(unittest.TestCase):
         
     def test_homepage(self):
         self.mapper.uri = '/'
+        self.mapper.default_route()
         self.mapper.parse()
-        self.assertEquals('package', self.mapper.route.package)
-        self.assertEquals('home', self.mapper.route.module)
-        self.assertEquals('Home', self.mapper.route.class_name)
-        self.assertEquals('index', self.mapper.route.method)
+        self.assertEquals(self.mapper.route.package, 'package')
+        self.assertEquals(self.mapper.route.module, 'home')
+        self.assertEquals(self.mapper.route.class_name, 'Home')
+        self.assertEquals(self.mapper.route.method, 'index')
 
     def test_module_with_named_method(self):
         self.mapper.uri = '/module/method/'
+        self.mapper.default_route()
         self.mapper.parse()
-        self.assertEquals('package', self.mapper.route.package)
-        self.assertEquals('module', self.mapper.route.module)
-        self.assertEquals('Module', self.mapper.route.class_name)
-        self.assertEquals('method', self.mapper.route.method)
+        self.assertEquals(self.mapper.route.package, 'package')
+        self.assertEquals(self.mapper.route.module, 'module')
+        self.assertEquals(self.mapper.route.class_name, 'Module')
+        self.assertEquals(self.mapper.route.method, 'method')
 
     def test_module_with_implied_method(self):
         self.mapper.uri = '/module/'
+        self.mapper.default_route()
         self.mapper.parse()
-        self.assertEquals('package', self.mapper.route.package)
-        self.assertEquals('module', self.mapper.route.module)
-        self.assertEquals('Module', self.mapper.route.class_name)
-        self.assertEquals('index', self.mapper.route.method)
+        self.assertEquals(self.mapper.route.package, 'package')
+        self.assertEquals(self.mapper.route.module, 'module')
+        self.assertEquals(self.mapper.route.class_name, 'Module')
+        self.assertEquals(self.mapper.route.method, 'index')
 
     def test_package_with_named_method(self):
         self.mapper.uri = '/pkg/module/method/'
+        self.mapper.default_route()
         self.mapper.parse()
-        self.assertEquals('package.pkg', self.mapper.route.package)
-        self.assertEquals('module', self.mapper.route.module)
-        self.assertEquals('Module', self.mapper.route.class_name)
-        self.assertEquals('method', self.mapper.route.method)
+        self.assertEquals(self.mapper.route.package, 'package.pkg')
+        self.assertEquals(self.mapper.route.module, 'module')
+        self.assertEquals(self.mapper.route.class_name, 'Module')
+        self.assertEquals(self.mapper.route.method, 'method')
