@@ -10,6 +10,12 @@
         </log>
         <log>Added singleton decorator</log>
         <log>Added initial logging support</log>
+        <log>
+            Added a regex style url mapper.  This means you can now
+            choose between automatic class mapping and hand crafted
+            mappings via regular expressions (this should be similar
+            to Django style routing).
+        </log>
         <log>Updated memcache.py to version 1.45</log>
         <log>
             Fixed regression in chula.www.cookie where the cookie
