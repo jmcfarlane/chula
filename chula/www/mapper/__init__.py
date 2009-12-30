@@ -12,4 +12,4 @@ DEFAULT_METHOD = 'index'
 
 # Include supported mappers
 from chula.www.mapper.classpath import ClassPathMapper
-from chula.www.mapper.routed import RegexMapper
+from chula.www.mapper.regex import RegexMapper
