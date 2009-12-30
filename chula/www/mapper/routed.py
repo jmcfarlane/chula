@@ -4,12 +4,15 @@ Python route/route based Chula URL mapper
 
 import re
 
+from chula import logger
 from chula.www.mapper import base
 
+LOG = logger.Logger().logger('chula.www.mapper.regex')
+
 class RegexMapper(base.BaseMapper):
-    def __init__(self, config, env, routes):
+    def __init__(self, config, env, route_map):
         super(RegexMapper, self).__init__(config, env)
-        self.routes = routes
+        self.route_map = route_map
 
     def _process_route(self, route, force=False):
         regex, target = route
@@ -25,15 +28,12 @@ class RegexMapper(base.BaseMapper):
         if parts:
             self.route.package += '.' + '.'.join(parts)
 
-        #print 'set route:', self.route
+        LOG.debug('Set route: %s via %s' % (self.route, regex))
         return self.route
         
     def parse(self):
-        # Set the default route
-        #self._process_route(self.routes[0], force=True)
-
         # Process each route looking for a match
-        for route in self.routes:
+        for route in self.route_map:
             if not self._process_route(route) is None:
                 break
 

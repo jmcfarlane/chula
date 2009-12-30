@@ -112,6 +112,10 @@ class BaseMapper(object):
             self.route.module = self.config.error_controller
             self.route.method = 'e500'
 
+        # If after the mapper's parse() call the route is still 404
+        if self.route == self.route_404:
+            status = 404
+
         # Import the controller module
         module = self.import_module()
 
@@ -127,7 +131,7 @@ class BaseMapper(object):
         self.controller = controller(self.env, self.config)
         self.bind()
 
-        # Set the http status
+        # Set the http status, which can be influenced by mapper.parse()
         self.controller.env.status = status
 
         return self.controller

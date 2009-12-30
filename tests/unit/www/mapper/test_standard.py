@@ -2,17 +2,17 @@ import unittest
 
 from chula import config
 from chula.www.adapters.mod_python import fakerequest
-from chula.www.mapper import standard
+from chula.www.mapper import classpath
 
-class Test_standard(unittest.TestCase):
-    doctest = standard
+class Test_classpath(unittest.TestCase):
+    doctest = classpath
 
     def setUp(self):
         req = fakerequest.FakeRequest()
         cfg = config.Config()
         cfg.classpath = 'package'
         cfg.error_controller = 'e404'
-        self.mapper = standard.StandardMapper(cfg, req)
+        self.mapper = classpath.ClassPathMapper(cfg, req)
 
     def tearDown(self):
         pass
