@@ -26,13 +26,13 @@ then give Chula a try :)
 Features
 ++++++++
 
- * Web servers: Most of the common setups are supported (Mod_Python_,
-   Mod_WSGI_, and FastCGI_).
- * Session: Uses both Memcached_ and PostgreSQL_ for cluster safe
-   storage that scales pretty well.
- * Message queue: Support for asynchronous processing of messages
- * Typical stuff: Environment, GET and POST variables
- * Speed: Chula seems to perform pretty well
+* Web servers: Most of the common setups are supported (Mod_Python_,
+  Mod_WSGI_, and FastCGI_).
+* Session: Uses both Memcached_ and PostgreSQL_ for cluster safe
+  storage that scales pretty well.
+* Message queue: Support for asynchronous processing of messages
+* Typical stuff: Environment, GET and POST variables
+* Speed: Chula seems to perform pretty well
 
 Source code
 +++++++++++
@@ -59,12 +59,10 @@ Roadmap
 The roadmap right now is pretty small.  Here are the features I'm
 currently thinking about:
 
-  1. Logging - This needs to happen sooner or later
-  2. Implementing a regex based mapper (see: `Getting Started`_)
-  3. Profiling - profilng of both Chula and apps running on it
-  4. Support for MySQL_ based session.  Currently only PostgreSQL_ is
-     supported.  With either backend Memcached_ will continue to be
-     used.
+1. Profiling - profilng of both Chula and apps running on it
+#. Support for MySQL_ based session.  Currently only PostgreSQL_ and
+   CouchDB are supported.  With either backend Memcached_ will continue to be
+   used.
 
 Who's using it
 ++++++++++++++
