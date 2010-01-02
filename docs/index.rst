@@ -7,7 +7,7 @@ Welcome to Chula's documentation!
 =================================
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 2
 
    about
    getting_started
