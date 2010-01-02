@@ -2,8 +2,6 @@
 About Chula
 ===========
 
-.. include:: rst/lib/toc.rst
-
 History
 +++++++
 
@@ -34,20 +32,21 @@ Features
    storage that scales pretty well.
  * Message queue: Support for asynchronous processing of messages
  * Typical stuff: Environment, GET and POST variables
- * Speed: Chula seems to perform pretty well already
+ * Speed: Chula seems to perform pretty well
 
 Source code
 +++++++++++
 
-Chula uses Git_ for version control.  The official Chula repository
+Chula uses the Git_ version control system.  The official Chula repository
 can be found on Github_.
 
 Issue tracker
 +++++++++++++
 
 Chula uses the issue tracker that's integrated with Github_.  If you
-find defects or have ideas for impprovement please feel free to file
-issues.
+find defects or have ideas for improvement please feel free to file
+issues.  In the event Chula becomes more popular, a more sophisticated
+tracker will be used.
 
 Release cycle
 +++++++++++++
@@ -61,7 +60,7 @@ The roadmap right now is pretty small.  Here are the features I'm
 currently thinking about:
 
   1. Logging - This needs to happen sooner or later
-  2. Implementing a configuration based mapper (see: `Getting Started`_)
+  2. Implementing a regex based mapper (see: `Getting Started`_)
   3. Profiling - profilng of both Chula and apps running on it
   4. Support for MySQL_ based session.  Currently only PostgreSQL_ is
      supported.  With either backend Memcached_ will continue to be
@@ -73,5 +72,4 @@ Who's using it
 I don't actually know of anyone that's using it.  If you're using it,
 let me know.
 
-.. include:: rst/lib/links.rst
-.. include:: rst/lib/extras.rst
+.. include:: links.rst

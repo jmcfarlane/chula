@@ -1,2 +1,0 @@
-// Create global namespace
-RF = {};

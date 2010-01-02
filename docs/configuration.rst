@@ -2,8 +2,6 @@
 Chula Application Configuration
 ===============================
 
-.. include:: rst/lib/toc.rst
-
 Introduction
 ++++++++++++
 
@@ -100,9 +98,7 @@ unhandled exceptions.
 If you want to have informative error pages during development, you'll
 want to place that code inside your error controller's ``e500`` method
 that exposes this information.  You can find a very simple
-implementation that does this inside this application's `error
-controller <?code=example/www/controllers/error.py>`_ and `view
-<?code=view/error/e500.tmpl>`_.
+implementation that does this inside this application's error
+controller and view.
 
-.. include:: rst/lib/links.rst
-.. include:: rst/lib/extras.rst
+.. include:: links.rst

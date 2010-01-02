@@ -2,8 +2,6 @@
 Getting Started
 ===============
 
-.. include:: rst/lib/toc.rst
-
 Terminology
 +++++++++++
 
@@ -39,16 +37,16 @@ Application structure
 
 Here is an example file structure of a bare bones Chula application::
 
-  |-- example
-  |   |-- __init__.py
-  |   |-- configuration.py
-  |   `-- www
-  |       |-- __init__.py
-  |       `-- controllers
-  |           |-- __init__.py
-  |           |-- error.py
-  |           `-- home.py
-  `-- webserver
+ |-- example
+ |   |-- __init__.py
+ |   |-- configuration.py
+ |   `-- www
+ |       |-- __init__.py
+ |       `-- controllers
+ |           |-- __init__.py
+ |           |-- error.py
+ |           `-- home.py
+ `-- webserver
 
 In the list of files above there is a Python package_ named ``example``
 that holds the entire application.  Inside it there are two
@@ -64,9 +62,9 @@ Run your first Chula application
 If you would like to try the above application right now, you'd type
 this in your terminal::
 
-  user# cd wherever_you_unpacked_the_chula_tarball
-  user# pushd apps/basic
-  user# ./webserver
+ user# cd wherever_you_unpacked_the_chula_tarball
+ user# pushd apps/basic
+ user# ./webserver
 
 At this point you should be able to point your browser at
 http://localhost:8080 and browse a really fancy Chula app :)
@@ -78,7 +76,4 @@ When creating your own application is's going to be important that you
 understand the configuration options available.  You'll also want to
 learn more about featues available, and how to use them.
 
-`Next <?doc=configuration>`_
-
-.. include:: rst/lib/links.rst
-.. include:: rst/lib/extras.rst
+.. include:: ../links.rst
