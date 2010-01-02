@@ -12,6 +12,7 @@ Welcome to Chula's documentation!
    about
    getting_started
    configuration
+   session
 
 Indices and tables
 ==================

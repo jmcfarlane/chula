@@ -23,5 +23,3 @@ Here's a list, that *includes* a link:
 
  1. `Getting Started`_ is a linked page
  2. A another element
-
-.. include:: links.rst
