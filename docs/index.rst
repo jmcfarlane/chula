@@ -7,11 +7,11 @@ Welcome to Chula's documentation!
 =================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
 
-   about.rst
-   getting_started.rst
-   configuration.rst
+   about
+   getting_started
+   configuration
 
 Indices and tables
 ==================
@@ -19,4 +19,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
