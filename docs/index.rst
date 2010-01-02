@@ -6,13 +6,11 @@
 Welcome to Chula's documentation!
 =================================
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
    about.rst
-   getting_started/index.rst
+   getting_started.rst
    configuration.rst
 
 Indices and tables
