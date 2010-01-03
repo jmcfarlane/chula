@@ -6,7 +6,7 @@ Introduction
 ++++++++++++
 
 Chula applications read all configurations from a configuration file.
-This file holds a ``chula.config.Config`` object.  Here's an example
+This file holds a ``chula.config.Config()`` object.  Here's an example
 configuration file::
 
  from chula import config
@@ -20,8 +20,7 @@ configuration file::
  prod.session = False
 
 Of the configuration options above, the only two that you need to
-understand now are the ``classpath``, ``error_controller`` and
-``construction_controller`` options.
+understand now are the ``classpath`` and ``error_controller`` options.
 
 Mandatory Settings
 ++++++++++++++++++
@@ -58,20 +57,14 @@ method called:
 ======= ====================================================================
 Method  Use case
 ======= ====================================================================
-e404    The inbound request does not map to a controller.  Currently the
-        mapping happens via package structure as implemented in
-        ``chula.www.maper.standard``.  In time there will be various
-        types of mappers available, the default most likely being
-        configuration based (meaning you will define regex patterns
-        that determine where to route requests).
-        
+e404    The inbound request does not map to a controller.
 e500    During the processing of a request, and unhandled exception is
         thrown within the controller.
 ======= ====================================================================
 
 Using an example configuration, if a request is made that cannot be
-mapped, Chula will call ``example.www.controllers.error.e404()``.  If
-an unhandled exception occurs ``example.www.controllers.error.e500()``
+mapped, Chula will call ``example.www.controllers.error.Error.e404()``.  If
+an unhandled exception occurs ``example.www.controllers.error.Error.e500()``
 will be called.  This also means that if a request is made that cannot
 be mapped, and something goes wrong inside ``e404()`` then both
 controller methods will actually get called.  This makes it very
@@ -79,7 +72,7 @@ important that your error controller not be capable of throwing
 unhandled exceptions. 
 
 If you want to have informative error pages during development, you'll
-want to place that code inside your error controller's ``e500`` method
+want to place that code inside your error controller's ``e500()`` method
 that exposes this information.  You can find a very simple
 implementation that does this inside this application's error
 controller and view.
@@ -125,7 +118,7 @@ to take your site down for maintenance or something you can just
 
 The mandatory method that must exist in this controller is
 ``index()``.  For example with the above configuration this would be
-``example.www.controllers.construction.index()``.
+``example.www.controllers.construction.Construction.index()``.
 
 ``construction_trigger``
 ------------------------
@@ -176,16 +169,17 @@ page):
 
 * http://localhost
 
-  1. ``example.www.controllers.home.index()``
+  1. ``example.www.controllers.home.Home.index()``
 
-  With no uri a direct call to the home controller can be made.  The
-  home controller is named ``home`` and is expected to be at the root
-  of the specified classpath.
+  With no REQUEST_URI a direct call to the home controller can be
+  made.  The home controller is named ``home`` and is expected to be
+  at the root of the specified classpath, with a class named ``Home``
+  and a method named ``index()``.
 
 * http://localhost/products
 
   1. ``example.www.controllers.products.Products.index()``
-  #. ``example.www.controllers.home.products()``
+  #. ``example.www.controllers.home.Home.products()``
   #. ``example.www.controllers.error.Error.e404()``
 
   When there is a single part this can either be a specified
@@ -194,7 +188,7 @@ page):
 
 * http://localhost/products/dog
 
-  1. ``example.www.controllers.products.Dog()``
+  1. ``example.www.controllers.products.Products.Dog()``
   #. ``example.www.controllers.error.Error.e404()``
 
   When there are two parts, it must be a specified controller and
@@ -221,6 +215,15 @@ mappings.  Here is an example regex mapper::
      (r'^/login/?$', 'auth.login'),
      (r'^/logout/?$', 'auth.logout')
  )
+
+In the map above, the first argument is a regular expression (this
+might actually become a compiled regex in time) that matches against
+``REQUEST_URI``, and the second argument is a dot syntax that matches
+the relative path to a controller method.  The syntax assumes the path is
+all lower case, but it will expect all actual controller classes to
+have an upper cased first letter, and the parens on the method are
+implied.  So using the last map in the map above, the actual
+class/method used would be: ``example.www.controllers.auth.Auth.logout()``
 
 ``mqueue_db``
 -------------
