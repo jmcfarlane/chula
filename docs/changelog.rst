@@ -15,6 +15,7 @@ Chula v0.4.0 (dev)
 * Added a regex style url mapper. This means you can now choose
   between automatic class mapping and hand crafted mappings via regular
   expressions (this should be similar to Django style routing).
+* Added (initial) documentation using Sphinx (not yet published)
 * Updated memcache.py to version 1.45
 * Fixed regression in chula.www.cookie where the cookie domain was
   getting prefixed with "." once for every cookie - oops.
@@ -24,7 +25,6 @@ Chula v0.4.0 (dev)
   the backends. Now there is a single session class that supports n
   number of backends that all use the same interface.
 
-.. :Download: `Chula-0.4.0 </downloads/Chula-0.4.0.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.3.0
