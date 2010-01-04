@@ -14,6 +14,14 @@ Welcome to Chula's documentation!
    configuration
    session
 
+Download Chula
+==============
+
+.. toctree::
+   :maxdepth: 3
+
+   changelog
+
 Indices and tables
 ==================
 
