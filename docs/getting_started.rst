@@ -73,7 +73,8 @@ What's next
 
 When creating your own application is's going to be important that you
 understand the configuration options available.  You'll also want to
-learn more about featues available, and how to use them.
+learn more about featues available, and how to use them.  You can find
+detail on configuration `here <library/config.html>`_.
 
 .. _Cheetah: http://www.cheetahtemplate.org
 .. _Mako: http://www.makotemplates.org

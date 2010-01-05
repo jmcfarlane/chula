@@ -11,7 +11,6 @@ Welcome to Chula's documentation!
 
    about
    getting_started
-   configuration
    session
 
 Download Chula
@@ -21,6 +20,14 @@ Download Chula
    :maxdepth: 3
 
    changelog
+
+Module Library
+==============
+
+.. toctree::
+   :maxdepth: 1
+
+   library
 
 Indices and tables
 ==================
