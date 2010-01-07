@@ -25,6 +25,7 @@ Chula v0.4.0 (dev)
   the backends. Now there is a single session class that supports n
   number of backends that all use the same interface.
 
+:Documentation: `Chula-0.4.0_dev </0.4.0_dev>`_
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.3.0
@@ -38,7 +39,7 @@ Chula v0.3.0
 * Enforced str key types with memcached
 * Disabled memcached key sanitization by default
 
-:Download: `Chula-0.3.0 </downloads/Chula-0.3.0.tar.gz>`_
+:Download: `Chula-0.3.0.tar.gz </downloads/Chula-0.3.0.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.3.0
 
 Chula v0.2.0
@@ -53,7 +54,7 @@ Chula v0.2.0
 * Moved unit tests out of the source tree
 * Added support for Selenium tests
 
-:Download: `Chula-0.2.0 </downloads/Chula-0.2.0.tar.gz>`_
+:Download: `Chula-0.2.0.tar.gz </downloads/Chula-0.2.0.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.2.0
 
 Chula v0.1.0
@@ -72,7 +73,7 @@ Chula v0.1.0
 * Minor tweaks to reduce memory consumption
 * Made session optional, but enabled by default
 
-:Download: `Chula-0.1.0 </downloads/Chula-0.1.0.tar.gz>`_
+:Download: `Chula-0.1.0.tar.gz </downloads/Chula-0.1.0.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.1.0
 
 Chula v0.0.6
@@ -88,7 +89,7 @@ Chula v0.0.6
 * Fixed defect in data.commaify with less than 2 decimals
 * Improved the timer to not break xhtml compliance
 
-:Download: `Chula-0.0.6 </downloads/Chula-0.0.6.tar.gz>`_
+:Download: `Chula-0.0.6.tar.gz </downloads/Chula-0.0.6.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.6
 
 Chula v0.0.5
@@ -111,7 +112,7 @@ Chula v0.0.5
 * Added initial support for WSGI
 * Added initial suport for the Python simple_server
 
-:Download: `Chula-0.0.5 </downloads/Chula-0.0.5.tar.gz>`_
+:Download: `Chula-0.0.5.tar.gz </downloads/Chula-0.0.5.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.5
 
 Chula v0.0.4
@@ -134,7 +135,7 @@ Chula v0.0.4
 * Added support for sqlite to chula.db.datastore
 * Added tcp based message queue (working, but very much not ready to be used)
 
-:Download: `Chula-0.0.4 </downloads/Chula-0.0.4.tar.gz>`_
+:Download: `Chula-0.0.4.tar.gz </downloads/Chula-0.0.4.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.4
 
 Chula v0.0.3
@@ -154,7 +155,7 @@ Chula v0.0.3
   consumer to handle that type of logic. It was poorly implemented
   anyway :)
 
-:Download: `Chula-0.0.3 </downloads/Chula-0.0.3.tar.gz>`_
+:Download: `Chula-0.0.3.tar.gz </downloads/Chula-0.0.3.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.3
 
 Chula v0.0.2
@@ -175,7 +176,7 @@ Chula v0.0.2
 * Added timer to html output (turn off with config.add_timer)
 * Handle exception on premature client disconnection
 
-:Download: `Chula-0.0.2 </downloads/Chula-0.0.2.tar.gz>`_
+:Download: `Chula-0.0.2.tar.gz </downloads/Chula-0.0.2.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.2
 
 Chula v0.0.1
@@ -185,5 +186,5 @@ Chula v0.0.1
 
 * Initial release
 
-:Download: `Chula-0.0.1 </downloads/Chula-0.0.1.tar.gz>`_
+:Download: `Chula-0.0.1.tar.gz </downloads/Chula-0.0.1.tar.gz>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.1

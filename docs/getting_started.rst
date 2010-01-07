@@ -56,8 +56,8 @@ Chula application without needing a webserver installed and
 configured.  Technically speaking this is all you need to run a Chula
 application.
 
-Run your first Chula application
-++++++++++++++++++++++++++++++++
+Run a sample Chula application
+++++++++++++++++++++++++++++++
 
 If you would like to try the above application right now, you'd type
 this in your terminal::
@@ -66,7 +66,21 @@ this in your terminal::
  user# ./apps/basic/webserver
 
 At this point you should be able to point your browser at
-http://localhost:8080 and browse a really fancy Chula app :)
+http://localhost:8080 and browse a hello world application that ships
+with Chula.  The actual purpose of the application is to serve as a
+way to run BAT_ tests, but it's useful for this purpose as well.
+
+Create your own hello world application
++++++++++++++++++++++++++++++++++++++++
+
+Todo...
+
+Web server integration
++++++++++++++++++++++++
+
+Chula integrates with WSGI_, ,Mod_Python_, and FastCGI_.  Let's go
+thru how you would integrate your hello world application with each of
+these.
 
 What's next
 +++++++++++
@@ -76,8 +90,12 @@ understand the configuration options available.  You'll also want to
 learn more about featues available, and how to use them.  You can find
 detail on configuration `here <library/config.html>`_.
 
+.. _BAT: http://en.wikipedia.org/wiki/Acceptance_testing
 .. _Cheetah: http://www.cheetahtemplate.org
+.. _FastCGI: http://en.wikipedia.org/wiki/FastCGI
 .. _Mako: http://www.makotemplates.org
+.. _Mod_python: http://www.modpython.org
 .. _MVC: http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller
 .. _package: http://docs.python.org/tutorial/modules.html#packages
 .. _reST: http://www.restructuredtext.org
+.. _WsGI: http://www.wsgi.org

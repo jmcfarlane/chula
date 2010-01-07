@@ -34,6 +34,33 @@ Features
 * Typical stuff: Environment, GET and POST variables
 * Speed: Chula seems to perform pretty well
 
+Dependencies
+++++++++++++
+
+Chula depends on the following packages, some of which are optional
+depending on configuration:
+
+Mandatory
+~~~~~~~~~
+
+#. Python_ (2.5 or 2.6)
+#. pytz_
+#. Simplejson_
+
+Optional
+~~~~~~~~
+
+* CouchDB_ and the couchdb-python_ driver
+* Flup_ (If using FastCGI this is recommended, but still optional)
+* Mako_ (Optional but recommended)
+* Memcached_
+* PostgreSQL_ and the Psycopg2_ driver
+* Web server: Nginx_, Apache_, etc.
+
+If you intend on enabling support for session, you will need
+Memcached, and either PostgreSQL or CouchDB and their respective
+drivers.  You can learn more about session `here <session.html>`_.
+
 Source code
 +++++++++++
 
@@ -48,10 +75,13 @@ find defects or have ideas for improvement please feel free to file
 issues.  In the event Chula becomes more popular, a more sophisticated
 tracker will be used.
 
+The link to the Github tracker is `here
+<http://github.com/jmcfarlane/chula/issues>`_.
+
 Release cycle
 +++++++++++++
 
-I generally try to release a new version around 4 times a year.
+Generally there are about 4 releases a year
 
 Roadmap
 +++++++
@@ -75,15 +105,25 @@ let me know.
 .. _`Getting Started`: getting_started.html
 
 .. External hyperlinks
+.. _Apache: http://www.apache.org
 .. _Cheetah: http://www.cheetahtemplate.org
+.. _CouchDB: http://couchdb.apache.org
+.. _couchdb-python: http://code.google.com/p/couchdb-python/
 .. _FastCGI: http://en.wikipedia.org/wiki/FastCGI
+.. _Flup: http://trac.saddi.com/flup
 .. _Git: http://www.git.cz
 .. _Github: http://www.github.com/jmcfarlane/chula
+.. _Mako: http://www.makotemplates.org
 .. _Memcached: http://www.memcached.org
 .. _Mod_python: http://www.modpython.org
 .. _Mod_WSGI: http://code.google.com/p/modwsgi/
 .. _MVC: http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller
 .. _MySQL: http://www.mysql.org
+.. _Nginx: http://nginx.org
 .. _package: http://docs.python.org/tutorial/modules.html#packages
 .. _PostgreSQL: http://www.postgresql.org
+.. _Psycopg2: https://dndg.it/cgi-bin/gitweb.cgi?p=public/psycopg2.git
+.. _Python: http://www.python.org
+.. _pytz: http://pytz.sourceforge.net
 .. _reST: http://www.restructuredtext.org
+.. _Simplejson: http://www.undefined.org/python/
