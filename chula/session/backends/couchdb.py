@@ -17,8 +17,8 @@ class Backend(base.Backend):
         self.doc = None
         self.shard = None
 
-        self.connect()
         self.calculate_shard()
+        self.connect()
 
     def connect(self):
         if not self.doc is None:
