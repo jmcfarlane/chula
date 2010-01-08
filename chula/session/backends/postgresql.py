@@ -59,7 +59,7 @@ class Backend(base.Backend):
             return None
 
         if row is None:
-            LOG.debug('`--> No active session, guid: %s' % self.guid)
+            LOG.debug('No active session, guid: %s' % self.guid)
             return None
         else:
             LOG.debug('Session found: OK')

@@ -44,7 +44,7 @@ class Backend(base.Backend):
             LOG.debug('Session found: OK')
             return values
         except KeyError, ex:
-            LOG.debug('`--> Did not find session data in the document')
+            LOG.debug('Did not find session data in the document')
         except Exception, ex:
             LOG.error('Error fetching session: ex:%s' % ex)
 
