@@ -3,6 +3,7 @@ Manage the environment when python is using wsgi
 """
 
 from cgi import FieldStorage
+import os
 
 from chula.www.adapters import env
 
@@ -33,6 +34,9 @@ class Environment(env.BaseEnv):
                 qs = environ.get('QUERY_STRING', None)
                 if not qs is None and qs != '':
                     self.REQUEST_URI += '?' + qs
+
+        # Make sure PATH is set
+        self.PATH = os.environ.get('PATH', None)
 
         # Be nice to the Python wsiref simple_server
         if self.SERVER_SOFTWARE.startswith('WSGIServer/0.1 Python'):
