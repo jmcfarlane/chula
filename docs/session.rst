@@ -103,6 +103,5 @@ Reference
 For more detail on Chula configuration in general, see
 :mod:`config`.
 
-.. _here: configuration.html
 .. _pgpool: http://pgpool.projects.postgresql.org/
 .. _pickle: http://docs.python.org/library/pickle.html
