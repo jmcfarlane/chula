@@ -6,10 +6,7 @@ SRC=$(dirname $0)
 cd $SRC/..
 
 # Validate the base dir exists
-if [ ! -d "$BASEDIR" ]; then
-    echo "$BASEDIR does not exist, fix and try again"
-    exit 1
-fi
+mkdir -p "$BASEDIR"
 
 # Fetch the current version for which docs are being generated
 version=$(grep -o -E '[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z_-]*' chula/__init__.py)

@@ -75,8 +75,8 @@ find defects or have ideas for improvement please feel free to file
 issues.  In the event Chula becomes more popular, a more sophisticated
 tracker will be used.
 
-The link to the Github tracker is `here
-<http://github.com/jmcfarlane/chula/issues>`_.
+The link to the Github tracker is here:
+http://github.com/jmcfarlane/chula/issues
 
 Release cycle
 +++++++++++++

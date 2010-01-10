@@ -23,17 +23,19 @@ have to use `sticky sessions` in your load balancer configuration.
 Scalable
 ++++++++
 
-10% of the traffic.  Because session is usually transient in nature,
-all requests to the cache, and only send requests to the backend Chula
-session is reasonably scalable.  The default behavior is to send
-configurations Memcached is used as the cache.  Memcached has a
-dramatically.  The default configuration is to send the backend only
-periodically.  This means that you can reduce your backend load
-reputation as performing well.  this is a reasonably safe way to
-increase performance.  The current limitation of the session store is
-that it does not use connection pooling.  This can optionally be added
-by fronting your PostgreSQL server with pgpool_.  When CouchDB is used
-as the backend, connection pooling isn't relevent as it uses HTTP.
+Chula maintains session in Memcached_ backed by a persistent data
+store.  Because Memcache is reasonably reliable, only a percentage of
+session requests are actually sent to the backend.  The default
+configuration is to update the backend every 10 requests.  This means
+the session backend (which is slower than cache) is only serving 10%
+of the actual traffic.  The frequency of backend updates is
+configurable via :attr:`config.Config.session_max_stale_count`, and
+the backend is always consulted in the event of a cache miss.
+
+A current limitation of the session store is that it does not use
+connection pooling.  This can optionally be added by fronting your
+PostgreSQL server with pgpool_.  When CouchDB is used as the backend,
+connection pooling isn't relevent as it uses HTTP.
 
 Native Storage
 ++++++++++++++
@@ -73,31 +75,33 @@ Assuming you're connecting to the server running locally, you're all
 done!
 
 If you're connecting to a remote server, you need to add the hostname
-in your configuration via ``session_host``.  If you want to use a different user/password/port/server you are free
-to do so.
+in your configuration via :attr:`config.Config.session_host`.  If you
+want to use a different user/password/port/server you are free to do
+so.
 
 CouchDB
 -------
 
-You wil need to configure ``session_nosql`` with the full HTTP path to
-your CouchDB server.  If this is a local install, you'd set the value
-to http://localhost:5984.  Don't worry about the database, as it wil
-be created automatically on demand.
+You wil need to configure :attr:`config.Config.session_nosql` with the
+full HTTP path to your CouchDB server.  If this is a local install,
+you'd set the value to http://localhost:5984.  Don't worry about the
+database, as it wil be created automatically on demand.
 
 Memcached
 ---------
 
 You need to configure your cluster information via
-``session_memcache``.  If you're using a local install of Memcached
-you can just take the defaults.  Else, specify it with something like
-this::
+:attr:`config.Config.session_memcache`.  If you're using a local
+install of Memcached you can just take the defaults, else configure it
+with something like this::
 
  [('host1:11211', 1), ('host2:11211', 1), ('host3:11211', 1)]
 
 Reference
 +++++++++
 
-For more detail on Chula configuration in general, see here_.
+For more detail on Chula configuration in general, see
+:mod:`config`.
 
 .. _here: configuration.html
 .. _pgpool: http://pgpool.projects.postgresql.org/
