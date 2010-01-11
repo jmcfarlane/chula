@@ -280,12 +280,176 @@ these.
 Nginx via FastCGI
 ~~~~~~~~~~~~~~~~~
 
-Todo
+The first step in FastCGI_ integration, is to create the application
+server that Nginx_ will sent requests to.  For this example, we'll use
+a unix domain socket, rather than TCP/IP for connectivity between the
+two.
+
+FastCGI process
+^^^^^^^^^^^^^^^
+
+Create :file:`Myapp/fastcgi.py` ::
+
+ try:
+     from flup.server.fcgi_fork import WSGIServer
+ except ImportError:
+     from chula.www.fcgi import WSGIServer
+     print "Unable to import flup.server.fcgi import WSGIServer"
+     print " >>> Falling back on old version available in Chula"
+
+ from chula.www.adapters.fcgi import adapter
+ 
+ from myapp import configuration
+
+ @adapter.fcgi
+ def application():
+     return configuration.dev
+ 
+ # Start the server which will handle calls from the webserver
+ WSGIServer(application, bindAddress='/tmp/myapp.socket').run()
+
+Start up the FastCGI_ process::
+
+ python Myapp/fastcgi.py
+
+Nginx config
+^^^^^^^^^^^^
+
+Configure Nginx_ to proxy application requests to our
+application.  Add this to the ``server`` block of your Nginx_
+configuration::
+
+ # Send all requests without a file extension to myapp:
+ location ~ ^([a-z/_])+$ {
+   # This is needed when using Ubuntu
+   include /etc/nginx/fastcgi_params;
+
+   # FastCGI parameter settings
+   fastcgi_read_timeout 3m;
+   fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+   fastcgi_param SERVER_ADMIN NA;
+   fastcgi_param SERVER_SIGNATURE nginx/$nginx_version;
+
+   # The path to our running unix domain socket
+   server unix:/tmp/myapp.socket
+ }
+
+Restart Nginx_ ::
+
+ sudo /etc/init.d/nginx restart
+
+Try it!
+^^^^^^^
+
+Now you should be able to hit: http://your-server/blog
+
+WSGI via Mod_WSGI
+~~~~~~~~~~~~~~~~~
+
+Mod_WSGI_ is the best choice if you want to run your app on Apache_.
+This configuration also happens is a little easier to setup.
+
+Register app
+^^^^^^^^^^^^
+
+When running applications under Apache, the Python interpreter is
+owned by ``nobody`` or ``apache`` or something, thus you need to
+register your application so that it's in python's ``path``.  The
+easiest way to do this is via a symlink.  You'll use something similar
+to one of these (but specific to your computer's setup)::
+
+ # Gentoo
+ sudo ln -s /path/to/Myapp/myapp /usr/lib/python2.6/site-packages/myapp
+
+ # Ubuntu
+ sudo ln -s /path/to/Myapp/myapp /usr/local/lib/python2.6/dist-packages/myapp
+
+WSGI handler
+^^^^^^^^^^^^
+
+Create :file:`Myapp/wsgi.py`, which will be loaded by Mod_WSGI_ ::
+
+ from chula.www.adapters.wsgi import adapter
+
+ from myapp import configuration
+ 
+ @adapter.wsgi
+ def application():
+     return configuration.dev
+
+Apache config
+^^^^^^^^^^^^^
+
+Add this to your ``VirtualHost`` ::
+
+ WSGIScriptAliasMatch ^([a-z/_])+$ /full/path/to/Myapp/wsgi.py 
+
+Try it!
+^^^^^^^
+
+Restart Apache::
+
+ sudo /etc/init.d/apache restart
+
+Now you should be able to hit: http://your-server/blog
 
 Apache via Mod_python
 ~~~~~~~~~~~~~~~~~~~~~
 
-Todo
+Mod_PYTHON_ was the first way to run Python applications under Apache
+with excellent performance.  It's still awesome, though Mod_WSGI_ has
+superceeded it.
+
+Register app
+^^^^^^^^^^^^
+
+When running applications under Apache, the Python interpreter is
+owned by ``nobody`` or ``apache`` or something, thus you need to
+register your application so that it's in python's ``path``.  The
+easiest way to do this is via a symlink.  You'll use something similar
+to one of these (but specific to your computer's setup)::
+
+ # Gentoo
+ sudo ln -s /path/to/Myapp/myapp /usr/lib/python2.6/site-packages/myapp
+
+ # Ubuntu
+ sudo ln -s /path/to/Myapp/myapp /usr/local/lib/python2.6/dist-packages/myapp
+
+Mod_python handler
+^^^^^^^^^^^^^^^^^^
+
+Create :file:`Myapp/myapp/mod_python.py`, which will be loaded by Mod_PYTHON_ ::
+
+ from chula.www.adapters.mod_python import adapter
+
+ from myapp import configuration
+ 
+ @adapter.handler
+ def application():
+     return configuration.dev
+
+Apache config
+^^^^^^^^^^^^^
+
+Update your apache ``VirtualHost`` to have::
+
+ # Send all application requests to a stub  with a ".py" extension
+ AliasMatch ^([a-z/_])+$ PLACEHOLDER.py
+ PythonDebug On
+
+ # Send requests to *.py to myapp's handler
+ AddHandler mod_python .py
+ PythonHandler myapp.mod_python
+
+
+Try it!
+^^^^^^^
+
+Restart Apache::
+
+ sudo /etc/init.d/apache restart
+
+Now you should be able to hit: http://your-server/blog
 
 What's next
 +++++++++++
@@ -295,12 +459,15 @@ understand the configuration options available.  You'll also want to
 learn more about featues available, and how to use them.  You can find
 detail on configuration `here <library/config.html>`_.
 
+.. _Apache: http://www.apache.org
 .. _BAT: http://en.wikipedia.org/wiki/Acceptance_testing
 .. _Cheetah: http://www.cheetahtemplate.org
 .. _FastCGI: http://en.wikipedia.org/wiki/FastCGI
 .. _Mako: http://www.makotemplates.org
 .. _Mod_python: http://www.modpython.org
+.. _Mod_WSGI: http://code.google.com/p/modwsgi/
 .. _MVC: http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller
+.. _Nginx: http://nginx.org
 .. _package: http://docs.python.org/tutorial/modules.html#packages
 .. _reST: http://www.restructuredtext.org
 .. _WsGI: http://www.wsgi.org
