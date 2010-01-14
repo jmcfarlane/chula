@@ -190,7 +190,7 @@ Let's try out what we have so far::
 At this point you should be able to browse the following urls:
 
 #. http://localhost:8080
-#. http://localhost:8080/blog
+#. http://localhost:8080/home/blog
 
 Hit :kbd:`Control-c` to stop the server.
 
@@ -341,7 +341,7 @@ Restart Nginx_ ::
 Try it!
 ^^^^^^^
 
-Now you should be able to hit: http://your-server/blog
+Now you should be able to hit: http://your-server/home/blog
 
 WSGI via Mod_WSGI
 ~~~~~~~~~~~~~~~~~
@@ -391,7 +391,7 @@ Restart Apache::
 
  sudo /etc/init.d/apache restart
 
-Now you should be able to hit: http://your-server/blog
+Now you should be able to hit: http://your-server/home/blog
 
 Apache via Mod_python
 ~~~~~~~~~~~~~~~~~~~~~
@@ -449,7 +449,7 @@ Restart Apache::
 
  sudo /etc/init.d/apache restart
 
-Now you should be able to hit: http://your-server/blog
+Now you should be able to hit: http://your-server/home/blog
 
 What's next
 +++++++++++
