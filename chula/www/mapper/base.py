@@ -8,8 +8,6 @@ import os
 from chula import logger
 from chula.www.mapper import *
 
-LOG = logger.Logger().logger('chula.www.mapper.base')
-
 class BaseMapper(object):
     def __init__(self, config, env):
         # Check to make sure the config is available
@@ -20,6 +18,7 @@ class BaseMapper(object):
             
         self.config = config
         self.env = env
+        self.log = logger.Logger(config).logger('chula.www.mapper.base')
         self.uri = env.REQUEST_URI
 
         # Set the under construction controller

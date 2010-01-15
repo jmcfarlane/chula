@@ -10,7 +10,7 @@ import sys
 import thread
 import time
 
-from chula import json, system
+from chula import json, logging, system
 from chula.queue import mqueue
 from chula.queue.messages import message
 
@@ -28,7 +28,7 @@ class MessageQueueServer(object):
 
         self.config = config
         self.debug = True
-        self.log_file = os.path.join(self.config.mqueue_db, 'log')
+        self.log = logger.Logger(config).logger('chula.queue.server')
         self.pid_file = os.path.join(self.config.mqueue_db, 'server.pid')
         self.queue = mqueue.MessageQueue(self.config)
         self.system = system.System()
@@ -42,7 +42,7 @@ class MessageQueueServer(object):
         """
 
         thread_id = thread.get_ident()
-        self.log('Worker thread started: %s' % thread_id) 
+        self.log.debug('Worker thread started: %s' % thread_id) 
         while True:
             msg = self.queue.get()
             try:
@@ -52,23 +52,9 @@ class MessageQueueServer(object):
             except Exception, ex:
                 self.queue.purge(msg, ex)
 
-            self.log('%s was processed' % msg.name)
+            self.log.debug('%s was processed' % msg.name)
             if self.debug:
                 print '%s processed by: %s' % (msg.name, thread_id)
-
-    def log(self, msg):
-        """
-        Log writer (this needs to be switched to logging.Logger)
-
-        @param msg: Message to log
-        @type msg: str
-        @return: None
-        """
-
-        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log = open(self.log_file, 'a')
-        log.write('%s: %s\n' % (now, msg))
-        log.close()
 
     def receive_message(self, client):
         """
@@ -165,7 +151,7 @@ class MessageQueueServer(object):
         # Before starting the server add any unprocessed msgs to the queue
         for msg in self.queue.unprocessed_messages():
             info = 'Found message out of band, adding to queue: %s'
-            self.log(info % msg)
+            self.log.debug(info % msg)
             self.queue.add(msg)
 
         # Serve forever

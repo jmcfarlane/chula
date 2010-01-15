@@ -4,12 +4,11 @@ from chula import db, logger
 from chula.db.datastore import DataStoreFactory
 from chula.session.backends import base
 
-LOG = logger.Logger().logger('chula.session.backends.postgresql')
-
 class Backend(base.Backend):
     def __init__(self, config, guid):
         super(Backend, self).__init__(config, guid)
         self.cursor = None
+        self.log = logger.Logger(config).logger('chula.session.postgresql')
 
         self.connect()
 
@@ -20,15 +19,15 @@ class Backend(base.Backend):
             try:
                 self.conn = DataStoreFactory(uri, self.config.session_password)
             except Exception, ex:
-                LOG.error('Unable to connect to postgresql: %s' % ex)
+                self.log.error('Unable to connect to postgresql: %s' % ex)
 
             try:
                 self.cursor = self.conn.cursor()
             except Exception, ex:
-                LOG.error('Unable to create postgresql cursor: %s' % ex)
+                self.log.error('Unable to create postgresql cursor: %s' % ex)
 
             if not self.conn is None and not self.cursor is None:
-                LOG.debug('Successfull connection to postgresql')
+                self.log.debug('Successfull connection to postgresql')
 
     def destroy(self):
         sql = "DELETE FROM SESSION WHERE guid = %s;" % db.cstr(self.guid)
@@ -44,7 +43,7 @@ class Backend(base.Backend):
         return False
 
     def fetch_session(self):
-        LOG.debug('fetching data from postgresql')
+        self.log.debug('fetching data from postgresql')
 
         sql = "SELECT values FROM session WHERE guid = %s AND active = TRUE;"
         sql = sql % db.cstr(self.guid)
@@ -55,14 +54,14 @@ class Backend(base.Backend):
             self.cursor.execute(sql)
             row = self.cursor.fetchone()
         except Exception, ex: #self.conn.error.OperationalError, ex:
-            LOG.warning('SQL error guid: %s, ex:%s' % (self.guid, ex))
+            self.log.warning('SQL error guid: %s, ex:%s' % (self.guid, ex))
             return None
 
         if row is None:
-            LOG.debug('No active session, guid: %s' % self.guid)
+            self.log.debug('No active session, guid: %s' % self.guid)
             return None
         else:
-            LOG.debug('Session found: OK')
+            self.log.debug('Session found: OK')
             return row['values']
    
     def gc(self):
@@ -74,7 +73,7 @@ class Backend(base.Backend):
             self.conn = None
 
     def persist(self, encoded):
-        LOG.debug('persist() called')
+        self.log.debug('persist() called')
 
         sql = "SELECT session_set(%s, %s, TRUE);"
         sql = sql % (db.cstr(self.guid), db.cstr(encoded))
@@ -83,7 +82,7 @@ class Backend(base.Backend):
         try:
             self.cursor.execute(sql)
             self.conn.commit()
-            LOG.debug('Persisted: OK')
+            self.log.debug('Persisted: OK')
             return True
         except Exception, ex:
             try:

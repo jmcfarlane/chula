@@ -7,12 +7,12 @@ import re
 from chula import logger
 from chula.www.mapper import base
 
-LOG = logger.Logger().logger('chula.www.mapper.regex')
-
 class RegexMapper(base.BaseMapper):
     def __init__(self, config, env, route_map):
         super(RegexMapper, self).__init__(config, env)
         self.route_map = route_map
+        self.log = logger.Logger(config).logger('chula.www.mapper.regex')
+
 
     def _process_route(self, route, force=False):
         regex, target = route
@@ -28,7 +28,7 @@ class RegexMapper(base.BaseMapper):
         if parts:
             self.route.package += '.' + '.'.join(parts)
 
-        LOG.debug('Set route: %s via %s' % (self.route, regex))
+        self.log.debug('Set route: %s via %s' % (self.route, regex))
         return self.route
         
     def parse(self):

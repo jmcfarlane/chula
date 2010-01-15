@@ -8,10 +8,8 @@ import pytz
 
 from chula import data, logger
 
-LOG = logger.Logger().logger('chula.www.cookie')
-
 class CookieCollection(SimpleCookie):
-    def __init__(self, timeout=20, path='/', input=None):
+    def __init__(self, config=None, timeout=20, path='/', input=None):
         """
         Create a collection of cookies
 
@@ -20,6 +18,7 @@ class CookieCollection(SimpleCookie):
         """
 
         super(CookieCollection, self).__init__(input)
+        self.log = logger.Logger(config).logger('chula.www.cookie')
         self.timeout = timeout
         self.path = path
         self.domain = None

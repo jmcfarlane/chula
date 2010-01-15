@@ -5,13 +5,13 @@ import hashlib
 from chula import logger, memcache
 from chula.session.backends import base
 
-LOG = logger.Logger().logger('chula.session.backends.memcached')
-
 class Backend(base.Backend):
     def __init__(self, config, guid):
         super(Backend, self).__init__(config, guid)
         self.connect()
         self.calculate_key()
+        self.log = logger.Logger(config).logger('chula.session.memcached')
+
 
     def gc(self):
         try:
@@ -38,10 +38,10 @@ class Backend(base.Backend):
 
         values = self.conn.get(self.key)
         if values is None:
-            LOG.debug('Did not find session, guid: %s' % self.guid)
+            self.log.debug('Did not find session, guid: %s' % self.guid)
             return None
         else:
-            LOG.debug('Session found: OK')
+            self.log.debug('Session found: OK')
             return values
    
     def calculate_key(self):

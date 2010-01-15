@@ -15,8 +15,6 @@ ENV = 'CHULA_COUCHDB_SERVER'
 VALID_ID = r'^[-a-zA-Z0-9_.]+$'
 VALID_ID_RE = re.compile(VALID_ID)
 
-LOG = logger.Logger().logger('chula.nosql.couch')
-
 def connect(db, server=None, shard=None):
     futon = None
 
@@ -48,7 +46,7 @@ class Document(dict):
     CouchDB document abstraction class
     """
 
-    def __init__(self, id, document=None, server=None, shard=None):
+    def __init__(self, id, config=None, document=None, server=None, shard=None):
         super(Document, self).__init__()
 
         id = self.sanitize_id(id)
@@ -67,6 +65,9 @@ class Document(dict):
 
         # Allow keeping track of is_dirty
         self._copy = copy.deepcopy(self)
+
+        # Loggers use thread locks and thus can't be copied
+        self.log = logger.Logger(config).logger('chula.nosql.couch')
 
     @staticmethod
     def sanitize_id(id):

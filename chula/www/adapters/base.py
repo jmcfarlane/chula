@@ -12,8 +12,6 @@ from chula.www import cookie
 from chula.www.mapper import ClassPathMapper
 from chula.www.mapper import RegexMapper
 
-LOG = logger.Logger().logger('chula.www.adapters.base')
-
 RE_HTML = re.compile(r"</body>\s*</html>\s*$", re.IGNORECASE)
 
 class BaseAdapter(object):
@@ -22,6 +20,8 @@ class BaseAdapter(object):
         self.timer_start()
 
         self.controller = None
+        self.log = logger.Logger(config).logger('chula.www.adapters.base')
+
         self.mapper = None
 
     def _gc(self):
@@ -97,7 +97,7 @@ class BaseAdapter(object):
         # Add the cookies to the headers
         self.env.headers.extend(self.env.cookies.headers())
         for c in self.env.cookies.headers():
-            LOG.debug('Added cookie: %s, %s' % c)
+            self.log.debug('Added cookie: %s, %s' % c)
 
         # If this is an under construction page do not try to persist
         # session, avoid as many dependencies as possible
@@ -128,7 +128,7 @@ class BaseAdapter(object):
         self.env.headers = []
 
         # Initialize cookies
-        self.env.cookies = cookie.CookieCollection()
+        self.env.cookies = cookie.CookieCollection(config=self.config)
         self.env.cookies.domain = self.env.HTTP_HOST
         self.env.cookies.key = self.config.session_encryption_key
         self.env.cookies.timeout = self.config.session_timeout

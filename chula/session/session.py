@@ -12,8 +12,6 @@ JSON = 'json'
 STALE_COUNT = 'REQUESTS-BETWEEN-DB-PERSIST'
 SESSION_UNAVAILABLE = 'SESSION_IS_CURRENTLY_UNAVAILABLE'
 
-LOG = logger.Logger().logger('chula.session')
-
 ##@singleton.singleton
 class Session(dict):
     """
@@ -35,6 +33,7 @@ class Session(dict):
         # Create member variables
         self._config = config
         self._expired = False
+        self._log = logger.Logger(config).logger('chula.session')
         self._max_stale_count = config.session_max_stale_count
         self._persist_immediately = False
         self._timeout = config.session_timeout
@@ -84,7 +83,7 @@ class Session(dict):
         backend connections.
         """
 
-        LOG.debug('session._gc() called')
+        self._log.debug('session._gc() called')
         
         self._backend.gc()
         self._cache.gc()
@@ -147,7 +146,7 @@ class Session(dict):
         backend if needed.
         """
 
-        LOG.debug('Fetching session, guid:%s' % self._guid)
+        self._log.debug('Fetching session, guid:%s' % self._guid)
         
         data = None
 
@@ -158,12 +157,12 @@ class Session(dict):
         # If the cache is unavailable fetch from the db and be sure to
         # persist to the database as we can't trust the cache currently
         if data is None:
-            LOG.debug('`--> stale_count: %s' % self.get(STALE_COUNT))
+            self._log.debug('`--> stale_count: %s' % self.get(STALE_COUNT))
             data = self.decode(self._backend.fetch_session())
 
         if data is None:
             msg = 'Active session not found in cache or backend, guid:%s'
-            LOG.debug(msg % self._guid)
+            self._log.debug(msg % self._guid)
 
             # Either the backends are unavailable, or this is a brand
             # new session, either way persist asap
@@ -171,9 +170,9 @@ class Session(dict):
         else:
             self.update(data)
     
-        LOG.debug('User session now loaded with the following k/v pairs:')
+        self._log.debug('User session now loaded with the following k/v pairs:')
         for key, value in self.iteritems():
-            LOG.debug('`--> %s: %s' % (key, value))
+            self._log.debug('`--> %s: %s' % (key, value))
 
     def flush_next_persist(self):
         """
@@ -183,7 +182,7 @@ class Session(dict):
         changes and you don't want to risk it being lost.
         """
         
-        LOG.debug('flush_next_persist called')
+        self._log.debug('flush_next_persist called')
 
         self._persist_immediately = True
 
@@ -205,14 +204,14 @@ class Session(dict):
         # the db - after that it's based on the max_stale_count.
         self[STALE_COUNT] = self.get(STALE_COUNT, -2) + 1
 
-        LOG.debug('current stale_count in persist(): %s' % self[STALE_COUNT])
+        self._log.debug('stale_count in persist(): %s' % self[STALE_COUNT])
 
         # Persist the session state to the database if this is a new
         # session (the STALE_COUNT won't be set) or the age (requests
         # between database persists) is greater than a constant value,
         # 10 for now. 
         if self[STALE_COUNT] == 0 or self[STALE_COUNT] > self._max_stale_count:
-            LOG.debug('decision made to call flush_next_persist')
+            self._log.debug('decision made to call flush_next_persist')
             self.flush_next_persist()
 
         # Save the stale count in case the backend persist fails, then

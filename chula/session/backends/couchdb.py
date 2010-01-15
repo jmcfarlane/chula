@@ -6,8 +6,6 @@ from chula import data, logger
 from chula.nosql import couch
 from chula.session.backends import base
 
-LOG = logger.Logger().logger('chula.session.backends.couchdb')
-
 class Backend(base.Backend):
     KEY = 'PICKLE'
 
@@ -15,6 +13,8 @@ class Backend(base.Backend):
         super(Backend, self).__init__(config, guid)
         self.server = self.config.session_nosql
         self.doc = None
+        self.log = logger.Logger(config).logger('chula.session.couchdb')
+
         self.shard = None
 
         self.calculate_shard()
@@ -24,7 +24,7 @@ class Backend(base.Backend):
         if not self.doc is None:
             return self.doc
 
-        LOG.debug('Connecting with shard: %s' % self.shard)
+        self.log.debug('Connecting with shard: %s' % self.shard)
         self.doc = SessionDoc(self.guid, server=self.server, shard=self.shard)
 
         return self.doc
@@ -36,17 +36,17 @@ class Backend(base.Backend):
 
     def fetch_session(self):
         if self.doc == {}:
-            LOG.debug('Document not found: %s' % self.guid)
+            self.log.debug('Document not found: %s' % self.guid)
             return None
 
         try:
             values = self.doc[self.KEY]
-            LOG.debug('Session found: OK')
+            self.log.debug('Session found: OK')
             return values
         except KeyError, ex:
-            LOG.debug('Did not find session data in the document')
+            self.log.debug('Did not find session data in the document')
         except Exception, ex:
-            LOG.error('Error fetching session: ex:%s' % ex)
+            self.log.error('Error fetching session: ex:%s' % ex)
 
         return None
 
@@ -54,11 +54,11 @@ class Backend(base.Backend):
         self.conn = None
 
     def persist(self, encoded):
-        LOG.debug('persist() called')
+        self.log.debug('persist() called')
 
         self.doc[self.KEY] = encoded
         persisted = self.doc.persist()
-        LOG.debug('Persisted, guid:%s as revision: %s' % (self.guid, persisted))
+        self.log.debug('saved guid:%s, revision: %s' % (self.guid, persisted))
 
         return True
 
