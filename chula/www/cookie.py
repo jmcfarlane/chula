@@ -6,7 +6,7 @@ from Cookie import SimpleCookie
 from datetime import datetime
 import pytz
 
-from chula import data, logger
+from chula import data
 
 class CookieCollection(SimpleCookie):
     def __init__(self, config=None, timeout=20, path='/', input=None):
@@ -18,7 +18,6 @@ class CookieCollection(SimpleCookie):
         """
 
         super(CookieCollection, self).__init__(input)
-        self.log = logger.Logger(config).logger('chula.www.cookie')
         self.timeout = timeout
         self.path = path
         self.domain = None
