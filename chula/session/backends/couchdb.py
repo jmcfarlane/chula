@@ -25,11 +25,20 @@ class Backend(base.Backend):
             return self.doc
 
         self.log.debug('Connecting with shard: %s' % self.shard)
-        self.doc = SessionDoc(self.guid, server=self.server, shard=self.shard)
-
-        return self.doc
+        try:
+            self.doc = SessionDoc(self.guid,
+                                  server=self.server,
+                                  shard=self.shard)
+            return self.doc
+        except Exception, ex:
+            self.log.error('Unable to connect to the db: %s' % ex)
+            return None
 
     def destroy(self):
+        if self.doc is None:
+            self.log.error('Unable to destroy(), no db connection')
+            return False
+
         SessionDoc.delete(self.guid, server=self.server, shard=self.shard)
 
         return True
@@ -55,6 +64,10 @@ class Backend(base.Backend):
 
     def persist(self, encoded):
         self.log.debug('persist() called')
+
+        if self.doc is None:
+            self.log.error('Unable to persist(), no db connection')
+            return False
 
         self.doc[self.KEY] = encoded
         persisted = self.doc.persist()
