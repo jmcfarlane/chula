@@ -293,7 +293,7 @@ Create :file:`Myapp/fastcgi.py` ::
  try:
      from flup.server.fcgi_fork import WSGIServer
  except ImportError:
-     from chula.www.fcgi import WSGIServer
+     from chula.vendor.fcgi import WSGIServer
      print "Unable to import flup.server.fcgi import WSGIServer"
      print " >>> Falling back on old version available in Chula"
 

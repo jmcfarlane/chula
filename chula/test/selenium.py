@@ -6,6 +6,7 @@ import unittest
 
 from chula.vendor import selenium as upstream
 
+KEY_ENTER = '10'
 UNSET = 'UNSET'
 
 class TestCase(unittest.TestCase):

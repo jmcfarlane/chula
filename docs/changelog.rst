@@ -24,6 +24,7 @@ Chula v0.4.0 (dev)
   things up properly the session logic had to be abstracted away from
   the backends. Now there is a single session class that supports n
   number of backends that all use the same interface.
+* Moved third party libs (selenium, memcache) into chula.vendor
 
 :Documentation: `Chula-0.4.0_dev </0.4.0_dev>`_
 :Source: http://github.com/jmcfarlane/chula

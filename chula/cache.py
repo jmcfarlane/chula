@@ -2,7 +2,8 @@
 Wrapper class for the Memcache client
 """
 
-from chula import error, memcache
+from chula import error
+from chula.vendor import memcache
 
 ENCODING = 'ascii'
 SANITIZE = False
