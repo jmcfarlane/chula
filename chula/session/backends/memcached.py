@@ -2,8 +2,9 @@
 
 import hashlib
 
-from chula import logger, memcache
+from chula import logger
 from chula.session.backends import base
+from chula.vendor import memcache
 
 class Backend(base.Backend):
     def __init__(self, config, guid):
