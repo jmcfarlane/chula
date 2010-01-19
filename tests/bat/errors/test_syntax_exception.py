@@ -1,4 +1,4 @@
-from chula import bat
+from chula.test import bat
 
 class Test_syntax_exception(bat.Bat):
     def test_root(self):

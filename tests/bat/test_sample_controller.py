@@ -1,4 +1,4 @@
-from chula import bat
+from chula.test import bat
 
 HTML = 'Sample controller'
 
