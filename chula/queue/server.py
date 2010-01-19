@@ -10,7 +10,7 @@ import sys
 import thread
 import time
 
-from chula import json, logging, system
+from chula import json, logger, system
 from chula.queue import mqueue
 from chula.queue.messages import message
 
