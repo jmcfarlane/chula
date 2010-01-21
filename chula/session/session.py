@@ -2,17 +2,14 @@
 
 import cPickle
 
-from chula import json, logger, singleton
-from chula.session.backends import couchdb
+from chula import json, logger
 from chula.session.backends import memcached
-from chula.session.backends import postgresql
 
 CPICKLE = 'cPickle'
 JSON = 'json'
 STALE_COUNT = 'REQUESTS-BETWEEN-DB-PERSIST'
 SESSION_UNAVAILABLE = 'SESSION_IS_CURRENTLY_UNAVAILABLE'
 
-##@singleton.singleton
 class Session(dict):
     """
     The Session class keeps track of user session.
@@ -47,8 +44,10 @@ class Session(dict):
 
         # Determine the backend to use
         if not self._config.session_nosql is None:
+            from chula.session.backends import couchdb
             self._backend =  couchdb.Backend(self._config, self._guid)
         else:
+            from chula.session.backends import postgresql
             self._backend = postgresql.Backend(self._config, self._guid)
 
         # Always use a memcached backend

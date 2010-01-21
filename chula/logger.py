@@ -14,6 +14,13 @@ class Logger(object):
         if config is None:
             config = Config()
 
+        # Create a logger instance.  NOTE: the level set in the logger
+        # determines which severity of messages it will pass to it's
+        # handlers.  We want to send everything to the handlers and
+        # let them decide what to do.
+        logger = logging.getLogger('')
+        logger.setLevel(logging.DEBUG)
+
         # Create file handler for WARNING and above
         fmt = ('%(asctime)s,'
                '%(levelname)s,'
@@ -25,28 +32,20 @@ class Logger(object):
         fh = RotatingFileHandler(config.log, maxBytes=104857600, backupCount=5)
         fh.setLevel(logging.WARNING)
         fh.setFormatter(logging.Formatter(fmt))
+        logger.addHandler(fh)
 
         # Create console handler for DEBUG and above (stderr)
-        fmt = ('%(levelname)-9s'
-               '%(name)-35s'
-               '%(filename)-15s'
-               '%(lineno)-5d'
-               '%(message)s'
-              )
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
-        ch.setFormatter(logging.Formatter(fmt))
-
-        # Create a logger instance.  NOTE: the level set in the logger
-        # determines which severity of messages it will pass to it's
-        # handlers.  We want to send everything to the handlers and
-        # let them decide what to do.
-        logger = logging.getLogger('')
-        logger.setLevel(logging.DEBUG)
-
-        # Add the handlers
-        logger.addHandler(ch)
-        logger.addHandler(fh)
+        if config.debug:
+            fmt = ('%(levelname)-9s'
+                   '%(name)-35s'
+                   '%(filename)-15s'
+                   '%(lineno)-5d'
+                   '%(message)s'
+                  )
+            ch = logging.StreamHandler()
+            ch.setLevel(logging.DEBUG)
+            ch.setFormatter(logging.Formatter(fmt))
+            logger.addHandler(ch)
 
     def logger(self, name=ROOT):
         if not name.startswith(ROOT):

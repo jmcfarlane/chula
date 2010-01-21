@@ -312,6 +312,13 @@ Start up the FastCGI_ process::
 
  python Myapp/fastcgi.py
 
+Make sure Nginx has permissions to write to the socket::
+
+ chmod o+w /tmp/myapp.socket
+
+TODO: Provide an example init script to properly startup the socket,
+setting permissions and what not.
+
 Nginx config
 ^^^^^^^^^^^^
 
@@ -331,7 +338,7 @@ configuration::
    fastcgi_param SERVER_SIGNATURE nginx/$nginx_version;
 
    # The path to our running unix domain socket
-   server unix:/tmp/myapp.socket
+   server unix:/tmp/myapp.socket;
  }
 
 Restart Nginx_ ::
