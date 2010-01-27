@@ -1,6 +1,6 @@
 #setup.py - Chula
 #
-#Copyright (C) 2007 John McFarlane <john.mcfarlane@rockfloat.com>
+#Copyright (C) 2010 John McFarlane <john.mcfarlane@rockfloat.com>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ if 'install' in sys.argv:
         raise error.MissingDependencyError('Python-2.5 or higher')
 
 # Attributes
-download_url = 'http://rockfloat.com/chula/chula-%s.tar.gz' % chula.version
+path = 'http://chula.rockfloat.com/downloads/Chula-%s.tar.gz'
+download_url = path % chula.version
 classifiers = """
 Development Status :: 3 - Beta
 Intended Audience :: Developers
@@ -77,6 +78,6 @@ setup(
     maintainer = "John McFarlane",
     name = 'Chula',
     packages = packages,
-    url='http://rockfloat.com/projects/chula/',
+    url='http://chula.rockfloat.com',
     version = chula.version
 )

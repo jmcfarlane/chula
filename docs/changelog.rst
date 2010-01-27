@@ -2,10 +2,18 @@
 Downloads/Release Notes
 =======================
 
-Chula v0.4.0 (dev)
-++++++++++++++++++
+.. Chula v0.5.0 (dev)
+   ++++++++++++++++++
 
-*Not yet released*
+   *Not yet released*
+
+   :Documentation: `Chula-0.5.0_dev </0.5.0_dev>`_
+   :Source: http://github.com/jmcfarlane/chula
+
+Chula v0.4.0
+++++++++++++
+
+*Released 2010-01-27*
 
 * Added simple wrapper around couchdb-python
 * Added support for couchdb session store. This means you now can
@@ -26,8 +34,9 @@ Chula v0.4.0 (dev)
   number of backends that all use the same interface.
 * Moved third party libs (selenium, memcache) into chula.vendor
 
-:Documentation: `Chula-0.4.0_dev </0.4.0_dev>`_
-:Source: http://github.com/jmcfarlane/chula
+:Download: `Chula-0.4.0.tar.gz </downloads/Chula-0.4.0.tar.gz>`_
+:Documentation: `Chula-0.4.0 </0.4.0>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.4.0
 
 Chula v0.3.0
 ++++++++++++
