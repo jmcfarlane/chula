@@ -182,6 +182,10 @@ def expose(**kwargs):
             except Exception, ex:
                 ws.exception = str(ex)
 
+            # Let the controller specify the msg if provided
+            if hasattr(self, 'msg'):
+                ws.msg = self.msg
+
             return ws.encode(**kwargs)
         return wrapper
     return decorator
