@@ -13,7 +13,7 @@ Downloads/Release Notes
 Chula v0.4.0
 ++++++++++++
 
-*Released 2010-01-27*
+*Released 2010-02-10*
 
 * Added simple wrapper around couchdb-python
 * Added support for couchdb session store. This means you now can
