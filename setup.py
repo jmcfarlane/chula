@@ -26,8 +26,8 @@ from chula import error
 
 # Check for dependencies
 if 'install' in sys.argv:
-    if sys.version_info < (2, 5):
-        raise error.MissingDependencyError('Python-2.5 or higher')
+    if sys.version_info < (2, 6):
+        raise error.MissingDependencyError('Python-2.6 or higher')
 
 # Attributes
 AUTHOR = 'John McFarlane'
