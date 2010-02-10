@@ -2,13 +2,22 @@
 Downloads/Release Notes
 =======================
 
-.. Chula v0.5.0 (dev)
+.. Chula v0.6.0 (dev)
    ++++++++++++++++++
 
-   *Not yet released*
+   *Not yet started*
 
-   :Documentation: `Chula-0.5.0_dev </0.5.0_dev>`_
-   :Source: http://github.com/jmcfarlane/chula
+
+Chula v0.5.0 (dev)
+++++++++++++++++++
+
+*Not yet released*
+
+* Added support for Setuptools.  This results in Chula being
+  installable via easy_install.
+
+:Documentation: `Chula-0.5.0_dev </0.5.0_dev>`_
+:Source: http://github.com/jmcfarlane/chula
 
 Chula v0.4.0
 ++++++++++++

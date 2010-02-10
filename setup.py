@@ -17,8 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from distutils.command.install import INSTALL_SCHEMES
-from distutils.core import setup
+from setuptools import setup, find_packages
 import os
 import sys
 
@@ -31,53 +30,40 @@ if 'install' in sys.argv:
         raise error.MissingDependencyError('Python-2.5 or higher')
 
 # Attributes
-path = 'http://chula.rockfloat.com/downloads/Chula-%s.tar.gz'
-download_url = path % chula.version
-classifiers = """
+AUTHOR = 'John McFarlane'
+CLASSIFIERS = """
 Development Status :: 3 - Beta
 Intended Audience :: Developers
 License :: OSI Approved :: GNU General Public License (GPL)
+Operating System :: OS Independent
 Programming Language :: Python
 Topic :: Database
+Topic :: Internet :: WWW/HTTP :: Site Management
 Topic :: Software Development
 Topic :: Software Development :: Libraries :: Python Modules
-Operating System :: Microsoft :: Windows
-Operating System :: Unix
 """
-
-# Data files
-data_files = []
-for basedir, dirs, files in os.walk(chula.data_dir):
-    if basedir.count(os.sep) > 0:
-        files = [os.path.join(basedir, file) for file in files]
-        basedir = os.path.join(chula.package_dir, basedir)
-        data_files.append((basedir, files))
-
-# Packages
-packages = []
-for basedir, dirs, files in os.walk(chula.package_dir):
-    if '__init__.py' in files:
-        packages.append(basedir.replace(os.sep, '.'))
-
-# Tell distutils to put the data_files in platform-specific installation
-# locations. See here for an explanation:
-# http://groups.google.com/group/comp.lang.python/browse_thread/thread/35ec7b2fed36eaec/2105ee4d9e8042cb
-# Credit: Django
-for scheme in INSTALL_SCHEMES.values():
-    scheme['data'] = scheme['purelib']
+EMAIL = 'john.mcfarlane@rockfloat.com'
+INSTALL_REQUIRES = ['pytz', 'simplejson']
+LICENSE = 'GPL'
+NAME = 'Chula'
+TESTS = 'tests'
+URL = 'http://chula.rockfloat.com'
+URL_ = URL + '/downloads/Chula-%s.tar.gz' % chula.version,
+ZIP_SAFE = True
 
 setup(
-    author = 'John McFarlane',
-    author_email = 'john.mcfarlane@rockfloat.com',
-    classifiers = filter(None, classifiers.split("\n")),
-    data_files = data_files,
+    author = AUTHOR,
+    author_email = EMAIL,
+    classifiers = [c for c in CLASSIFIERS.split('\n') if c],
     description = chula.__doc__.split('\n')[0],
+    download_url = URL_,
+    install_requires = INSTALL_REQUIRES,
+    license = LICENSE,
     long_description = '\n'.join(chula.__doc__.split('\n')[2:]),
-    download_url = download_url,
-    license = 'GPL',
-    maintainer = "John McFarlane",
-    name = 'Chula',
-    packages = packages,
-    url='http://chula.rockfloat.com',
-    version = chula.version
+    name = NAME,
+    packages = find_packages(),
+    test_suite = TESTS,
+    url = URL,
+    version = chula.version,
+    zip_safe = ZIP_SAFE,
 )

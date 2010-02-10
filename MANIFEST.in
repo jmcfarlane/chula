@@ -1,4 +1,5 @@
-recursive-include chula *.py
-recursive-include sql *
-include LICENSE
 include INSTALL
+include LICENSE
+recursive-include chula *.py
+recursive-include docs *
+recursive-include sql *
