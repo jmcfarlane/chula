@@ -1,0 +1,24 @@
+From 5a1effe0f60a95b6c1e5d809d5d7442557dda83f Mon Sep 17 00:00:00 2001
+From: John McFarlane <john.mcfarlane@rockfloat.com>
+Date: Wed, 10 Feb 2010 14:23:33 -0800
+Subject: [PATCH] [2.5 BACKPORT] Remove class decorator
+
+---
+ chula/logger.py |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/chula/logger.py b/chula/logger.py
+index d537be7..59729fb 100644
+--- a/chula/logger.py
++++ b/chula/logger.py
+@@ -8,7 +8,6 @@ from chula.singleton import singleton
+ 
+ ROOT = 'chula'
+ 
+-@singleton
+ class Logger(object):
+     def __init__(self, config=None):
+         if config is None:
+-- 
+1.6.4.4
+
