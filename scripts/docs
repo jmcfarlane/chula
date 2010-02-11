@@ -9,7 +9,7 @@ cd $SRC/..
 mkdir -p "$BASEDIR"
 
 # Fetch the current version for which docs are being generated
-version=$(grep -o -E '[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z_-]*' chula/__init__.py)
+version=$(grep -o -E '[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z._-]*' chula/__init__.py)
 
 # Specify the output location (this will include a version number)
 dest=$BASEDIR/$version

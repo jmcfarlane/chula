@@ -16,7 +16,7 @@ Chula v0.5.0 (dev)
 * Added support for Setuptools.  This results in Chula being
   installable via easy_install.
 
-:Documentation: `Chula-0.5.0_dev </0.5.0_dev>`_
+:Documentation: `Chula-0.5.0.dev </0.5.0.dev>`_
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.4.0

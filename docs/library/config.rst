@@ -107,7 +107,7 @@ understand now are the :attr:`Config.classpath` and
        <div style="display:none;">
          <div id="CHULA_ADAPTER">FCGI/WSGI</div>
          <div id="CHULA_SERVER">li83-242</div>
-         <div id="CHULA_VERSION">0.4.0_dev</div>
+         <div id="CHULA_VERSION">0.5.0</div>
          <div id="CHULA_COST">104.279995 ms</div>
        </div>
 
