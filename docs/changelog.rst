@@ -8,15 +8,17 @@ Downloads/Release Notes
    ++++++++++++++++++
 
    *Not yet started*
+   :Source: http://github.com/jmcfarlane/chula
 
 
-Chula v0.5.0 (dev)
-++++++++++++++++++
+Chula v0.5.0
+++++++++++++
 
-*Not yet released*
+*Released 2010-02-22*
 
 * Added support for Setuptools.  This results in Chula being
   installable via ``easy_install``.
+* Added a bit more documentation on how to install Chula.
 
 :Documentation: `Chula-0.5.0.dev </0.5.0.dev>`_
 :Download: `</downloads/Chula-0.5.0-py2.6.egg>`_
@@ -25,7 +27,7 @@ Chula v0.5.0 (dev)
 :Download: `</downloads/Chula-0.5.0-py2.6.linux-x86_64.exe>`_ (unsupported)
 :Download: `</downloads/Chula-0.5.0-py2.5.win32.exe>`_ (unsupported)
 :Download: `</downloads/Chula-0.5.0.checksums>`_
-:Source: http://github.com/jmcfarlane/chula
+:Source: http://github.com/jmcfarlane/chula/tree/v0.5.0
 
 Chula v0.4.0
 ++++++++++++
