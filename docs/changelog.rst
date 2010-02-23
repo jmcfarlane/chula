@@ -20,7 +20,7 @@ Chula v0.5.0
   installable via ``easy_install``.
 * Added a bit more documentation on how to install Chula.
 
-:Documentation: `Chula-0.5.0.dev </0.5.0.dev>`_
+:Documentation: `Chula-0.5.0 </0.5.0>`_
 :Download: `</downloads/Chula-0.5.0-py2.6.egg>`_
 :Download: `</downloads/Chula-0.5.0-py2.5.egg>`_
 :Download: `</downloads/Chula-0.5.0.tar.gz>`_
