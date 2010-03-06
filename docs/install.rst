@@ -49,7 +49,7 @@ mandatory requirements (Pytz and Simplejson), as they were installed
 in automatically.  If not, on Ubuntu it's really easy to install
 them::
 
- sudo apt-get install python-pytz python-simplejson
+ sudo apt-get install python-simplejson
 
 Optional
 ^^^^^^^^
@@ -82,6 +82,5 @@ Install the server and client::
 
 .. External hyperlinks
 .. _Python: http://www.python.org
-.. _pytz: http://pytz.sourceforge.net
 .. _reST: http://www.restructuredtext.org
 .. _Simplejson: http://www.undefined.org/python/

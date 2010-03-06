@@ -98,8 +98,7 @@ class FakeRequestConnection(object):
         self.remote_ip = '127.0.0.1'
         
 class FakeServer(object):
-    def __init__(self):
-        self.server_hostname = 'localhost'
+    pass
 
 # Expose drop in replacements for the real thing
 FieldStorage = FakeFieldStorage

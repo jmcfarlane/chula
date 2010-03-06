@@ -4,7 +4,6 @@ Cookie reads and writes cookies
 
 from Cookie import SimpleCookie
 from datetime import datetime
-import pytz
 
 from chula import data
 
@@ -24,7 +23,7 @@ class CookieCollection(SimpleCookie):
 
     def headers(self):
         timeout = self.timeout * 60
-        now = datetime.now(pytz.timezone('GMT'))
+        now = datetime.utcnow()
         expires = data.date_add('s', timeout, now)
         expires = expires.strftime('%a, %d-%b-%Y %H:%M:%S %Z')
 

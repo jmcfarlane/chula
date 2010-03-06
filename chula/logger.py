@@ -22,17 +22,20 @@ class Logger(object):
         logger.setLevel(logging.DEBUG)
 
         # Create file handler for WARNING and above
-        fmt = ('%(asctime)s,'
-               '%(levelname)s,'
-               'pid:%(process)d,'
-               '%(name)s,'
-               '%(filename)s:%(lineno)d,'
-               '%(message)s'
-              )
-        fh = RotatingFileHandler(config.log, maxBytes=104857600, backupCount=5)
-        fh.setLevel(logging.WARNING)
-        fh.setFormatter(logging.Formatter(fmt))
-        logger.addHandler(fh)
+        if not config.log is None:
+            fmt = ('%(asctime)s,'
+                   '%(levelname)s,'
+                   'pid:%(process)d,'
+                   '%(name)s,'
+                   '%(filename)s:%(lineno)d,'
+                   '%(message)s'
+                  )
+            fh = RotatingFileHandler(config.log,
+                                     maxBytes=104857600,
+                                     backupCount=5)
+            fh.setLevel(logging.WARNING)
+            fh.setFormatter(logging.Formatter(fmt))
+            logger.addHandler(fh)
 
         # Create console handler for DEBUG and above (stderr)
         if config.debug:

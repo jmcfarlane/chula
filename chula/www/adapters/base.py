@@ -74,12 +74,10 @@ class BaseAdapter(object):
                 timer = """
                     <div style="display:none;">
                         <div id="CHULA_ADAPTER">%s</div>
-                        <div id="CHULA_SERVER">%s</div>
                         <div id="CHULA_VERSION">%s</div>
                         <div id="CHULA_COST">%f ms</div>
                     </div></body></html>
                     """ % (self.controller.env.chula_adapter,
-                           self.controller.env.server_hostname,
                            self.controller.env.chula_version,
                            (time.time() - self.timer) * 1000)
 

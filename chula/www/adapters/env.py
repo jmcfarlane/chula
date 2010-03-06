@@ -5,7 +5,6 @@ Chula adapter environment class
 from copy import deepcopy
 import cgi
 import re
-import socket
 
 from chula import error, collection
 from chula.www import http
@@ -72,7 +71,6 @@ class BaseEnv(collection.RestrictedCollection):
                 'form_post',
                 'headers',
                 'route',
-                'server_hostname',
                 'status',
                 'under_construction'
                )
@@ -129,7 +127,6 @@ class BaseEnv(collection.RestrictedCollection):
         self.form = collection.UNSET
         self.form_get = collection.UNSET
         self.form_post = collection.UNSET
-        self.server_hostname = None
         self.status = http.HTTP_OK
         self.under_construction = False
 
@@ -183,9 +180,6 @@ class BaseEnv(collection.RestrictedCollection):
                         # Let me know if you can make this get called :)
                         pass
 
-    def _server_hostname(self):
-        return socket.gethostname()
-
     def _clean_http_vars(self):
         passed = deepcopy(dict(self.form))
 
@@ -231,7 +225,6 @@ class BaseEnv(collection.RestrictedCollection):
 
         self.HTTP_COOKIE = self._cookie()
         self.ajax_uri = self._ajax_uri()
-        self.server_hostname = self._server_hostname()
 
         # Make sure get/post variables are handled correctly
         self._clean_http_vars()

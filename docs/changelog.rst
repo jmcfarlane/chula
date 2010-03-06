@@ -10,6 +10,23 @@ Downloads/Release Notes
    *Not yet started*
    :Source: http://github.com/jmcfarlane/chula
 
+Chula v0.6.0 (dev)
+++++++++++++++++++
+
+*Still under development*
+
+* Added support for Google App Engine.
+* Removed dependency on pytz.
+* Removed usage of :func:`socket.gethostname`, which can have a
+  negative impact on performance (especially in heavily threaded
+  applications).  This also makes it possible to use Chula in
+  environments that do not have access to :mod:`socket`.
+* When looking for simplejson, also try using the copy that ships with
+  Django.
+* Updated the logger to not use a file handler when
+  :attr:`config.Config.log` is ``None``.
+
+:Source: http://github.com/jmcfarlane/chula
 
 Chula v0.5.0
 ++++++++++++

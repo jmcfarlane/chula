@@ -44,7 +44,6 @@ Mandatory
 ~~~~~~~~~
 
 #. Python_ 2.6 (2.5 can work with minor changes, see Roadmap_)
-#. pytz_
 #. Simplejson_
 
 Optional
@@ -131,6 +130,5 @@ let me know.
 .. _PostgreSQL: http://www.postgresql.org
 .. _Psycopg2: https://dndg.it/cgi-bin/gitweb.cgi?p=public/psycopg2.git
 .. _Python: http://www.python.org
-.. _pytz: http://pytz.sourceforge.net
 .. _reST: http://www.restructuredtext.org
 .. _Simplejson: http://www.undefined.org/python/
