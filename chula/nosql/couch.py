@@ -26,7 +26,7 @@ def connect(db, server=None, shard=None):
         raise Exception(msg)
 
     # Determine the cache key and serve from cache if possible
-    key = (server, shard)
+    key = (server, db, shard)
     if key in CONNECTION_CACHE:
         return CONNECTION_CACHE[key]
 

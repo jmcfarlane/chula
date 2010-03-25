@@ -25,6 +25,7 @@ Chula v0.6.0 (dev)
   Django.
 * Updated the logger to not use a file handler when
   :attr:`config.Config.log` is ``None``.
+* Fixed defect in Couchdb connection cache.
 
 :Source: http://github.com/jmcfarlane/chula
 
