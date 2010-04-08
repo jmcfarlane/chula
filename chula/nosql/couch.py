@@ -46,15 +46,23 @@ class Document(dict):
     CouchDB document abstraction class
     """
 
-    def __init__(self, id, config=None, document=None, server=None, shard=None):
+    def __init__(self, id,
+                 db_conn=None,
+                 document=None,
+                 server=None,
+                 shard=None,
+                 track_dirty=True):
+
         super(Document, self).__init__()
 
-        id = self.sanitize_id(id)
-        self.db = connect(self.DB, server=server, shard=shard)
+        if not db_conn is None:
+            self.db = db_conn
+        else:
+            self.db = connect(self.DB, server=server, shard=shard)
 
         # If this is a couchdb document, just fill - don't fetch
         try:
-            self.fill(document['_id'], document)
+            self.fill(id, document)
         except TypeError:
             try:
                 self.fill(self.db[id]['_id'], self.db[id])
@@ -64,10 +72,13 @@ class Document(dict):
             raise
 
         # Allow keeping track of is_dirty
-        self._copy = copy.deepcopy(self)
+        if track_dirty:
+            self._copy = copy.deepcopy(self)
+        else:
+            track_dirty = None
 
         # Loggers use thread locks and thus can't be copied
-        self.log = logger.Logger(config).logger('chula.nosql.couch')
+        self.log = logger.Logger().logger('chula.nosql.couch')
 
     @staticmethod
     def sanitize_id(id):
@@ -92,6 +103,9 @@ class Document(dict):
         self.update(data)
         
     def is_dirty(self):
+        if self._copy is None:
+            return True
+
         for key, value in self.iteritems():
             if self._copy.get(key, '__MISSING__') != value:
                 return True
@@ -109,10 +123,11 @@ class Document(dict):
         if self.get('_rev', None) is None:
             self['created'] = time.time()
             self.db[self.id] = self
+
         # Support existing documents
         elif self.is_dirty():
             # Support document renames
-            if self.id != self._copy.id:
+            if not self._copy is None and self.id != self._copy.id:
                 try:
                     del self.db[self._copy.id]
                 except ResourceNotFound, ex:
@@ -135,6 +150,19 @@ class Documents(list):
 
     def query(self, func, cls=None, sort=False, reverse=False):
         view = self.db.query(func)
+
+        # Fill the requested class types if desired
+        if not cls is None:
+            view = [cls(doc.key, doc.value) for doc in view]
+
+        # Sort if desired
+        if sort:
+            view.sort(reverse=reverse)
+
+        return view
+
+    def view(self, name, cls=None, sort=False, reverse=False):
+        view = self.db.view(name)
 
         # Fill the requested class types if desired
         if not cls is None:

@@ -16,6 +16,7 @@ Chula v0.6.0 (dev)
 *Still under development*
 
 * Added support for Google App Engine.
+* Added ability to fetch data from CouchDB using views
 * Removed dependency on pytz.
 * Removed usage of :func:`socket.gethostname`, which can have a
   negative impact on performance (especially in heavily threaded
@@ -26,6 +27,7 @@ Chula v0.6.0 (dev)
 * Updated the logger to not use a file handler when
   :attr:`config.Config.log` is ``None``.
 * Fixed defect in Couchdb connection cache.
+* Performance improvements to `nosql.couch`
 
 :Source: http://github.com/jmcfarlane/chula
 
