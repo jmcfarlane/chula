@@ -31,7 +31,7 @@ Chula v0.6.0
 * Fixed defect in Couchdb connection cache.
 * Performance improvements to :mod:`nosql.couch`
 
-:Documentation: `Chula-0.6.0 </0.6.0>`_
+:Documentation: `Chula-0.6.0 </0.6.0/>`_
 :Download: `</downloads/Chula-0.6.0-py2.6.egg>`_
 :Download: `</downloads/Chula-0.6.0-py2.5.egg>`_
 :Download: `</downloads/Chula-0.6.0.tar.gz>`_
@@ -49,7 +49,7 @@ Chula v0.5.0
   installable via ``easy_install``.
 * Added a bit more documentation on how to install Chula.
 
-:Documentation: `Chula-0.5.0 </0.5.0>`_
+:Documentation: `Chula-0.5.0 </0.5.0/>`_
 :Download: `</downloads/Chula-0.5.0-py2.6.egg>`_
 :Download: `</downloads/Chula-0.5.0-py2.5.egg>`_
 :Download: `</downloads/Chula-0.5.0.tar.gz>`_
@@ -83,7 +83,7 @@ Chula v0.4.0
 * Moved third party libs (selenium, memcache) into chula.vendor
 
 :Download: `Chula-0.4.0.tar.gz </downloads/Chula-0.4.0.tar.gz>`_
-:Documentation: `Chula-0.4.0 </0.4.0>`_
+:Documentation: `Chula-0.4.0 </0.4.0/>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.4.0
 
 Chula v0.3.0
