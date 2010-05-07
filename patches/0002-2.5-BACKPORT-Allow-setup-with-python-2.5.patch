@@ -1,4 +1,4 @@
-From 0012e747d7819631343aad519d0532b8c7775a10 Mon Sep 17 00:00:00 2001
+From 3fd2c86b7e1e3257bee3b64a01d59f17a5cd7457 Mon Sep 17 00:00:00 2001
 From: John McFarlane <john.mcfarlane@rockfloat.com>
 Date: Wed, 10 Feb 2010 15:31:15 -0800
 Subject: [PATCH 2/2] [2.5 BACKPORT] Allow setup with python-2.5
@@ -8,7 +8,7 @@ Subject: [PATCH 2/2] [2.5 BACKPORT] Allow setup with python-2.5
  1 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/setup.py b/setup.py
-index f2a8963..caae930 100644
+index 8b9f038..9c8e974 100644
 --- a/setup.py
 +++ b/setup.py
 @@ -26,8 +26,8 @@ from chula import error

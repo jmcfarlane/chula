@@ -1,4 +1,4 @@
-From 48ca2b604df272a19dc435b38472ffdadc45ea9f Mon Sep 17 00:00:00 2001
+From 32f1b81470bac964107a93e880011caa42988ce4 Mon Sep 17 00:00:00 2001
 From: John McFarlane <john.mcfarlane@rockfloat.com>
 Date: Wed, 10 Feb 2010 14:23:33 -0800
 Subject: [PATCH 1/2] [2.5 BACKPORT] Remove class decorator
@@ -8,7 +8,7 @@ Subject: [PATCH 1/2] [2.5 BACKPORT] Remove class decorator
  1 files changed, 0 insertions(+), 1 deletions(-)
 
 diff --git a/chula/logger.py b/chula/logger.py
-index d537be7..59729fb 100644
+index 8bffdd1..84ed0f0 100644
 --- a/chula/logger.py
 +++ b/chula/logger.py
 @@ -8,7 +8,6 @@ from chula.singleton import singleton
