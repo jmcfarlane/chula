@@ -4,17 +4,19 @@
 Downloads/Release Notes
 =======================
 
-.. Chula v0.6.0 (dev)
-   ++++++++++++++++++
-
-   *Not yet started*
-   :Source: http://github.com/jmcfarlane/chula
-
-Chula v0.6.0 (dev)
+Chula v0.7.0 (dev)
 ++++++++++++++++++
 
 *Still under development*
 
+:Source: http://github.com/jmcfarlane/chula
+
+Chula v0.6.0
+++++++++++++
+
+*Released 2010-05-07*
+
+* Updated the manifest to include apps, and test cases
 * Added support for Google App Engine.
 * Added ability to fetch data from CouchDB using views
 * Removed dependency on pytz.
@@ -22,14 +24,21 @@ Chula v0.6.0 (dev)
   negative impact on performance (especially in heavily threaded
   applications).  This also makes it possible to use Chula in
   environments that do not have access to :mod:`socket`.
-* When looking for simplejson, also try using the copy that ships with
-  Django.
+* When looking for :mod:`simplejson`, also try using the copy that
+  ships with Django.
 * Updated the logger to not use a file handler when
   :attr:`config.Config.log` is ``None``.
 * Fixed defect in Couchdb connection cache.
-* Performance improvements to `nosql.couch`
+* Performance improvements to :mod:`nosql.couch`
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.6.0 </0.6.0>`_
+:Download: `</downloads/Chula-0.6.0-py2.6.egg>`_
+:Download: `</downloads/Chula-0.6.0-py2.5.egg>`_
+:Download: `</downloads/Chula-0.6.0.tar.gz>`_
+:Download: `</downloads/Chula-0.6.0-py2.6.linux-x86_64.exe>`_ (unsupported)
+:Download: `</downloads/Chula-0.6.0-py2.5.win32.exe>`_ (unsupported)
+:Download: `</downloads/Chula-0.6.0.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.6.0
 
 Chula v0.5.0
 ++++++++++++
