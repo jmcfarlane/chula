@@ -9,6 +9,9 @@ Chula v0.7.0 (dev)
 
 *Still under development*
 
+* Added support for native couchdb sorting
+* Removed support for app level sorting of couchdb documents
+
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.6.0

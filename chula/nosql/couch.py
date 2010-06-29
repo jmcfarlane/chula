@@ -53,6 +53,11 @@ class Document(dict):
                  shard=None,
                  track_dirty=True):
 
+        self.db_conn = db_conn
+        self.server = server
+        self.shard = shard
+        self.track_dirty = track_dirty
+
         super(Document, self).__init__()
 
         if not db_conn is None:
@@ -147,32 +152,20 @@ class Documents(list):
     def __init__(self, server=None, shard=None):
         super(Documents, self).__init__()
         self.db = connect(self.DB, server=server, shard=shard)
+        self.server = server
+        self.shard = shard
 
-    def query(self, func, cls=None, sort=False, reverse=False):
-        view = self.db.query(func)
-
-        # Fill the requested class types if desired
+    def _fill(self, view, cls):
         if not cls is None:
-            view = [cls(doc.key, doc.value) for doc in view]
+            return [cls(doc.id, doc.value) for doc in view]
+        else:
+            return view
 
-        # Sort if desired
-        if sort:
-            view.sort(reverse=reverse)
+    def query(self, func, cls=None, **kwargs):
+        return self._fill(self.db.query(func, **kwargs), cls)
 
-        return view
-
-    def view(self, name, cls=None, sort=False, reverse=False):
-        view = self.db.view(name)
-
-        # Fill the requested class types if desired
-        if not cls is None:
-            view = [cls(doc.key, doc.value) for doc in view]
-
-        # Sort if desired
-        if sort:
-            view.sort(reverse=reverse)
-
-        return view
+    def view(self, name, cls=None, **kwargs):
+        return self._fill(self.db.view(name, **kwargs), cls)
 
 class DocumentAlreadyExistsError(ResourceNotFound):
     pass
