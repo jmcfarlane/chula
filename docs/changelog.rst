@@ -4,15 +4,29 @@
 Downloads/Release Notes
 =======================
 
-Chula v0.7.0 (dev)
+Chula v0.8.0 (dev)
 ++++++++++++++++++
 
 *Still under development*
 
+:Source: http://github.com/jmcfarlane/chula
+
+Chula v0.7.0
+++++++++++++
+
+*Released 2010-06-29*
+
 * Added support for native couchdb sorting
 * Removed support for app level sorting of couchdb documents
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.7.0 </0.7.0/>`_
+:Download: `</downloads/Chula-0.7.0-py2.6.egg>`_
+:Download: `</downloads/Chula-0.7.0-py2.5.egg>`_
+:Download: `</downloads/Chula-0.7.0.tar.gz>`_
+:Download: `</downloads/Chula-0.7.0-py2.6.linux-x86_64.exe>`_ (unsupported)
+:Download: `</downloads/Chula-0.7.0-py2.5.win32.exe>`_ (unsupported)
+:Download: `</downloads/Chula-0.7.0.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.7.0
 
 Chula v0.6.0
 ++++++++++++
