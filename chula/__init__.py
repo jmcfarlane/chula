@@ -5,7 +5,7 @@ handles the nuts and bolts - meaning there isn't any ORM layer, and no
 code generation.
 """
 
-__VERSION__ = '0.7.0'
+__VERSION__ = '0.8.0.dev'
 version = __VERSION__
 
 package_dir = 'chula'
