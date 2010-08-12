@@ -9,6 +9,8 @@ Chula v0.8.0 (dev)
 
 *Still under development*
 
+* Add support for couchdb-python-0.7.0 (api changes).
+
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.7.0

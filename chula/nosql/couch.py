@@ -1,13 +1,22 @@
+# Python imports
 from operator import itemgetter
 import copy
 import os
 import re
 import time
 
-from couchdb import client, ResourceNotFound
+# Third party imports
+import couchdb
 
+# couchdb.http was introduced in 0.7.0
+if hasattr(couchdb, 'http'):
+    from couchdb.http import ResourceNotFound
+else:
+    from couchdb import ResourceNotFound
+
+# Project imports
 from chula.db import datastore
-from chula import logger
+from chula import collection, logger
 
 CONNECTION_CACHE = {}
 ENCODING = 'ascii'
@@ -78,7 +87,12 @@ class Document(dict):
 
         # Allow keeping track of is_dirty
         if track_dirty:
-            self._copy = copy.deepcopy(self)
+            # Avoid a direct deepcopy on self, as we indirectly have a
+            # lock via the connection attributes.  Casting back to a
+            # dict makes this clean, but removes attribute access.
+            # Using a chula.collection.Collection gives this back
+            self._copy = collection.Collection(copy.deepcopy(dict(self)))
+            self._copy.id = self.id
         else:
             track_dirty = None
 

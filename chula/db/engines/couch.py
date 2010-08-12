@@ -1,5 +1,13 @@
-from couchdb import Server, ResourceNotFound, PreconditionFailed 
+# Third party imports
+import couchdb
 
+# couchdb.http was introduced in 0.7.0
+if hasattr(couchdb, 'http'):
+    from couchdb.http import PreconditionFailed, ResourceNotFound
+else:
+    from couchdb import PreconditionFailed, ResourceNotFound
+
+# Project imports
 from chula.db.engines import engine
 
 class DataStore(engine.Engine):
@@ -9,7 +17,7 @@ class DataStore(engine.Engine):
 
     def __init__(self, uri, *args, **kwargs):
         super(DataStore, self).__init__()
-        self.conn = Server(uri)
+        self.conn = couchdb.Server(uri)
 
     def delete(self, db):
         try:

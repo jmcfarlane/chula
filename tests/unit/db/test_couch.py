@@ -1,9 +1,18 @@
+# Python imports
 import os
 import time
 import unittest
 
-from couchdb import Database, Server, ResourceNotFound
+# Third party imports
+import couchdb
 
+# couchdb.http was introduced in 0.7.0
+if hasattr(couchdb, 'http'):
+    from couchdb.http import ResourceNotFound
+else:
+    from couchdb import ResourceNotFound
+
+# Project imports
 from chula.error import *
 from chula.db import datastore
 from chula.db.engines import couch
@@ -31,16 +40,16 @@ class Test_couchdb(unittest.TestCase):
         self.db = self.futon.db(db)
 
     def test_connection_type(self):
-        self.assertTrue(isinstance(self.futon.conn, Server))
+        self.assertTrue(isinstance(self.futon.conn, couchdb.Server))
 
     def test_connection_with_existing_db(self):
         self.connect()
-        self.assertTrue(isinstance(self.db, Database))
+        self.assertTrue(isinstance(self.db, couchdb.Database))
 
     def test_connection_with_new_db(self):
         TEST = 'chula_datastore_test_%s' % str(time.time()).split('.')[0]
         self.connect(TEST)
-        self.assertTrue(isinstance(self.db, Database))
+        self.assertTrue(isinstance(self.db, couchdb.Database))
         self.futon.delete(TEST)
 
 class Test_couchdb_document(unittest.TestCase):
