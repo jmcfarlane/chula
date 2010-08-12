@@ -2,6 +2,10 @@
 Chula configuration class (restricted collection class)
 """
 
+# Python imports
+import logging
+
+# Project imports
 from chula import error, collection
 
 class Config(collection.RestrictedCollection):
@@ -28,6 +32,7 @@ class Config(collection.RestrictedCollection):
                 'error_controller',
                 'local',
                 'log',
+                'log_level',
                 'mapper',
                 'mqueue_db',
                 'mqueue_host',
@@ -56,6 +61,7 @@ class Config(collection.RestrictedCollection):
         self.error_controller = collection.UNSET
         self.local = collection.Collection()
         self.log = '/tmp/chula.log'
+        self.log_level = logging.WARNING
         self.mapper = 'ClassPathMapper'
         self.mqueue_db = '/tmp/chula/mqueue'
         self.mqueue_host = 'localhost'

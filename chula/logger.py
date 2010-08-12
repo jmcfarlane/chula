@@ -1,8 +1,10 @@
 """Chula logger class"""
 
+# Python imports
 import logging
 from logging.handlers import RotatingFileHandler
 
+# Project imports
 from chula.config import Config
 from chula.singleton import singleton
 
@@ -17,7 +19,8 @@ class Logger(object):
         # Create a logger instance.  NOTE: the level set in the logger
         # determines which severity of messages it will pass to it's
         # handlers.  We want to send everything to the handlers and
-        # let them decide what to do.
+        # let them decide what to do (aka this must pass everything
+        # along).
         logger = logging.getLogger('')
         logger.setLevel(logging.DEBUG)
 
@@ -33,7 +36,7 @@ class Logger(object):
             fh = RotatingFileHandler(config.log,
                                      maxBytes=104857600,
                                      backupCount=5)
-            fh.setLevel(logging.WARNING)
+            fh.setLevel(config.log_level)
             fh.setFormatter(logging.Formatter(fmt))
             logger.addHandler(fh)
 
@@ -46,7 +49,7 @@ class Logger(object):
                    '%(message)s'
                   )
             ch = logging.StreamHandler()
-            ch.setLevel(logging.DEBUG)
+            ch.setLevel(config.log_level - 20)
             ch.setFormatter(logging.Formatter(fmt))
             logger.addHandler(ch)
 

@@ -158,9 +158,22 @@ understand now are the :attr:`Config.classpath` and
 
       Fully qualified path to a file on disk.  This will will hold
       Chula specific logging.  The data sent to this file will only be
-      ``warnings`` and above.  The default value is
-      :file:`/tmp/chula.log`.  The user running the application must have
-      write access to this file.
+      warnings and above by default.  The default value is
+      :file:`/tmp/chula.log`.  The user running the application must
+      have write access to this file.
+
+   .. attribute:: log_level
+
+      This value is of type ``int`` and holds the threshold at which
+      loging should occur.  The default value is ``logging.WARNING``.
+      This means you will see warnings and errors, but not debug
+      output.  If you change the value to ``logging.DEBUG`` you will
+      get even more verbose output.  There is logic builtin to perform
+      an offset for stdout logging.  So if you have
+      :attr:`config.Config.debug` set to ``True`` the stdout logging
+      will be more verbose than the file based logging.  Thus with the
+      default configuration you get warnings and errors logged via the
+      file, and debug and above via stdout.
 
    .. attribute:: mapper
 

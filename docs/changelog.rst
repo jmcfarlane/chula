@@ -10,6 +10,7 @@ Chula v0.8.0 (dev)
 *Still under development*
 
 * Add support for couchdb-python-0.7.0 (api changes).
+* Expose :attr:`config.Config.log_level` in the config object. 
 
 :Source: http://github.com/jmcfarlane/chula
 

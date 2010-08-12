@@ -13,7 +13,6 @@ class RegexMapper(base.BaseMapper):
         self.route_map = route_map
         self.log = logger.Logger(config).logger('chula.www.mapper.regex')
 
-
     def _process_route(self, route, force=False):
         regex, target = route
         if re.match(regex, self.uri) is None and force is False:

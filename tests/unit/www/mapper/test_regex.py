@@ -1,8 +1,12 @@
+# Python imports
+import logging
 import unittest
 
-from chula import config
+# Project imports
+from chula import config, logger
 from chula.www.adapters.mod_python import fakerequest
 from chula.www.mapper import regex
+
 
 mapper = (
     # Home controller
@@ -14,6 +18,16 @@ mapper = (
     (r'^/sample/?$', 'sample.index'),
     (r'^/sample/page/?$', 'sample.page'),
 )
+
+# Make sure the logger gets initialized with our config, otherwise
+# when couch.py loads it, it will always get the default values (aka
+# defalt logger level).  Because the logger is a singleton, putting
+# this in the global part of the doc ensures it gets executed prior to
+# any of the tests.  I guess if another test does this too, that'd
+# break... but why buy trouble :)
+cfg = config.Config()
+cfg.log_level = logging.WARNING + 1
+log = logger.Logger(cfg).logger()
 
 class Test_regex(unittest.TestCase):
     doctest = regex
