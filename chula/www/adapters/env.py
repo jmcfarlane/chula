@@ -20,7 +20,8 @@ class BaseEnv(collection.RestrictedCollection):
         The minimum environment must at least adhere to the wsgi spec
         """
 
-        return ('DOCUMENT_ROOT',
+        return ('CONTENT_LENGTH',
+                'DOCUMENT_ROOT',
                 'GATEWAY_INTERFACE',
                 'HTTP_ACCEPT',
                 'HTTP_ACCEPT_CHARSET',
@@ -69,6 +70,7 @@ class BaseEnv(collection.RestrictedCollection):
                 'form',
                 'form_get',
                 'form_post',
+                'form_raw',
                 'headers',
                 'route',
                 'status',
@@ -76,6 +78,7 @@ class BaseEnv(collection.RestrictedCollection):
                )
 
     def __defaults__(self):
+        self.CONTENT_LENGTH = 0
         self.DOCUMENT_ROOT = collection.UNSET
         self.GATEWAY_INTERFACE = collection.UNSET
         self.HTTP_ACCEPT = None
@@ -127,6 +130,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.form = collection.UNSET
         self.form_get = collection.UNSET
         self.form_post = collection.UNSET
+        self.form_raw = None
         self.status = http.HTTP_OK
         self.under_construction = False
 

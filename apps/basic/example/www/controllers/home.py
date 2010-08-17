@@ -6,3 +6,6 @@ class Home(controller.Controller):
 
     def foo(self):
         return 'This is the method "foo" of the home controller'
+
+    def raw(self):
+        return self.env.form_raw
