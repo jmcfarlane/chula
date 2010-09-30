@@ -175,6 +175,9 @@ class BaseEnv(collection.RestrictedCollection):
         left alone (not sure how this can happen, but it does).
         """
 
+        if not self.form_raw is None:
+            return
+
         for key in self.form.keys():
             if isinstance(self.form[key], list):
                 for i in xrange(len(self.form[key])):
@@ -185,6 +188,9 @@ class BaseEnv(collection.RestrictedCollection):
                         pass
 
     def _clean_http_vars(self):
+        if not self.form_raw is None:
+            return
+
         passed = deepcopy(dict(self.form))
 
         # Create object to hold only HTTP GET variables
