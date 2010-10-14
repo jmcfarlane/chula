@@ -67,7 +67,7 @@ class Environment(env.BaseEnv):
         else:
             wsgi_input = self.wsgi_input
             
-        # Set http get or post variables
+        # Extract HTTP form information (later enriched by extras())
         self.form = FieldStorage(fp=wsgi_input,
                                  environ=environ,
                                  keep_blank_values=1)
