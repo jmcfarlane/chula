@@ -9,6 +9,8 @@ import re
 from chula import error, collection
 from chula.www import http
 
+RE_HTTP_GET_OR_POST_KEY = re.compile(r'[:{}<>[\]]+')
+
 class BaseEnv(collection.RestrictedCollection):
     """
     Provide a consistent interface all adapters must conform to
@@ -20,7 +22,8 @@ class BaseEnv(collection.RestrictedCollection):
         The minimum environment must at least adhere to the wsgi spec
         """
 
-        return ('DOCUMENT_ROOT',
+        return ('CONTENT_LENGTH',
+                'DOCUMENT_ROOT',
                 'GATEWAY_INTERFACE',
                 'HTTP_ACCEPT',
                 'HTTP_ACCEPT_CHARSET',
@@ -69,6 +72,7 @@ class BaseEnv(collection.RestrictedCollection):
                 'form',
                 'form_get',
                 'form_post',
+                'form_raw',
                 'headers',
                 'route',
                 'status',
@@ -76,6 +80,7 @@ class BaseEnv(collection.RestrictedCollection):
                )
 
     def __defaults__(self):
+        self.CONTENT_LENGTH = 0
         self.DOCUMENT_ROOT = collection.UNSET
         self.GATEWAY_INTERFACE = collection.UNSET
         self.HTTP_ACCEPT = None
@@ -127,6 +132,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.form = collection.UNSET
         self.form_get = collection.UNSET
         self.form_post = collection.UNSET
+        self.form_raw = None
         self.status = http.HTTP_OK
         self.under_construction = False
 
@@ -171,6 +177,9 @@ class BaseEnv(collection.RestrictedCollection):
         left alone (not sure how this can happen, but it does).
         """
 
+        if not self.form_raw is None:
+            return
+
         for key in self.form.keys():
             if isinstance(self.form[key], list):
                 for i in xrange(len(self.form[key])):
@@ -181,7 +190,19 @@ class BaseEnv(collection.RestrictedCollection):
                         pass
 
     def _clean_http_vars(self):
-        passed = deepcopy(dict(self.form))
+        """
+        Analyze self.form and create/validate the following
+        attributes:
+
+         - self.form (holds POST + GET args with POST taking priority)
+         - self.form_get (key/value pairs)
+         - self.form_post (key/value pairs)
+         - self.form_raw (usually xml or json)
+        """
+
+        # Cast any dict-like objects (FieldStorage for example) to
+        # real dicts, so method like get() and iteritems() exist.
+        self.form = dict(self.form)
 
         # Create object to hold only HTTP GET variables
         self.form_get = cgi.parse_qs(self.QUERY_STRING, keep_blank_values=1)
@@ -191,8 +212,22 @@ class BaseEnv(collection.RestrictedCollection):
             else:
                 self.form_get[key] = self.form_get[key]
                 
+        # Before processing the POST variables, check for "raw" input.
+        # We do this by looking at the posted keys (minus the GET
+        # keys).  In the case of a raw string post, the key will
+        # actually contain the raw string (probably xml or json).  If
+        # we do find raw input, we skip form_post processing.
+        keys = [k for k in self.form.keys() if not k in self.form_get.keys()]
+        if len(keys) == 1 and RE_HTTP_GET_OR_POST_KEY.search(keys.pop()):
+            self.form = self.form_get
+            self.form_post = {}
+            return
+        else:
+            self.form_raw = None
+
         # Create an object to hold only HTTP POST variables
         self.form_post = {}
+        passed = deepcopy(self.form)
         for key in passed.keys():
             if not key in self.form_get:
                 if isinstance(passed[key], list):

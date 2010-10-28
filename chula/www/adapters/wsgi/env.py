@@ -2,9 +2,12 @@
 Manage the environment when python is using wsgi
 """
 
+# Python imports
 from cgi import FieldStorage
+from StringIO import StringIO
 import os
 
+# Project imports
 from chula.www.adapters import env
 
 WSGI = 'WSGI'
@@ -51,8 +54,21 @@ class Environment(env.BaseEnv):
         if not self.SCRIPT_NAME:
             self.SCRIPT_NAME = self.PATH_INFO
 
-        # Set http get or post variables
-        self.form = FieldStorage(fp=self.wsgi_input,
+        # http://wsgi.org/wsgi/WSGI_2.0 [Unknown-length wsgi.input]
+        if self.CONTENT_LENGTH in ('', '-1'):
+            self.CONTENT_LENGTH = 0
+        else:
+            self.CONTENT_LENGTH = int(self.CONTENT_LENGTH)
+
+        # Extract raw http body if available
+        if self.CONTENT_LENGTH > 0:
+            self.form_raw = self.wsgi_input.read(self.CONTENT_LENGTH)
+            wsgi_input = StringIO(self.form_raw)
+        else:
+            wsgi_input = self.wsgi_input
+            
+        # Extract HTTP form information (later enriched by extras())
+        self.form = FieldStorage(fp=wsgi_input,
                                  environ=environ,
                                  keep_blank_values=1)
 
