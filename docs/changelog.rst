@@ -9,8 +9,10 @@ Chula v0.8.0 (dev)
 
 *Still under development*
 
-* Add support for couchdb-python-0.7.0 (api changes).
-* Expose :attr:`config.Config.log_level` in the config object. 
+* Added support for couchdb-python-0.7.0 (api changes).
+* Added support for raw (json/xml) http posts
+  (`GH-17 <http://github.com/jmcfarlane/chula/issues#issue/17>`_).
+* Exposed :attr:`config.Config.log_level` in the config object.
 
 :Source: http://github.com/jmcfarlane/chula
 
