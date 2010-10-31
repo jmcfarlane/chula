@@ -12,6 +12,8 @@ Chula v0.8.0 (dev)
 * Added support for couchdb-python-0.7.0 (api changes).
 * Added support for raw (json/xml) http posts
   (`GH-17 <http://github.com/jmcfarlane/chula/issues#issue/17>`_).
+* Added support for the Python provided json library (now the default).
+* Removed old xml based changelog
 * Exposed :attr:`config.Config.log_level` in the config object.
 
 :Source: http://github.com/jmcfarlane/chula
