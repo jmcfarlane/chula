@@ -3,13 +3,12 @@ Wrapper to make it easy to switch from one json library to another
 """
 
 # Python imports
-import sys
+from __future__ import absolute_import
 
 # Chula imports
 from chula import error
 
 def _official():
-    sys.path.pop(0) # The python provided lib has a namespace clash
     import json
     return json
 
