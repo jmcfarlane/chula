@@ -1,8 +1,0 @@
-To install on linux/unix/mac:
-    root# python setup.py
-
-To install on windows (replace 1.2.3 with the actual version):
-    Download http://rockfloat.com/chula/Chula-1.2.3.win32.exe
-    Double click on Chula-1.2.3.win32.exe and follow the prompts
-
-See http://www.rockfloat.com/projects/chula/ for more information
