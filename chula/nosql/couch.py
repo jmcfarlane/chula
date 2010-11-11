@@ -99,7 +99,7 @@ class Document(dict):
     def sanitize_id(id):
         if VALID_ID_RE.match(id) is None:
             msg = 'Invalid couchdb document name: "%s", must match: %s'
-            raise InvalidCouchdbDocumentId(msg % (id, VALID_ID))
+            raise InvalidCouchdbDocumentIdError(msg % (id, VALID_ID))
         else:
             return id.encode(ENCODING)
 
@@ -180,5 +180,5 @@ class Documents(list):
 class DocumentAlreadyExistsError(ResourceNotFound):
     pass
 
-class InvalidCouchdbDocumentId(Exception):
+class InvalidCouchdbDocumentIdError(Exception):
     pass
