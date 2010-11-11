@@ -1,4 +1,3 @@
-include INSTALL
 include LICENSE
 recursive-include apps *
 recursive-include chula *.py
