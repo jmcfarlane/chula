@@ -13,6 +13,9 @@ Chula v0.8.0 (dev)
 * Added support for raw (json/xml) http posts
   (`GH-17 <http://github.com/jmcfarlane/chula/issues#issue/17>`_).
 * Added support for the Python provided json library (now the default).
+* Added support for "zero config" CouchDB access.  Previously the code
+  would raise an excception of the server url was not specified, now
+  it assumes http://localhost:5984 if no configuration is provided.
 * Removed old xml based changelog
 * Exposed :attr:`config.Config.log_level` in the config object.
 
@@ -23,8 +26,8 @@ Chula v0.7.0
 
 *Released 2010-06-29*
 
-* Added support for native couchdb sorting
-* Removed support for app level sorting of couchdb documents
+* Added support for native CouchDB sorting
+* Removed support for app level sorting of CouchDB documents
 
 :Documentation: `Chula-0.7.0 </0.7.0/>`_
 :Download: `</downloads/Chula-0.7.0-py2.6.egg>`_
@@ -88,7 +91,7 @@ Chula v0.4.0
 *Released 2010-02-10*
 
 * Added simple wrapper around couchdb-python
-* Added support for couchdb session store. This means you now can
+* Added support for CouchDB session store. This means you now can
   choose between PostgreSQL/Memcached or CouchDB/Memcached.
 * Added singleton decorator
 * Added initial logging support
@@ -99,7 +102,7 @@ Chula v0.4.0
 * Updated memcache.py to version 1.45
 * Fixed regression in chula.www.cookie where the cookie domain was
   getting prefixed with "." once for every cookie - oops.
-* Refactored session into a package. When the couchdb backend was
+* Refactored session into a package. When the CouchDB backend was
   added, not all of the failover logic was being implemented. To clean
   things up properly the session logic had to be abstracted away from
   the backends. Now there is a single session class that supports n

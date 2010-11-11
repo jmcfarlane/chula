@@ -28,11 +28,7 @@ def connect(db, server=None, shard=None):
     futon = None
 
     if server is None:
-        server = os.environ.get(ENV, None)
-
-    if server is None:
-        msg = 'Server uri not specified'
-        raise Exception(msg)
+        server = os.environ.get(ENV, 'http://localhost:5984')
 
     # Determine the cache key and serve from cache if possible
     key = (server, db, shard)
