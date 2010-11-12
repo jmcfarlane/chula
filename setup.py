@@ -43,7 +43,7 @@ Topic :: Software Development
 Topic :: Software Development :: Libraries :: Python Modules
 """
 EMAIL = 'john.mcfarlane@rockfloat.com'
-INSTALL_REQUIRES = ['simplejson']
+INSTALL_REQUIRES = []
 LICENSE = 'GPL'
 NAME = 'Chula'
 TESTS = 'tests'

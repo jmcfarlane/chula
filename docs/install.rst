@@ -44,12 +44,8 @@ Dependencies
 Mandatory
 ^^^^^^^^^
 
-If you installed Chula via ``easy_install`` you already have the two
-mandatory requirements (Pytz and Simplejson), as they were installed
-in automatically.  If not, on Ubuntu it's really easy to install
-them::
-
- sudo apt-get install python-simplejson
+Currently the aren't any mandadory dependencies beyond Python itself,
+so this will give you 5 minutes to go make a latte :)
 
 Optional
 ^^^^^^^^

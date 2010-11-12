@@ -16,8 +16,9 @@ Chula v0.8.0 (dev)
 * Added support for "zero config" CouchDB access.  Previously the code
   would raise an excception of the server url was not specified, now
   it assumes http://localhost:5984 if no configuration is provided.
-* Removed old xml based changelog
 * Exposed :attr:`config.Config.log_level` in the config object.
+* Removed old xml based changelog and doc files.
+* Removed support for Python-2.5 (though you can still use it).
 
 :Source: http://github.com/jmcfarlane/chula
 

@@ -43,8 +43,10 @@ depending on configuration:
 Mandatory
 ~~~~~~~~~
 
-#. Python_ 2.6 (2.5 can work with minor changes, see Roadmap_)
-#. Simplejson_
+#. Python_ (2.6 or 2.7)
+
+.. NOTE:: Python-2.5 can work with minor changes, see Roadmap_
+.. NOTE:: Python-3.1 builds are available, but are considered unstable
 
 Optional
 ~~~~~~~~
@@ -131,4 +133,3 @@ let me know.
 .. _Psycopg2: https://dndg.it/cgi-bin/gitweb.cgi?p=public/psycopg2.git
 .. _Python: http://www.python.org
 .. _reST: http://www.restructuredtext.org
-.. _Simplejson: http://www.undefined.org/python/
