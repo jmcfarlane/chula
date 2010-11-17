@@ -222,8 +222,6 @@ class BaseEnv(collection.RestrictedCollection):
             self.form = self.form_get
             self.form_post = {}
             return
-        else:
-            self.form_raw = None
 
         # Create an object to hold only HTTP POST variables
         self.form_post = {}
