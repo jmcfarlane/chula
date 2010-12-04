@@ -16,7 +16,12 @@ Chula v0.8.0 (dev)
 * Added support for "zero config" CouchDB access.  Previously the code
   would raise an excception of the server url was not specified, now
   it assumes http://localhost:5984 if no configuration is provided.
+* Added support for optional webservice indentation when using the
+  JSON transport.  This is useful for situations where you prefer to
+  have payload you can actually read, and are ok with the performance
+  impact.
 * Exposed :attr:`config.Config.log_level` in the config object.
+* Improved name of queue msg purging exception to be more accurate.
 * Removed old xml based changelog and doc files.
 * Removed support for Python-2.5 (though you can still use it).
 

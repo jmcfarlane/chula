@@ -92,15 +92,23 @@ class JSON(Transport):
         Encode the transport into a json string and return X-JSON
         """
 
+        indent = self.__default__(self.controller, kwargs, 'indent', None)
+        if indent:
+            try:
+                indent = int(indent)
+            except:
+                pass
+
         if self.__default__(self.controller, kwargs, 'x_header', False):
             self.controller.content_type = 'application/x-json'
             self.controller.env.headers.append(('X-JSON',
-                                                json.encode(self.strip())))
+                                                json.encode(self.strip(),
+                                                indent=indent)))
 
             return '<X-JSON Object>'
         else:
             self.controller.content_type = 'text/plain'
-            return json.encode(self.strip())
+            return json.encode(self.strip(), indent=indent)
 
 class PICKLE(Transport):
     """
