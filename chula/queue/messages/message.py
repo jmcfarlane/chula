@@ -106,7 +106,7 @@ class MessageFactory(object):
         else:
             return msg
 
-class CannotPurgeUnprocessedError(error.ChulaException):
+class IOErrorWhenPurgingProcessedMessage(error.ChulaException):
     """
     Exception indicating that the message was not marked as having
     been processed, thus cannot be purged from the queue

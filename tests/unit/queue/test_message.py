@@ -85,7 +85,7 @@ class Test_mqueue(unittest.TestCase):
     #    msg.inprocess = False
     #    self.mqueue.persist(msg)
 
-    #    self.assertRaises(message.CannotPurgeUnprocessedError,
+    #    self.assertRaises(message.IOErrorWhenPurgingProcessedMessage,
     #                      self.mqueue.purge, msg)
 
     #def test_successfull_purge(self):

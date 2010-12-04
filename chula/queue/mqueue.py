@@ -192,4 +192,4 @@ class MessageQueue(Queue.Queue, object):
             shutil.move(fpath, dest)
         except IOError, er:
             msg = 'The message was not marked as being processed'
-            raise message.CannotPurgeUnprocessedError(msg)
+            raise message.IOErrorWhenPurgingProcessedMessage(msg)
