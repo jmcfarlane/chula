@@ -24,7 +24,9 @@ ENV = 'CHULA_COUCHDB_SERVER'
 VALID_ID = r'^[-a-zA-Z0-9_.]+$'
 VALID_ID_RE = re.compile(VALID_ID)
 
-def connect(db, server=None, shard=None):
+def connect(db, **kwargs):
+    server = kwargs.get('server', None)
+    shard = kwargs.get('shard', None)
     futon = None
 
     if server is None:
@@ -51,24 +53,21 @@ class Document(dict):
     CouchDB document abstraction class
     """
 
-    def __init__(self, id,
-                 db_conn=None,
-                 document=None,
-                 server=None,
-                 shard=None,
-                 track_dirty=True):
+    def __init__(self, id, **kwargs):
+        document = kwargs.get('document', None)
 
-        self.db_conn = db_conn
-        self.server = server
-        self.shard = shard
-        self.track_dirty = track_dirty
+        # Member variables
+        self.db_conn = kwargs.get('db_conn', None)
+        self.server = kwargs.get('server', None)
+        self.shard = kwargs.get('shard', None)
+        self.track_dirty = kwargs.get('track_dirty', True)
 
         super(Document, self).__init__()
 
-        if not db_conn is None:
-            self.db = db_conn
+        if not self.db_conn is None:
+            self.db = self.db_conn
         else:
-            self.db = connect(self.DB, server=server, shard=shard)
+            self.db = connect(self.DB, server=self.server, shard=self.shard)
 
         # If this is a couchdb document, just fill - don't fetch
         try:
@@ -82,15 +81,13 @@ class Document(dict):
             raise
 
         # Allow keeping track of is_dirty
-        if track_dirty:
+        if self.track_dirty:
             # Avoid a direct deepcopy on self, as we indirectly have a
             # lock via the connection attributes.  Casting back to a
             # dict makes this clean, but removes attribute access.
             # Using a chula.collection.Collection gives this back
             self._copy = collection.Collection(copy.deepcopy(dict(self)))
             self._copy.id = self.id
-        else:
-            track_dirty = None
 
         # Loggers use thread locks and thus can't be copied
         self.log = logger.Logger().logger('chula.nosql.couch')
