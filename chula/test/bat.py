@@ -1,12 +1,10 @@
 """Class for use with Basic Acceptance Testing"""
 
-import os
-import signal
-import subprocess
-import time
+# Python imports
 import unittest
 import urllib2
 
+# Chula imports
 from chula import collection
 
 #class RedirectHandler(urllib2.HTTPRedirectHandler):
@@ -23,16 +21,6 @@ from chula import collection
 #        return result
 
 class Bat(unittest.TestCase):
-    def setUp(self):
-        self.server = subprocess.Popen(['./apps/basic/webserver'],
-                                       shell=True,
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE)
-        time.sleep(1.5)
-
-    def tearDown(self):
-        os.kill(self.server.pid, signal.SIGTERM)
-
     def request(self, url):
         if not url.startswith('http://'):
             url = 'http://localhost:8080' + url

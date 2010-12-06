@@ -2,13 +2,19 @@
 #
 # Run all Chula unit tests (including doctests)
 
+# Python imports
+import multiprocessing
 import os
 import sys
 
 # For those running tests without Chula actually installed
-sys.path.insert(0, os.path.dirname(sys.path[0]))
+project_root = os.path.join(os.path.dirname(sys.argv[0]), '..')
+sys.path.insert(0, project_root)
+sys.path.insert(0, os.path.join(project_root, 'apps/example/webapp'))
 
+# Chula imports
 from chula import testutils
+import webserver
 
 if __name__ == "__main__":
     # Search the passed paths, or the current working directory
@@ -16,5 +22,14 @@ if __name__ == "__main__":
     if len(path) == 0:
         path = os.getcwd()
 
+    # Start up the webserver
+    proc = multiprocessing.Process(target=webserver.main)
+    proc.start()
+    proc.join(1)
+
+    # Run all tests
     tests = testutils.TestFinder(path)
     tests.run()
+
+    # Stop the webserver
+    proc.terminate()
