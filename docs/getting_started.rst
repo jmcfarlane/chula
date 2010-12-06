@@ -42,24 +42,26 @@ Application structure
 
 Here is an example file structure of a bare bones Chula application::
 
- |-- example
- |   |-- __init__.py
+ |-- model
  |   |-- configuration.py
- |   `-- www
- |       |-- __init__.py
- |       `-- controllers
- |           |-- __init__.py
- |           |-- error.py
- |           `-- home.py
- `-- webserver
+ |   `-- __init__.py
+ |-- view
+ |   |-- error.tmpl
+ |   `-- home.tmpl
+ |-- controller
+ |   |-- error.py
+ |   |-- home.py
+ |   `-- __init__.py
+ |-- www
+ |   |-- jquery.js
+ |   `-- style.css
+ `-- webserver.py
 
-In the list of files above there is a Python package_ named ``example``
-that holds the entire application.  Inside it there are two
-controllers, a configuration, and a webserver.  The webserver is not
-specific to Chula really, but rather a quick and dirty way to launch a
-Chula application without needing a webserver installed and
-configured.  Technically speaking this is all you need to run a Chula
-application.
+In the list of files above you can see the model, view, controller,
+and static web resources (www).  The webserver is not specific to
+Chula really, but rather a quick and dirty way to launch a Chula
+application without needing a webserver installed and configured.
+Technically speaking this is all you need to run a Chula application.
 
 Run a sample Chula application
 ++++++++++++++++++++++++++++++
@@ -68,7 +70,7 @@ If you would like to try the above application right now, you'd type
 this in your terminal::
 
  cd wherever_you_unpacked_the_chula_tarball
- ./apps/basic/webserver
+ python apps/example/webapp/webserver.py
 
 At this point you should be able to point your browser at
 http://localhost:8080 and browse a hello world application that ships
@@ -83,46 +85,49 @@ Create your own hello world application
 Directory structure
 ~~~~~~~~~~~~~~~~~~~
 
-The structure we want so far will support view templates, web server
-configuration, client side static files, and a python package::
+The structure we want is a typical MVC_ web application deployed
+against a typical web server::
 
  cd Desktop
- mkdir -p Myapp/config    # Web server configs
- mkdir -p Myapp/myapp     # Python package
- mkdir -p Myapp/view      # View emplates
- mkdir -p Myapp/www       # Static files (client side)
+ mkdir -p myapp/config      # Web server configs
+ mkdir -p myapp/model       # Model
+ mkdir -p myapp/view        # View
+ mkdir -p myapp/controller  # Controller
+ mkdir -p myapp/www         # Static files
 
-Make ``myapp`` an actual python package::
+Make the ``model`` and ``controller`` actual python packages::
 
- touch Myapp/myapp/__init__.py
+ touch myapp/model/__init__.py
+ touch myapp/controller/__init__.py
 
 Configuration
 ~~~~~~~~~~~~~
 
-Create the following file in :file:`Myapp/myapp/configuration.py`::
+Create the following file in :file:`myapp/model/configuration.py`::
  
  from chula import config
  
  # Development configuration
- dev = config.Config()
- dev.classpath = 'myapp.controllers'
- dev.construction_controller = 'error'
- dev.construction_trigger = '/tmp/myapp.stop'
- dev.debug = True
- dev.error_controller = 'error'
- dev.session = False
+ app = config.Config()
+ app.classpath = 'controller'
+ app.construction_controller = 'error'
+ app.construction_trigger = '/tmp/myapp.stop'
+ app.debug = True
+ app.error_controller = 'error'
+ app.session = False
+
+ app.mapper = (
+   (r'^/myapp/?$', 'home.index'),
+   (r'^/myapp/home/?$', 'home.index'),
+   (r'^/myapp/blog/?$', 'home.blog'),
+   (r'^/myapp/envinfo/?$', 'home.envinfo'),
+ )
 
 Controllers
 ~~~~~~~~~~~
 
-Create a package called ``controllers`` to hold all app controllers,
-this makes it easy to distinguish controllers from your other python
-modules you might have::
- 
- mkdir Myapp/myapp/controllers
- touch Myapp/myapp/controllers/__init__.py
-
-Create the **mandatory** ``error`` controller configured previously by creating :file:`Myapp/myapp/controllers/error.py` ::
+Create the **mandatory** ``error`` controller configured previously by
+creating :file:`myapp/controller/error.py` ::
 
  from chula.www import controller
 
@@ -137,7 +142,7 @@ Create the **mandatory** ``error`` controller configured previously by creating 
          return 'Trapped Error: %s' % self.model.exception.exception
 
 Now create a controller that will serve as the homepage, as well as a
-blog or something, :file:`Myapp/myapp/controllers/home.py` ::
+blog or something, :file:`myapp/controller/home.py` ::
 
  from chula.www import controller
 
@@ -156,7 +161,7 @@ against a few different web servers.
 Test server
 ~~~~~~~~~~~
 
-Create :file:`Myapp/webserver.py` ::
+Create :file:`myapp/webserver.py`::
 
  import os
  import sys
@@ -164,38 +169,41 @@ Create :file:`Myapp/webserver.py` ::
 
  from chula.www.adapters.wsgi import adapter
  
- # Expose the myapp python package, as it's not "installed"
+ # Expose the myapp, as it's not "installed"
  sys.path.insert(0, os.getcwd())
  
  # Import my configuration we created above
- from myapp import configuration
+ from model import configuration
  
  # Define a wsgi application, passing in our (dev) configuration
  @adapter.wsgi
  def application():
-     return configuration.dev
+     return configuration.app
  
- # Setup a simple server using the proxy app and it's configuration
- port = 8080
- httpd = make_server('', port, application)
- try:
-     print 'Starting server on: http://localhost:%s' % port
-     httpd.serve_forever()
- except KeyboardInterrupt:
-     sys.exit() 
+ def main():
+     # Setup a simple server using the proxy app and it's configuration
+     port = 8080
+     httpd = make_server('', port, application)
+     try:
+         print 'Starting server on: http://localhost:%s' % port
+         httpd.serve_forever()
+     except KeyboardInterrupt:
+         sys.exit() 
+
+ if __name__ == '__main__':
+     main()
 
 Test it!
 ~~~~~~~~
 
 Let's try out what we have so far::
 
- cd Myapp
- python webserver.py
+ python myapp/webserver.py
 
 At this point you should be able to browse the following urls:
 
-#. http://localhost:8080
-#. http://localhost:8080/home/blog
+#. http://localhost:8080/myapp
+#. http://localhost:8080/myapp/blog
 
 Hit :kbd:`Control-c` to stop the server.
 
@@ -210,7 +218,7 @@ Update controller
 ^^^^^^^^^^^^^^^^^
 
 Let's update our ``home`` controller
-to look like this, :file:`Myapp/myapp/controllers/home.py` ::
+to look like this, :file:`myapp/controller/home.py` ::
 
  from chula.www import controller
 
@@ -239,7 +247,7 @@ Mako template
 ^^^^^^^^^^^^^
 
 Now let's create the mako template referenced above,
-:file:`Myapp/view/envinfo.tmpl` ::
+:file:`myapp/view/envinfo.tmpl` ::
 
  <html>
  <head><title>Env Variables</title></head>
@@ -265,10 +273,9 @@ Try it!
 
 Let's see what this looks like now::
 
- cd Myapp
- python webserver.py
+ python myapp/webserver.py
 
-Now browse to http://localhost:8080/envinfo and you should see a table
+Now browse to http://localhost:8080/myapp/envinfo and you should see a table
 of environment variables.  It's a little hard to read because the keys
 are not sorted, but that's because keys in the standard dict are not
 sorted.  I leave the sorting issue as an excercise for the reader :)
@@ -293,7 +300,7 @@ two.
 FastCGI process
 ^^^^^^^^^^^^^^^
 
-Create :file:`Myapp/fastcgi.py` ::
+Create :file:`myapp/fastcgi.py`::
 
  try:
      from flup.server.fcgi_fork import WSGIServer
@@ -304,18 +311,21 @@ Create :file:`Myapp/fastcgi.py` ::
 
  from chula.www.adapters.fcgi import adapter
  
- from myapp import configuration
+ # Expose the myapp, as it's not "installed"
+ sys.path.insert(0, os.getcwd())
+ 
+ from model import configuration
 
  @adapter.fcgi
  def application():
-     return configuration.dev
+     return configuration.app
  
  # Start the server which will handle calls from the webserver
  WSGIServer(application, bindAddress='/tmp/myapp.socket').run()
 
 Start up the FastCGI_ process::
 
- python Myapp/fastcgi.py
+ python myapp/fastcgi.py
 
 Make sure Nginx has permissions to write to the socket::
 
@@ -353,7 +363,7 @@ Restart Nginx_ ::
 Try it!
 ^^^^^^^
 
-Now you should be able to hit: http://your-server/home/blog
+Now you should be able to hit: http://your-server/myapp/blog
 
 WSGI via Mod_WSGI
 ~~~~~~~~~~~~~~~~~
@@ -361,40 +371,28 @@ WSGI via Mod_WSGI
 Mod_WSGI_ is the best choice if you want to run your app on Apache_.
 This configuration also happens is a little easier to setup.
 
-Register app
-^^^^^^^^^^^^
-
-When running applications under Apache, the Python interpreter is
-owned by ``nobody`` or ``apache`` or something, thus you need to
-register your application so that it's in python's ``path``.  The
-easiest way to do this is via a symlink.  You'll use something similar
-to one of these (but specific to your computer's setup)::
-
- # Gentoo
- sudo ln -s /path/to/Myapp/myapp /usr/lib/python2.6/site-packages/myapp
-
- # Ubuntu
- sudo ln -s /path/to/Myapp/myapp /usr/local/lib/python2.6/dist-packages/myapp
-
 WSGI handler
 ^^^^^^^^^^^^
 
-Create :file:`Myapp/wsgi.py`, which will be loaded by Mod_WSGI_ ::
+Create :file:`myapp/wsgi.py`, which will be loaded by Mod_WSGI_ ::
 
  from chula.www.adapters.wsgi import adapter
 
- from myapp import configuration
+ # Expose the myapp, as it's not "installed"
+ sys.path.insert(0, os.getcwd())
+
+ from model import configuration
  
  @adapter.wsgi
  def application():
-     return configuration.dev
+     return configuration.app
 
 Apache config
 ^^^^^^^^^^^^^
 
-Add this to your ``VirtualHost`` ::
+Add this to your ``VirtualHost``::
 
- WSGIScriptAliasMatch ^([a-z/_])+$ /full/path/to/Myapp/wsgi.py 
+ WSGIScriptAliasMatch ^([a-z/_])+$ /path/to/myapp/wsgi.py 
 
 Try it!
 ^^^^^^^
@@ -403,7 +401,7 @@ Restart Apache::
 
  sudo /etc/init.d/apache restart
 
-Now you should be able to hit: http://your-server/home/blog
+Now you should be able to hit: http://your-server/myapp/blog
 
 Apache via Mod_python
 ~~~~~~~~~~~~~~~~~~~~~
@@ -412,47 +410,29 @@ Mod_PYTHON_ was the first way to run Python applications under Apache
 with excellent performance.  It's still awesome, though Mod_WSGI_ has
 superceeded it.
 
-Register app
-^^^^^^^^^^^^
-
-When running applications under Apache, the Python interpreter is
-owned by ``nobody`` or ``apache`` or something, thus you need to
-register your application so that it's in python's ``path``.  The
-easiest way to do this is via a symlink.  You'll use something similar
-to one of these (but specific to your computer's setup)::
-
- # Gentoo
- sudo ln -s /path/to/Myapp/myapp /usr/lib/python2.6/site-packages/myapp
-
- # Ubuntu
- sudo ln -s /path/to/Myapp/myapp /usr/local/lib/python2.6/dist-packages/myapp
-
 Mod_python handler
 ^^^^^^^^^^^^^^^^^^
 
-Create :file:`Myapp/myapp/mod_python.py`, which will be loaded by Mod_PYTHON_ ::
+Create :file:`myapp/mod_python.py`, which will be loaded by Mod_PYTHON_ ::
 
  from chula.www.adapters.mod_python import adapter
-
- from myapp import configuration
+ from model import configuration
  
  @adapter.handler
- def application():
-     return configuration.dev
+ def handler():
+     return configuration.app
 
 Apache config
 ^^^^^^^^^^^^^
 
 Update your apache ``VirtualHost`` to have::
 
- # Send all application requests to a stub  with a ".py" extension
- AliasMatch ^([a-z/_])+$ PLACEHOLDER.py
- PythonDebug On
-
- # Send requests to *.py to myapp's handler
- AddHandler mod_python .py
- PythonHandler myapp.mod_python
-
+ <Directory /path/to/myapp>
+   PythonDebug On
+   PythonHandler mod_python
+   PythonPath "['/path/to/myapp'] + sys.path"
+   SetHandler python-program
+ </Directory>
 
 Try it!
 ^^^^^^^
@@ -461,7 +441,7 @@ Restart Apache::
 
  sudo /etc/init.d/apache restart
 
-Now you should be able to hit: http://your-server/home/blog
+Now you should be able to hit: http://your-server/myapp/blog
 
 What's next
 +++++++++++
