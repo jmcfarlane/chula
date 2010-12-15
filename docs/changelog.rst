@@ -23,6 +23,7 @@ Chula v0.8.0 (dev)
 * Exposed :attr:`config.Config.log_level` in the config object.
 * Improved `nosql.couch` class constructors to avoid kwargs overflow
   (`GH-18 <http://github.com/jmcfarlane/chula/issues#issue/18>`_).
+* Improved the :doc:`getting_started` documentation a bit.
 * Improved name of queue msg purging exception to be more accurate.
 * Removed old xml based changelog and doc files.
 * Removed support for Python-2.5 (though you can still use it).
