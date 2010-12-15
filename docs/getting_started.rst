@@ -376,13 +376,15 @@ WSGI handler
 
 Create :file:`myapp/wsgi.py`, which will be loaded by Mod_WSGI_ ::
 
+ import os
+ import sys
  from chula.www.adapters.wsgi import adapter
 
  # Expose the myapp, as it's not "installed"
- sys.path.insert(0, os.getcwd())
+ sys.path.insert(0, '/var/www/myapp')
 
  from model import configuration
- 
+
  @adapter.wsgi
  def application():
      return configuration.app
