@@ -32,7 +32,7 @@ if 'install' in sys.argv:
 # Attributes
 AUTHOR = 'John McFarlane'
 CLASSIFIERS = """
-Development Status :: 3 - Beta
+Development Status :: 4 - Beta
 Intended Audience :: Developers
 License :: OSI Approved :: GNU General Public License (GPL)
 Operating System :: OS Independent
@@ -48,7 +48,7 @@ LICENSE = 'GPL'
 NAME = 'Chula'
 TESTS = 'tests'
 URL = 'http://chula.rockfloat.com'
-URL_ = URL + '/downloads/Chula-%s.tar.gz' % chula.version,
+URL_ = URL + '/downloads/Chula-%s.tar.gz' % chula.version
 ZIP_SAFE = True
 
 setup(
@@ -65,5 +65,5 @@ setup(
     test_suite = TESTS,
     url = URL,
     version = chula.version,
-    zip_safe = ZIP_SAFE,
+    zip_safe = ZIP_SAFE
 )
