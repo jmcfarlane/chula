@@ -4,10 +4,18 @@
 Downloads/Release Notes
 =======================
 
-Chula v0.8.0 (dev)
-++++++++++++++++++
+..
+ Chula v0.9.0 (dev)
+ ++++++++++++++++++
+ 
+ *Still under development*
+ 
+ :Source: http://github.com/jmcfarlane/chula
 
-*Still under development*
+Chula v0.8.0
+++++++++++++
+
+*Released 2010-12-26*
 
 * Added support for couchdb-python-0.7.0 (api changes).
 * Added support for raw (json/xml) http posts
@@ -28,7 +36,13 @@ Chula v0.8.0 (dev)
 * Removed old xml based changelog and doc files.
 * Removed support for Python-2.5 (though you can still use it).
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.8.0 </0.8.0/>`_
+:Download: `</downloads/Chula-0.8.0-py2.6.egg>`_
+:Download: `</downloads/Chula-0.8.0-py3.1.egg>`_
+:Download: `</downloads/Chula-0.8.0.tar.gz>`_
+:Download: `</downloads/Chula-0.8.0-py2.6.linux-x86_64.exe>`_ (unsupported)
+:Download: `</downloads/Chula-0.8.0.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.8.0
 
 Chula v0.7.0
 ++++++++++++
