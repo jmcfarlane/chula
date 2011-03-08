@@ -123,7 +123,7 @@ class BaseMapper(object):
         # If the module is None, then we're looking at an error
         # conroller situation, but the app's configuration didn't
         # specify an error controller.  Use the basic one we provide.
-        if self.route.module is None:
+        if not self.route.module:
             self.route.package = 'chula.www.controller'
             self.route.module = 'error'
 

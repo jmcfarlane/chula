@@ -59,7 +59,7 @@ class Config(collection.RestrictedCollection):
         self.construction_controller = None
         self.construction_trigger = None
         self.debug = True
-        self.error_controller = None
+        self.error_controller = ''
         self.htdocs = None
         self.local = collection.Collection()
         self.log = '/tmp/chula.log'
