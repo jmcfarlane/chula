@@ -15,7 +15,7 @@ class BaseMapper(object):
             msg = ('[cfg.classpath] must be specified in your configuration.'
                    ' See documentation for help on how to set this.')
             raise error.UnsupportedConfigError(msg)
-            
+
         self.config = config
         self.env = env
         self.log = logger.Logger(config).logger('chula.www.mapper.base')
@@ -119,6 +119,13 @@ class BaseMapper(object):
         and self.route.module == self.route_404.module \
         and self.route.package == self.route_404.package:
             status = 404
+
+        # If the module is None, then we're looking at an error
+        # conroller situation, but the app's configuration didn't
+        # specify an error controller.  Use the basic one we provide.
+        if self.route.module is None:
+            self.route.package = 'chula.www.controller'
+            self.route.module = 'error'
 
         # Import the controller module
         module = self.import_module()

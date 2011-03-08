@@ -15,7 +15,7 @@ WSGI = 'WSGI'
 class Environment(env.BaseEnv):
     def __init__(self, environ):
         super(Environment, self).__init__()
-        
+
         # Indicate what type of adapter this is
         self.chula_adapter = WSGI
 
@@ -66,7 +66,7 @@ class Environment(env.BaseEnv):
             wsgi_input = StringIO(self.form_raw)
         else:
             wsgi_input = self.wsgi_input
-            
+
         # Extract HTTP form information (later enriched by extras())
         self.form = FieldStorage(fp=wsgi_input,
                                  environ=environ,

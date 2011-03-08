@@ -30,6 +30,7 @@ class Config(collection.RestrictedCollection):
                 'construction_trigger',
                 'debug',
                 'error_controller',
+                'htdocs',
                 'local',
                 'log',
                 'log_level',
@@ -58,7 +59,8 @@ class Config(collection.RestrictedCollection):
         self.construction_controller = None
         self.construction_trigger = None
         self.debug = True
-        self.error_controller = collection.UNSET
+        self.error_controller = None
+        self.htdocs = None
         self.local = collection.Collection()
         self.log = '/tmp/chula.log'
         self.log_level = logging.WARNING
