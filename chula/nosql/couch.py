@@ -106,14 +106,14 @@ class Document(dict):
         db = connect(self.DB, server=server, shard=shard)
 
         try:
-            del db[id] 
+            del db[id]
         except ResourceNotFound:
             pass
 
     def fill(self, id, data):
         self.id = self.sanitize_id(id)
         self.update(data)
-        
+
     def is_dirty(self):
         if self._copy is None:
             return True
@@ -164,7 +164,7 @@ class Documents(list):
 
     def _fill(self, view, cls):
         if not cls is None:
-            return [cls(doc.id, doc.value) for doc in view]
+            return [cls(doc.id, document=doc.value) for doc in view]
         else:
             return view
 
