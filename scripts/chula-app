@@ -1,0 +1,65 @@
+#! /usr/bin/env python
+
+# Python imports
+from wsgiref.simple_server import make_server
+import imp
+import optparse
+import os
+import sys
+
+# Project imports
+from chula.www.adapters.wsgi import adapter
+
+def getopts():
+    p = optparse.OptionParser('Usage: %prog [options] path/to/app')
+    p.add_option('-a', '--app',
+                 dest='app',
+                 help='Path to application')
+    p.add_option('-c', '--config',
+                 dest='config_module',
+                 help='Module name containing app configuration')
+    p.add_option('-o', '--config-object',
+                 dest='config_obj',
+                 help='Configuration object inside the config')
+    p.add_option('-p', '--port',
+                 dest='port',
+                 help='TCP port to run the webserver on')
+    # Defaults
+    p.set_defaults(config_module='configuration')
+    p.set_defaults(config_obj='app')
+    p.set_defaults(debug=False)
+    p.set_defaults(port=8080)
+
+    return p.parse_args()
+
+def main():
+    # Parse command line options
+    (options, args) = getopts()
+
+    if not options.app or not os.path.exists(options.app):
+        print 'Please specify the path to your app, via -a'
+        sys.exit(1)
+
+    # Expose the application's top level package(s)
+    app_root = os.path.expanduser(options.app)
+    sys.path.append(app_root)
+    for d in os.listdir(app_root):
+        sys.path.append(os.path.join(options.app, d))
+    fp, pathname, description = imp.find_module(options.config_module)
+    app_config_module = imp.load_module('app', fp, pathname, description)
+
+    @adapter.wsgi
+    def application():
+        return getattr(app_config_module, options.config_obj)
+
+    # Setup a simple server using the proxy app and it's configuration
+    port = int(options.port)
+    httpd = make_server('', port, application)
+    try:
+        print 'Starting server on: http://localhost:%s' % port
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        sys.exit()
+
+if __name__ == '__main__':
+    main()
