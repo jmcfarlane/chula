@@ -19,7 +19,7 @@ class Controller(object):
         @param env: Normalized environment (wsgi at a minimum)
         @type env: env WSGI environ object with a few extra objects
         """
-        
+
         self.content_type = 'text/html'
 
         # Add some convenience attributes

@@ -6,7 +6,7 @@ import sys
 import traceback
 
 # Project imports
-from chula import collection
+from chula import collection, logger
 from chula.www.controller import base
 from chula.www import http
 
@@ -56,6 +56,8 @@ class Error(base.Controller):
         return '<html><body><h1>404</h1></body></html>'
 
     def e500(self):
+        log = logger.Logger().logger('chula.www.controller.error')
+
         exception = collection.Collection()
         try:
             context = self.model.exception
@@ -83,6 +85,10 @@ class Error(base.Controller):
         except Exception, ex:
             print ex
             pass
+
+        # Log the error
+        extra = {'clientip':self.env.REMOTE_ADDR}
+        log.error(exception.summary, exc_info=(etype, value, tb), extra=extra)
 
         # Add the message to the view if debugging
         if not self.config.debug:

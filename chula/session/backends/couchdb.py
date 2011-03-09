@@ -1,10 +1,14 @@
 """Chula couchdb based session store"""
 
+# Python imports
 import os
 
+# Project imports
 from chula import data, logger
 from chula.nosql import couch
 from chula.session.backends import base
+
+EXTRA = {'clientip':''}
 
 class Backend(base.Backend):
     KEY = 'PICKLE'
@@ -31,12 +35,12 @@ class Backend(base.Backend):
                                   shard=self.shard)
             return self.doc
         except Exception, ex:
-            self.log.error('Unable to connect to the db: %s' % ex)
+            self.log.error('Unable to connect', exc_info=True, extra=EXTRA)
             return None
 
     def destroy(self):
         if self.doc is None:
-            self.log.error('Unable to destroy(), no db connection')
+            self.log.error('Unable to destroy', exc_info=True, extra=EXTRA)
             return False
 
         SessionDoc.delete(self.guid, server=self.server, shard=self.shard)
@@ -55,7 +59,7 @@ class Backend(base.Backend):
         except KeyError, ex:
             self.log.debug('Did not find session data in the document')
         except Exception, ex:
-            self.log.error('Error fetching session: ex:%s' % ex)
+            self.log.error('Error fetching session', exc_info=True, extra=EXTRA)
 
         return None
 
@@ -66,7 +70,7 @@ class Backend(base.Backend):
         self.log.debug('persist() called')
 
         if self.doc is None:
-            self.log.error('Unable to persist(), no db connection')
+            self.log.error('Unable to persist: no db connection', extra=EXTRA)
             return False
 
         self.doc[self.KEY] = encoded

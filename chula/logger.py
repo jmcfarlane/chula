@@ -26,11 +26,12 @@ class Logger(object):
 
         # Create file handler for WARNING and above
         if not config.log is None:
-            fmt = ('%(asctime)s,'
-                   '%(levelname)s,'
-                   'pid:%(process)d,'
-                   '%(name)s,'
-                   '%(filename)s:%(lineno)d,'
+            fmt = ('%(asctime)s, '
+                   '%(clientip)s, '
+                   '%(levelname)s, '
+                   'pid:%(process)d, '
+                   '%(name)s, '
+                   '%(filename)s:%(lineno)d, '
                    '%(message)s'
                   )
             fh = RotatingFileHandler(config.log,

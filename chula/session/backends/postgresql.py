@@ -1,8 +1,11 @@
 """Chula postgresql based session store"""
 
+# Project imports
 from chula import db, logger
 from chula.db.datastore import DataStoreFactory
 from chula.session.backends import base
+
+EXTRA = {'clientip':''}
 
 class Backend(base.Backend):
     def __init__(self, config, guid):
@@ -19,12 +22,12 @@ class Backend(base.Backend):
             try:
                 self.conn = DataStoreFactory(uri, self.config.session_password)
             except Exception, ex:
-                self.log.error('Unable to connect to postgresql: %s' % ex)
+                self.log.error('Unable to connect', exc_info=True, extra=EXTRA)
 
             try:
                 self.cursor = self.conn.cursor()
             except Exception, ex:
-                self.log.error('Unable to create postgresql cursor: %s' % ex)
+                self.log.error('Cursor error', exc_info=True, extra=EXTRA)
 
             if not self.conn is None and not self.cursor is None:
                 self.log.debug('Successfull connection to postgresql')
@@ -54,7 +57,7 @@ class Backend(base.Backend):
             self.cursor.execute(sql)
             row = self.cursor.fetchone()
         except Exception, ex: #self.conn.error.OperationalError, ex:
-            self.log.warning('SQL error guid: %s, ex:%s' % (self.guid, ex))
+            self.log.warning('guid: %s', self.guid, exc_info=True, extra=EXTRA)
             return None
 
         if row is None:
@@ -63,7 +66,7 @@ class Backend(base.Backend):
         else:
             self.log.debug('Session found: OK')
             return row['values']
-   
+
     def gc(self):
         try:
             self.conn.close()
