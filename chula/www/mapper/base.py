@@ -3,8 +3,11 @@ Base class to convert HTTP url path into a Python object path.  This
 class can be subclassed to customize the url mapping behavior.
 """
 
+# Python imports
+import imp
 import os
 
+# Project imports
 from chula import logger
 from chula.www.mapper import *
 
@@ -71,7 +74,26 @@ class BaseMapper(object):
         msg = "%s - %s [Route being used: %s]"
 
         try:
-            return __import__(path, globals(), locals(), [class_name])
+            # Import the controller.  If reloading is enabled, then
+            # use imp so it gets reloaded fresh.  This is more
+            # complicated as imp doesn't support dot notation, so we
+            # have to walk the namespace ourselves.
+            if self.config.auto_reload:
+                parent_path = None
+                for i, part in enumerate(path.split('.')):
+                    if i > 0:
+                        parent_path = importee.__path__
+
+                    file, pathname, descr = imp.find_module(part, parent_path)
+                    importee = imp.load_module(part, file, pathname, descr)
+                    if not '__init__.py' in importee.__file__:
+                        return importee
+            else:
+                return __import__(path, globals(), locals(), [class_name])
+
+            # Better safe than sorry
+            raise ImportError('Unable to import: %s' % path)
+
         except ImportError, ex:
             msg = msg % (path, ex, self.route)
 
@@ -79,7 +101,7 @@ class BaseMapper(object):
             #  1. controller module not found (ImportError) [HTTP 404]
             #  2. controller found, but raises an ImportError [HTTP 500]
             classpath_in_excecption = ex.args[0].split()[-1]
-            if path.endswith(classpath_in_excecption):
+            if classpath_in_excecption in path:
                 raise error.ControllerClassNotFoundError(msg)
             else:
                 raise error.ControllerImportError(msg)

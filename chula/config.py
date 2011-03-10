@@ -25,6 +25,7 @@ class Config(collection.RestrictedCollection):
         """
 
         return ('add_timer',
+                'auto_reload',
                 'classpath',
                 'construction_controller',
                 'construction_trigger',
@@ -55,6 +56,7 @@ class Config(collection.RestrictedCollection):
 
     def __defaults__(self):
         self.add_timer = True
+        self.auto_reload = True
         self.classpath = collection.UNSET
         self.construction_controller = None
         self.construction_trigger = None
