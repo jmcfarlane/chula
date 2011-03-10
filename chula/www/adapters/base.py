@@ -49,6 +49,10 @@ class BaseAdapter(object):
         try:
             html = self.controller.execute()
         except Exception, ex:
+            # Log the error
+            extra = {'clientip':self.env.REMOTE_ADDR}
+            msg = 'Unhandled exception in controller method'
+            self.log.error(msg, exc_info=True, extra=extra)
 
             # Save off the exception before re-mapping the controller
             exception = self.exception(self.controller, ex)
