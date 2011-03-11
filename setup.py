@@ -62,7 +62,7 @@ setup(
     long_description = '\n'.join(chula.__doc__.split('\n')[2:]),
     name = NAME,
     packages = find_packages(),
-    scripts = ['scripts/chula-app'],
+    scripts = ['scripts/chula-run'],
     test_suite = TESTS,
     url = URL,
     version = chula.version,
