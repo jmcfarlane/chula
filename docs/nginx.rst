@@ -1,3 +1,5 @@
+.. _nginx_fastcgi:
+
 =================
 Nginx via FastCGI
 =================
@@ -20,16 +22,16 @@ Create :file:`myapp/fastcgi.py`::
      print " >>> Falling back on old version available in Chula"
 
  from chula.www.adapters.fcgi import adapter
- 
+
  # Expose the myapp, as it's not "installed"
  sys.path.insert(0, os.getcwd())
- 
+
  from model import configuration
 
  @adapter.fcgi
  def application():
      return configuration.app
- 
+
  # Start the server which will handle calls from the webserver
  WSGIServer(application, bindAddress='/tmp/myapp.socket').run()
 

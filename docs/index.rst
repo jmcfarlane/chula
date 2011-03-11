@@ -9,24 +9,10 @@ Welcome to Chula's documentation!
 .. toctree::
    :maxdepth: 2
 
-   about
    getting_started
+   about
    session
-
-Download Chula
-==============
-
-.. toctree::
-   :maxdepth: 3
-
    changelog
-
-Module Library
-==============
-
-.. toctree::
-   :maxdepth: 1
-
    library
 
 Indices and tables

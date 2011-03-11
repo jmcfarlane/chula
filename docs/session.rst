@@ -12,7 +12,7 @@ Currently there are three supported backends:
 Via configuration you can choose between PostgreSQL or CouchDB as the
 main session store - Memcached is always used as a cache.
 
-Cluster Safe
+Cluster safe
 ++++++++++++
 
 Because local storage is not used, Chula is has cluster safe session.
@@ -37,7 +37,7 @@ connection pooling.  This can optionally be added by fronting your
 PostgreSQL server with pgpool_.  When CouchDB is used as the backend,
 connection pooling isn't relevent as it uses HTTP.
 
-Native Storage
+Native storage
 ++++++++++++++
 
 Chula stores your session values as pickle_'d strings (via cPickle) thus

@@ -12,19 +12,23 @@ Chula applications read all configurations from a configuration file.
 This file holds a :class:`Config` object.  Here's an example
 configuration file::
 
+ # Python imports
+ import os
+
+ # Third party imports
  from chula import config
 
- prod = config.Config()
- prod.classpath = 'example.www.controllers'
- prod.construction_controller = 'construction'
- prod.construction_trigger = '/tmp/chula_example.stop'
- prod.debug = False
- prod.error_controller = 'error'
- prod.session = False
+ app = config.Config()
+ app.classpath = 'controller'
+ app.debug = True
+ app.htdocs = os.path.join(os.path.dirname(__file__), '..', 'www')
+ app.session = False
 
-Of the configuration options above, the only two that you need to
-understand now are the :attr:`Config.classpath` and
-:attr:`Config.error_controller` options.
+Of the configuration options above, the only one that you need to
+understand now is: :attr:`Config.classpath`.
+
+..
+  :attr:`Config.error_controller` options.
 
 .. class:: Config()
 
@@ -33,7 +37,7 @@ understand now are the :attr:`Config.classpath` and
    :class:`collection.restricted.RestrictedCollection`
 
    .. note::
-      
+
       The following two attributes are **mandatory**, meaning your
       configuration must provide values for them.
 
@@ -57,39 +61,8 @@ understand now are the :attr:`Config.classpath` and
       must have a few methods implemented.  The location of these
       controllers are relative to the defined :attr:`classpath`.
 
-   .. attribute:: error_controller
-
-      The :attr:`error_controller` specifies the controller to be
-      called when something goes wrong.  Here are a few example use
-      cases that will result in the error controller being called, and
-      the corresponding method called:
-       
-      ============= ===========================================================
-      Method        Use case
-      ============= ===========================================================
-      :meth:`e404`  The inbound request does not map to a controller.
-      :meth:`e500`  During the processing of a request, and unhandled exception
-                    is thrown within the controller.
-      ============= ===========================================================
-
-      Using an example configuration, if a request is made that cannot
-      be mapped, Chula will call
-      ``example.www.controllers.error.Error.e404()``.  If an unhandled
-      exception occurs ``example.www.controllers.error.Error.e500()``
-      will be called.  This also means that if a request is made that
-      cannot be mapped, and something goes wrong inside :meth:`e404`
-      then both controller methods will actually get called.  This
-      makes it very important that your error controller not be
-      capable of throwing unhandled exceptions. 
-
-      If you want to have informative error pages during development,
-      you'll want to place that code inside your error controller's
-      :meth:`e500` method that exposes this information.  You can find a
-      very simple implementation that does this inside this
-      application's error controller and view.
-
    .. note::
-      
+
       The following attributes are all optional.
 
    .. attribute:: add_timer
@@ -115,6 +88,16 @@ understand now are the :attr:`Config.classpath` and
       fast search results were obtained, for example.  If your application
       happens to use aggressive caching (like full html caching) the timer
       will still be accurate.
+
+      Default: ``True``
+
+   .. attribute:: auto_reload
+
+      If :attr:`auto_reload` is ``True`` Chula will try to reload the
+      application with every http request.  The idea here is to save
+      code in your editor, and refresh the browser - super handy.
+
+      Default: ``True``
 
    .. attribute:: construction_controller
 
@@ -142,6 +125,46 @@ understand now are the :attr:`Config.classpath` and
       only used by the Chula queue server.  It's main intention is
       really to be a hook that your application can use to alter it's
       behavior during development.
+
+   .. attribute:: error_controller
+
+      The :attr:`error_controller` specifies the controller to be
+      called when something goes wrong.  Here are a few example use
+      cases that will result in the error controller being called, and
+      the corresponding method called:
+
+      ============= ===========================================================
+      Method        Use case
+      ============= ===========================================================
+      :meth:`e404`  The inbound request does not map to a controller.
+      :meth:`e500`  During the processing of a request, and unhandled exception
+                    is thrown within the controller.
+      ============= ===========================================================
+
+      Using an example configuration, if a request is made that cannot
+      be mapped, Chula will call ``error.Error.e404()``.  If an
+      unhandled exception occurs ``error.Error.e500()`` will be
+      called.  This also means that if a request is made that cannot
+      be mapped, and something goes wrong inside :meth:`e404` then
+      both controller methods will actually get called.  This makes it
+      very important that your error controller not be capable of
+      throwing unhandled exceptions.
+
+      If you want to have informative error pages during development,
+      you'll want to place that code inside your error controller's
+      :meth:`e500` method that exposes this information.  You can find a
+      very simple implementation that does this inside this
+      application's error controller and view.
+
+      Default: :mod:`chula.www.controller.error`
+
+   .. attribute:: htdocs
+
+      Fully qualified path to a directory on disk.  When using the
+      default :mod:`chula.www.controller.error` controller will serve
+      static resources (css, js, html, png) from this directory.
+
+      Default: ``None``
 
    .. attribute:: local
 

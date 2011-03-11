@@ -1,41 +1,21 @@
+.. installation:
+
 ===============
 Getting Started
 ===============
+
+Preferred::
+
+ sudo pip install chula
+
+Alternatiely::
+
+ sudo easy_install chula
 
 .. toctree::
    :maxdepth: 2
 
    install
-
-Terminology
-+++++++++++
-
-Welcome to Chula. Let's go thru a few things before you get started
-building your first app.  Chula is a simple toolkit that is based on
-the MVC_ pattern.  From now on we'll use the terms "*model*",
-"*view*", and "*controller*" when describing things.  Here's a brief
-summary of what these terms as they relate to Chula:
-
-=========== ===================================================================
-Term        Description
-=========== ===================================================================
-Model       The logic and data of an application.  These are usually
-            standard Python classes.  They do work, implement
-            algorithms, and hold data.
-
-View        The view is responsible for presentation.  Examples of
-            this would be:
-
-            * Mako_
-            * Cheetah_
-            * reST_ (restructured text)
-
-Controller  The controller is the main class responsible for coordinating 
-            everything.  The controller is responsible for capturing
-            user input, calling the model for processing, invoking the
-            view, passing the model to the view, and returning
-            view's output to the client.
-=========== ===================================================================
 
 Application structure
 +++++++++++++++++++++
@@ -52,44 +32,21 @@ Here is an example file structure of a bare bones Chula application::
  |   |-- error.py
  |   |-- home.py
  |   `-- __init__.py
- |-- www
- |   |-- jquery.js
- |   `-- style.css
- `-- webserver.py
+ `-- www
+     |-- jquery.js
+     `-- style.css
 
 In the list of files above you can see the model, view, controller,
-and static web resources (www).  The webserver is not specific to
-Chula really, but rather a quick and dirty way to launch a Chula
-application without needing a webserver installed and configured.
-Technically speaking this is all you need to run a Chula application.
+and static web resources (www).
 
-Run a sample Chula application
-++++++++++++++++++++++++++++++
+Reference: MVC_
 
-If you would like to try the above application right now, you'd type
-this in your terminal::
+Create an app!
+++++++++++++++
 
- cd wherever_you_unpacked_the_chula_tarball
- python apps/example/webapp/webserver.py
-
-At this point you should be able to point your browser at
-http://localhost:8080 and browse a hello world application that ships
-with Chula.  The actual purpose of the application is to serve as a
-way to run BAT_ tests, but it's useful for this purpose as well.
-
-Hit :kbd:`Control-c` to stop the server, and let's move on.
-
-Create your own hello world application
-+++++++++++++++++++++++++++++++++++++++
-
-Directory structure
-~~~~~~~~~~~~~~~~~~~
-
-The structure we want is a typical MVC_ web application deployed
-against a typical web server::
+Create the directory structure::
 
  cd Desktop
- mkdir -p myapp/config      # Web server configs
  mkdir -p myapp/model       # Model
  mkdir -p myapp/view        # View
  mkdir -p myapp/controller  # Controller
@@ -101,19 +58,20 @@ Make the ``model`` and ``controller`` actual python packages::
  touch myapp/controller/__init__.py
 
 Configuration
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 Create the following file in :file:`myapp/model/configuration.py`::
- 
+
+ # Python imports
+ import os
+
+ # Third party imports
  from chula import config
- 
- # Development configuration
+
  app = config.Config()
  app.classpath = 'controller'
- app.construction_controller = 'error'
- app.construction_trigger = '/tmp/myapp.stop'
  app.debug = True
- app.error_controller = 'error'
+ app.htdocs = os.path.join(os.path.dirname(__file__), '..', 'www')
  app.session = False
 
  app.mapper = (
@@ -124,24 +82,9 @@ Create the following file in :file:`myapp/model/configuration.py`::
  )
 
 Controllers
-~~~~~~~~~~~
+^^^^^^^^^^^
 
-Create the **mandatory** ``error`` controller configured previously by
-creating :file:`myapp/controller/error.py` ::
-
- from chula.www import controller
-
- class Error(controller.Controller):
-     def index(self):
-         return 'Sorry, the site is down for maintenance'
- 
-     def e404(self):
-         return 'Page not found'
- 
-     def e500(self):
-         return 'Trapped Error: %s' % self.model.exception.exception
-
-Now create a controller that will serve as the homepage, as well as a
+Create a controller that will serve as the homepage, as well as a
 blog or something, :file:`myapp/controller/home.py` ::
 
  from chula.www import controller
@@ -149,7 +92,7 @@ blog or something, :file:`myapp/controller/home.py` ::
  class Home(controller.Controller):
      def index(self):
          return 'Hello world'
- 
+
      def blog(self):
          return 'This is my blog'
 
@@ -158,47 +101,12 @@ way to run it.  For now, let's create a standalone web server script
 for testing purposes.  Next, we'll actually wire up the application
 against a few different web servers.
 
-Test server
-~~~~~~~~~~~
-
-Create :file:`myapp/webserver.py`::
-
- import os
- import sys
- from wsgiref.simple_server import make_server
-
- from chula.www.adapters.wsgi import adapter
- 
- # Expose the myapp, as it's not "installed"
- sys.path.insert(0, os.getcwd())
- 
- # Import my configuration we created above
- from model import configuration
- 
- # Define a wsgi application, passing in our (dev) configuration
- @adapter.wsgi
- def application():
-     return configuration.app
- 
- def main():
-     # Setup a simple server using the proxy app and it's configuration
-     port = 8080
-     httpd = make_server('', port, application)
-     try:
-         print 'Starting server on: http://localhost:%s' % port
-         httpd.serve_forever()
-     except KeyboardInterrupt:
-         sys.exit() 
-
- if __name__ == '__main__':
-     main()
-
 Test it!
-~~~~~~~~
+^^^^^^^^
 
 Let's try out what we have so far::
 
- python myapp/webserver.py
+ chula-run myapp
 
 At this point you should be able to browse the following urls:
 
@@ -207,15 +115,15 @@ At this point you should be able to browse the following urls:
 
 Hit :kbd:`Control-c` to stop the server.
 
-Add env vars
-~~~~~~~~~~~~
+Add more to it
+++++++++++++++
 
 Let's add a page that's a little bit more usefull.  This one will
 generate an HTML table of the environment variables.  This page will
 also use Mako_ for the view.
 
-Update controller
-^^^^^^^^^^^^^^^^^
+Controller
+^^^^^^^^^^
 
 Let's update our ``home`` controller
 to look like this, :file:`myapp/controller/home.py` ::
@@ -228,7 +136,7 @@ to look like this, :file:`myapp/controller/home.py` ::
  class Home(controller.Controller):
      def index(self):
          return 'Hello world'
- 
+
      def blog(self):
          return 'This is my blog'
 
@@ -243,8 +151,8 @@ to look like this, :file:`myapp/controller/home.py` ::
          # Return the rendered template, passing in our model
          return view.render(model=self.model)
 
-Mako template
-^^^^^^^^^^^^^
+View
+^^^^
 
 Now let's create the mako template referenced above,
 :file:`myapp/view/envinfo.tmpl` ::
@@ -273,7 +181,7 @@ Try it!
 
 Let's see what this looks like now::
 
- python myapp/webserver.py
+ chula-run myapp
 
 Now browse to http://localhost:8080/myapp/envinfo and you should see a table
 of environment variables.  It's a little hard to read because the keys
@@ -295,6 +203,52 @@ these.
    nginx
    mod_wsgi
    mod_python
+
+Run a sample Chula application
+++++++++++++++++++++++++++++++
+
+If you would like to try the above application right now, you'd type
+this in your terminal::
+
+ cd wherever_you_unpacked_the_chula_tarball
+ ./scripts/chula-run apps/example/webapp
+
+At this point you should be able to point your browser at
+http://localhost:8080 and browse a hello world application that ships
+with Chula.  The actual purpose of the application is to serve as a
+way to run BAT_ tests, but it's useful for this purpose as well.
+
+Hit :kbd:`Control-c` to stop the server, and let's move on.
+
+Terminology
++++++++++++
+
+Welcome to Chula. Let's go thru a few things before you get started
+building your first app.  Chula is a simple toolkit that is based on
+the MVC_ pattern.  From now on we'll use the terms "*model*",
+"*view*", and "*controller*" when describing things.  Here's a brief
+summary of what these terms as they relate to Chula:
+
+=========== ===================================================================
+Term        Description
+=========== ===================================================================
+Model       The logic and data of an application.  These are usually
+            standard Python classes.  They do work, implement
+            algorithms, and hold data.
+
+View        The view is responsible for presentation.  Examples of
+            this would be:
+
+            * Mako_
+            * Cheetah_
+            * reST_ (restructured text)
+
+Controller  The controller is the main class responsible for coordinating
+            everything.  The controller is responsible for capturing
+            user input, calling the model for processing, invoking the
+            view, passing the model to the view, and returning
+            view's output to the client.
+=========== ===================================================================
 
 What's next
 +++++++++++

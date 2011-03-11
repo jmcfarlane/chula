@@ -1,19 +1,42 @@
 .. _downloads:
 
-=======================
-Downloads/Release Notes
-=======================
+=========
+Changelog
+=========
 
 ..
  Chula v0.9.0 (dev)
  ++++++++++++++++++
- 
+
  *Still under development*
- 
+
  :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.8.0
-++++++++++++
+Chula v0.9.0 (dev)
+++++++++++++++++++
+
+*Still under development*
+
+- Added :program:`chula-run` to serve a Chula application using
+  Python's reference :mod:`wsgiref.simple_server`.  Remember this is
+  just for debugging and developing.  When running your application
+  for real you'll want to use something like :ref:`nginx_fastcgi`.
+- [`GH-19 <http://github.com/jmcfarlane/chula/issues#issue/19>`_]
+  Added :mod:`chula.www.controller.error` as a default error
+  controller.  This provides basic static content handling as well as
+  [crude] stack trace formatting in html when debugging is enabled.
+- Added support for :attr:`config.Config.auto_reload` to make coding
+  even funner.
+- Improved logging.
+- Improved build process to reference build artifacts directly from
+  pypi.
+- [`GH-20 <http://github.com/jmcfarlane/chula/issues#issue/20>`_]
+  Fixed :class:`chula.couch.Documents` to use ``document=value``.
+
+:Source: http://github.com/jmcfarlane/chula
+
+Chula v0.8.0 (stable)
++++++++++++++++++++++
 
 *Released 2010-12-26*
 
@@ -44,8 +67,11 @@ Chula v0.8.0
 :Download: `</downloads/Chula-0.8.0.checksums>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.8.0
 
+Older releases
+++++++++++++++
+
 Chula v0.7.0
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 2010-06-29*
 
@@ -62,7 +88,7 @@ Chula v0.7.0
 :Source: http://github.com/jmcfarlane/chula/tree/v0.7.0
 
 Chula v0.6.0
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 2010-05-07*
 
@@ -91,7 +117,7 @@ Chula v0.6.0
 :Source: http://github.com/jmcfarlane/chula/tree/v0.6.0
 
 Chula v0.5.0
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 2010-02-22*
 
@@ -109,7 +135,7 @@ Chula v0.5.0
 :Source: http://github.com/jmcfarlane/chula/tree/v0.5.0
 
 Chula v0.4.0
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 2010-02-10*
 
@@ -137,7 +163,7 @@ Chula v0.4.0
 :Source: http://github.com/jmcfarlane/chula/tree/v0.4.0
 
 Chula v0.3.0
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 11/03/2009*
 
@@ -151,7 +177,7 @@ Chula v0.3.0
 :Source: http://github.com/jmcfarlane/chula/tree/v0.3.0
 
 Chula v0.2.0
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 09/27/2009*
 
@@ -166,7 +192,7 @@ Chula v0.2.0
 :Source: http://github.com/jmcfarlane/chula/tree/v0.2.0
 
 Chula v0.1.0
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 06/29/2009*
 
@@ -185,7 +211,7 @@ Chula v0.1.0
 :Source: http://github.com/jmcfarlane/chula/tree/v0.1.0
 
 Chula v0.0.6
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 04/11/2009*
 
@@ -201,7 +227,7 @@ Chula v0.0.6
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.6
 
 Chula v0.0.5
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 12/11/2008*
 
@@ -224,7 +250,7 @@ Chula v0.0.5
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.5
 
 Chula v0.0.4
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 8/19/2008*
 
@@ -247,7 +273,7 @@ Chula v0.0.4
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.4
 
 Chula v0.0.3
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 6/15/2008*
 
@@ -267,7 +293,7 @@ Chula v0.0.3
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.3
 
 Chula v0.0.2
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 1/21/2008*
 
@@ -288,7 +314,7 @@ Chula v0.0.2
 :Source: http://github.com/jmcfarlane/chula/tree/v0.0.2
 
 Chula v0.0.1
-++++++++++++
+^^^^^^^^^^^^
 
 *Released 12/14/2007*
 
