@@ -1,5 +1,5 @@
-:mod:`cache` -- Wrapper module for upstream memcache.py
-=======================================================
+:mod:`chula.cache` -- Wrapper module for upstream memcache.py
+=============================================================
 
 .. index::
    single: caching
@@ -11,7 +11,7 @@
 .. module:: cache
 
 .. data:: ENCODING
-   
+
    Encoding to be used with memcache keys.  Default value is ``ASCII``
 
 .. data:: SANITIZE
@@ -19,7 +19,7 @@
    Should invalid characters in the key be removed.  Default is ``False``
 
 .. class:: Cache(servers)
-   
+
    Takes a list of two element tuples representing a memcached cluster
 
    .. staticmethod:: clean_key(key, sanitize=SANITIZE)
@@ -35,14 +35,14 @@
       Close client connection to server.
 
    .. method:: delete(key)
-      
+
       Delete *key* from the cluster, returning ``True`` if deleted,
       ``False`` if not.
 
    .. method:: get(key)
 
       Fetch the value in memcache associated with *key*.
-   
+
    .. method:: purge(key)
 
       Alias for :meth:`delete`.
@@ -53,5 +53,5 @@
       ``True`` if successfully persisted, else returns ``False``.
 
    .. method:: stats()
-      
+
       Return a ``list`` of stats per server.

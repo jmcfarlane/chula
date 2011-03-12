@@ -10,10 +10,17 @@ Welcome to Chula's documentation!
    :maxdepth: 2
 
    getting_started
-   about
-   session
    changelog
+
+In depth
+========
+
+.. toctree::
+   :maxdepth: 2
+
    library/index
+   session
+   about
 
 Indices and tables
 ==================

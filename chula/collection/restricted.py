@@ -40,9 +40,9 @@ class RestrictedCollection(base.Collection):
         """
         Prevent deletion of keys
 
-        @param key: Key to be deleted
-        @type key: String
-        @return: None
+        :param key: Key to be deleted
+        :type key: :class:`str`
+        :rtype: :class:`None`
         """
 
         if key in self.__dict__['validkeys']:
@@ -54,9 +54,8 @@ class RestrictedCollection(base.Collection):
         """
         Allow restricted attribute access
 
-        @param key: Key to be accessed
-        @type key: String
-        @return: Attribute
+        :param key: Key to be accessed
+        :type key: :class:`str`
         """
 
         if key in self.__dict__['validkeys']:
@@ -75,10 +74,10 @@ class RestrictedCollection(base.Collection):
         """
         Allow restricted attribute write access
 
-        @param key: Key to be set
-        @type key: String
-        @param value: Value of key
-        @type value: Anything
+        :param key: Key to be set
+        :type key: :class:`str`
+        :param value: Value of key
+        :type value: Anything
         """
 
         if key in self.__dict__['validkeys']:
@@ -90,7 +89,7 @@ class RestrictedCollection(base.Collection):
 
     def __delattr__(self, key):
         raise error.RestrictecCollectionKeyRemovalError(key)
-        
+
     def __getattr__(self, key):
         return self.__getitem__(key)
 
@@ -106,10 +105,10 @@ class RestrictedCollection(base.Collection):
 
     def strip(self):
         """
-        Purge I{privatekeys} from the collection.  This is useful when
+        Purge *privatekeys* from the collection.  This is useful when
         passing the collection along, without it's private keys.  This
         does actually delete the private keys, and thus acts on
-        itself.  If this isn't what you want use copy.deepcopy().
+        itself.  If this isn't what you want use :meth:`copy.deepcopy`.
         """
 
         for key in self.__dict__['privatekeys']:

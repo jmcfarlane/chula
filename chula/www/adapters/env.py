@@ -80,6 +80,11 @@ class BaseEnv(collection.RestrictedCollection):
                )
 
     def __defaults__(self):
+        """
+        Set default values.  Values set to collection.UNSET must be
+        set downstream, else we'll raise an exception.
+        """
+
         self.CONTENT_LENGTH = 0
         self.DOCUMENT_ROOT = collection.UNSET
         self.GATEWAY_INTERFACE = collection.UNSET
@@ -211,7 +216,7 @@ class BaseEnv(collection.RestrictedCollection):
                 self.form_get[key] = self.form_get[key][0]
             else:
                 self.form_get[key] = self.form_get[key]
-                
+
         # Before processing the POST variables, check for "raw" input.
         # We do this by looking at the posted keys (minus the GET
         # keys).  In the case of a raw string post, the key will

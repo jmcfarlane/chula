@@ -12,10 +12,10 @@ class ChulaException(Exception):
         """
         Create custom exception
 
-        @param msg: Default exception message
-        @type msg: String
-        @param append: Message to be appended to the exception message
-        @type append: String
+        :param msg: Default exception message
+        :type msg: :class:`str`
+        :param append: Message to be appended to the exception message
+        :type append: :class:`str`
         """
 
         self._message = None
@@ -36,8 +36,8 @@ class ChulaException(Exception):
         named "message" which will raise deprecation errors in
         Python-2.6.
 
-        @param msg: Error message to be used
-        @type msg: str
+        :param msg: Error message to be used
+        :type msg: :class:`str`
         """
 
         self._message = msg
@@ -48,9 +48,9 @@ class ChulaException(Exception):
         """
         Return the message itself
 
-        @param append: Additional info to be added to the message
-        @type append: String
-        @return: String
+        :param append: Additional info to be added to the message
+        :type append: :class:`str`
+        :return: :class:`str
         """
 
         if self.message is None:
@@ -126,16 +126,6 @@ class ControllerRedirectionError(ChulaException):
 
     def msg(self):
         return "Unable to redirect as requested"
-
-#class ExtremeDangerError(ChulaException):
-#    """
-#    Exception indicating a refusal to do something dangerous.  Usually
-#    if this exception is raised you'll be glad it saved you from doing
-#    something stupid.
-#    """
-#
-#    def msg(self):
-#        return 'Chula is not willing to perform the requested task'
 
 class InvalidAttributeError(ChulaException):
     """
@@ -222,7 +212,7 @@ class MissingDependencyError(ChulaException):
     Exception indicating a required dependency of chula is either
     missing or of an incompatible version.
     """
-    
+
     def __init__(self, _pkg, append=None):
         self.message = 'Please install: %s' % _pkg
         self.append = append

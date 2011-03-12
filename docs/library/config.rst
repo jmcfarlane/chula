@@ -1,4 +1,4 @@
-:mod:`config` -- Chula Configuration
+:mod:`chula.config` -- Configuration
 ====================================
 
 .. index::
@@ -6,7 +6,7 @@
    single: configuration
    pair: application; configuration
 
-.. module:: config
+.. module:: chula.config
 
 Chula applications read all configurations from a configuration file.
 This file holds a :class:`Config` object.  Here's an example

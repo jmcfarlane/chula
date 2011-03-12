@@ -10,6 +10,7 @@ from chula import error
 class Collection(dict):
     """
     Example usage:
+
     >>> from chula import collection
     >>> person = collection.Collection()
     >>> person.name = 'Mr. Smith'
@@ -18,7 +19,7 @@ class Collection(dict):
     >>>
     >>> print person.age
     20
-    
+
     >>> print person['timezone']
     PST
 
@@ -31,8 +32,8 @@ class Collection(dict):
         """
         Allow attribute style deletion
 
-        @param key: Key to be deleted
-        @type key: String
+        :param key: Key to be deleted
+        :type key: :class:`str`
         """
 
         self.__delitem__(key)
@@ -40,17 +41,19 @@ class Collection(dict):
     def __deepcopy__(self, memo={}):
         """
         Return a fresh copy of a Collection object
+
+        :rtype: :class:`chula.collection.Collection` (filled copy)
         """
-        
+
         return self.copy_into(self.__class__())
 
     def copy_into(self, collection):
         """
         Copy the current object into the object passed
 
-        @param collection: Object to be copied into
-        @type collection: chula.collection.Collection
-        @return: chula.collection.Collection (filled copy)
+        :param collection: Object to be copied into
+        :type collection: :class:`chula.collection.Collection`
+        :rtype: :class:`chula.collection.Collection` (filled copy)
         """
 
         for key, value in self.iteritems():
@@ -61,10 +64,9 @@ class Collection(dict):
     def __getattr__(self, key):
         """
         Allow attribute style get
-        
-        @param key: Key to be accessed
-        @type key: String
-        @return: Attribute
+
+        :param key: Key to be accessed
+        :type key: :class:`str`
         """
 
         try:
@@ -75,11 +77,11 @@ class Collection(dict):
     def __setattr__(self, key, value):
         """
         Allow attribute style set
-        
-        @param key: Key to be set
-        @type key: String
-        @param value: Value of key
-        @type value: Any
+
+        :param key: Key to be set
+        :type key: :class:`str`
+        :param value: Value of key
+        :type value: Any
         """
 
         self.__setitem__(key, value)
@@ -88,10 +90,10 @@ class Collection(dict):
         """
         Allow set via method
 
-        @param key: Key to be set
-        @type key: String
-        @param value: Value of key
-        @type value: Any
+        :param key: Key to be set
+        :type key: :class:`str`
+        :param value: Value of key
+        :type value: Any
         """
 
         self.__setitem__(key, value)
@@ -100,8 +102,8 @@ class Collection(dict):
         """
         Allow list.remove() style attribute deletion
 
-        @param key: Key/value pair to be removed
-        @type key: String
+        :param key: Key/value pair to be removed
+        :type key: :class:`str`
         """
 
         self.__delitem__(key)

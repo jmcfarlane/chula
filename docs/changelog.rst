@@ -25,7 +25,7 @@ Chula v0.9.0 (dev)
   Added :mod:`chula.www.controller.error` as a default error
   controller.  This provides basic static content handling as well as
   [crude] stack trace formatting in html when debugging is enabled.
-- Added support for :attr:`config.Config.auto_reload` to make coding
+- Added support for :attr:`chula.config.Config.auto_reload` to make coding
   even funner.
 - Improved logging.
 - Improved build process to reference build artifacts directly from
@@ -51,7 +51,7 @@ Chula v0.8.0 (stable)
   JSON transport.  This is useful for situations where you prefer to
   have payload you can actually read, and are ok with the performance
   impact.
-* Exposed :attr:`config.Config.log_level` in the config object.
+* Exposed :attr:`chula.config.Config.log_level` in the config object.
 * Improved `nosql.couch` class constructors to avoid kwargs overflow
   (`GH-18 <http://github.com/jmcfarlane/chula/issues#issue/18>`_).
 * Improved the :doc:`getting_started` documentation a bit.
@@ -103,7 +103,7 @@ Chula v0.6.0
 * When looking for :mod:`simplejson`, also try using the copy that
   ships with Django.
 * Updated the logger to not use a file handler when
-  :attr:`config.Config.log` is ``None``.
+  :attr:`chula.config.Config.log` is ``None``.
 * Fixed defect in Couchdb connection cache.
 * Performance improvements to :mod:`nosql.couch`
 
@@ -307,7 +307,8 @@ Chula v0.0.2
   pages.
 * Tweaks to improve support for static content
 * Improved reliability/accuracy of session
-* Added timer to html output (turn off with config.add_timer)
+* Added timer to html output (turn off with
+  :attr:`chula.config.Config.add_timer`)
 * Handle exception on premature client disconnection
 
 :Download: `Chula-0.0.2.tar.gz </downloads/Chula-0.0.2.tar.gz>`_
