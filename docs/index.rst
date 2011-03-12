@@ -13,7 +13,7 @@ Welcome to Chula's documentation!
    about
    session
    changelog
-   library
+   library/index
 
 Indices and tables
 ==================
