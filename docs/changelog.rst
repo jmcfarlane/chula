@@ -31,7 +31,7 @@ Chula v0.9.0 (dev)
 - Improved build process to reference build artifacts directly from
   pypi.
 - [`GH-20 <http://github.com/jmcfarlane/chula/issues#issue/20>`_]
-  Fixed :class:`chula.couch.Documents` to use ``document=value``.
+  Fixed :class:`chula.nosql.couch.Documents` to use ``document=value``.
 
 :Source: http://github.com/jmcfarlane/chula
 

@@ -17,4 +17,5 @@ Modules
    www/adapters/base
    www/adapters/env
    www/controller/base
+   www/controller/error
    www/http

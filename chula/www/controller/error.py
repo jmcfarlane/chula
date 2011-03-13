@@ -13,10 +13,16 @@ from chula.www import http
 RE_STATIC_FILE = re.compile(r'.*\.(css|gif|jpg|js|png|txt|xsl|ico|json)$')
 
 class Error(base.Controller):
+    """Default error controller."""
+
     def _crappy_static_server(self, path):
         """
         Fetch a static file from disk, changing headers and HTTP
         status as appropriate.
+
+        :param path: Path relative
+        :type path: :attr:`chula.www.adapters.env.BaseEnv.REQUEST_URI`
+        :rtype: :class:`str`
         """
 
         if self.config.htdocs is None:
@@ -41,6 +47,11 @@ class Error(base.Controller):
             return data.read()
 
     def e404(self):
+        """
+        Controller method to serve
+        :attr:`chula.www.http.HTTP_NOT_FOUND` requests.
+        """
+
         request_uri = self.env.REQUEST_URI
 
         # Support standalone mode and serve static content ourselves
@@ -56,6 +67,32 @@ class Error(base.Controller):
         return '<html><body><h1>404</h1></body></html>'
 
     def e500(self):
+        """
+        Controller method to serve
+        :attr:`chula.www.http.HTTP_INTERNAL_SERVER_ERROR` requests.
+
+        This method will add an ``exception`` key to the controller's
+        ``self.model`` with the following attributes:
+
+        .. attribute:: summary
+
+           Summery information about the exception, of type :class:`str`
+
+        .. attribute:: message
+
+           Detailed description of the exception, of type :class:`str`
+
+        .. attribute:: traceback
+
+           Traceback, of type :class:`list`
+
+        .. note::
+
+           This method creates the above structure and then returns
+           :meth:`e500_render`.  You should overload that method if
+           you want to render the exception detail differently.
+        """
+
         exception = collection.Collection()
         try:
             context = self.model.exception
@@ -94,6 +131,52 @@ class Error(base.Controller):
         return self.e500_render(self.model)
 
     def e500_render(self, model):
+        """
+        Method to render the :mod:`traceback` as html.  The intended
+        use of this method is for an application to have an `error`
+        controller that overloads this method.  This way applications
+        can share the [somewhat crazy] logic of capturing a useful
+        traceback, but render it uniquely to each application if it so
+        desires.
+
+        Here's an example error controller that might do this:
+
+        >>> from chula.www.controller import error
+        >>>
+        >>> class Error(error.Error):
+        ...     def e500_render(self):
+        ...         return self.render('/view/error.tmpl')
+        >>>
+
+        Where the controller's :func:`render` method would use
+        a Mako :class:`mako.template.Template` or something to render
+        the model.
+
+        With this type of implementation, the Mako template referenced
+        above (:file:`webapp/view/error.tmpl`) might look like::
+
+         % if not model.exception is None:
+           <br/>
+           <div class="exception">
+             <fieldset>
+               <legend>Application Error</legend>
+               <h1>Summary</h1>
+               ${model.exception['summary']}
+
+               <h1>Message</h1>
+               ${model.exception['message']}
+
+               <h1>Traceback</h1>
+               <ol>
+                 % for part in model.exception['traceback']:
+                   <li>${part | h}</li>
+                 % endfor
+               </ol>
+             </fieldset>
+           </div>
+         % endif
+        """
+
         exception = model.exception
 
         stack = ['<li>%s</li>' % cgi.escape(s) for s in exception.traceback]

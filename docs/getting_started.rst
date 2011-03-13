@@ -204,22 +204,6 @@ these.
    mod_wsgi
    mod_python
 
-Run a sample Chula application
-++++++++++++++++++++++++++++++
-
-If you would like to try the above application right now, you'd type
-this in your terminal::
-
- cd wherever_you_unpacked_the_chula_tarball
- ./scripts/chula-run apps/example/webapp
-
-At this point you should be able to point your browser at
-http://localhost:8080 and browse a hello world application that ships
-with Chula.  The actual purpose of the application is to serve as a
-way to run BAT_ tests, but it's useful for this purpose as well.
-
-Hit :kbd:`Control-c` to stop the server, and let's move on.
-
 Terminology
 +++++++++++
 
