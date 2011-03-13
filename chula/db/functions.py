@@ -4,226 +4,240 @@ import re
 
 from chula import data, error
 
-def cbool(input_):
+def cbool(string):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it
-    will return 'NULL' so as to insert a NULL value into the database.
+    will return ``NULL`` so as to insert a NULL value into the database.
 
-    @param input_: String to be cleaned
-    @type input_: String
-    @return: String I{TRUE/FALSE}, or 'NULL'
-    
+    :param string: String to be cleaned
+    :type string: :class:`str`
+    :rtype: :class:`str` ``TRUE``, ``FALSE``, or ``NULL``
+
     >>> print 'SET active = %s;' % cbool(True)
     SET active = TRUE;
+    >>>
+    >>> print 'SET active = %s;' % cbool(False)
+    SET active = FALSE;
+    >>>
+    >>> print 'SET active = %s;' % cbool(None)
+    SET active = NULL;
     """
-    
-    if input_ in [None, '']:
+
+    if string in [None, '']:
         return 'NULL'
-    
-    input_ = str(input_).lower()
-    if input_ in data.TRUE:
+
+    string = str(string).lower()
+    if string in data.TRUE:
         return 'TRUE'
 
-    elif input_ in data.FALSE:
+    elif string in data.FALSE:
         return 'FALSE'
 
     else:
-        raise error.TypeConversionError(input_, 'sql boolean')
+        raise error.TypeConversionError(string, 'sql boolean')
 
-def cdate(input_, doquote=True, isfunction=False):
+def cdate(string, doquote=True, isfunction=False):
     """
-    Returns a formatted string safe for use in SQL. If None or an empty
-    string is passed, it will return 'NULL' so as to insert a NULL value
+    Returns a formatted string safe for use in SQL. If :class:`None` or an empty
+    string is passed, it will return ``NULL`` so as to insert a NULL value
     into the database.
-    
-    B{Todo:}
-    I{This function needs to be able to receive datetime.datetime types too.}
-    
-    @param input_: Date to be cleaned
-    @type input_: String
-    @return: String, or 'NULL'
-    
+
+    .. note::
+
+       Todo: This function needs to be able to receive
+       datetime.datetime types too.
+
+    :param string: Date to be cleaned
+    :type string: :class:`str`
+    :rtype: :class:`str`, or ``NULL``
+
     >>> print 'SET updated = %s;' % cdate('1/1/2005')
     SET updated = '1/1/2005';
-    
+
     >>> print 'SET updated = %s;' % cdate('now()', isfunction=True)
     SET updated = now();
     """
-    
-    if input_ in [None, '', 'NULL']:
+
+    if string in [None, '', 'NULL']:
         return 'NULL'
 
     elif isfunction:
-        return input_
+        return string
 
     else:
-        input_ = str(input_)
-        if data.isdate(input_):
+        string = str(string)
+        if data.isdate(string):
             if doquote:
-                input_ = data.wrap(input_, "'")
+                string = data.wrap(string, "'")
         else:
-            raise error.TypeConversionError(input_, 'sql date')
+            raise error.TypeConversionError(string, 'sql date')
 
-    return input_
+    return string
 
-def cfloat(input_):
+def cfloat(flt):
     """
     Returns a formatted string safe for use in SQL. If None is passed, it
-    will return 'NULL' so as to insert a NULL value into the database.
-    
-    @param input_: Float to be cleaned
-    @type input_: Anything
-    @return: Float, or 'NULL'
-    
+    will return ``NULL`` so as to insert a NULL value into the database.
+
+    :param flt: Float to be cleaned
+    :type flt: Anything
+    :rtype: :class:`float`, or ``NULL``
+
     >>> print 'WHERE field = %s;' % cfloat("45")
     WHERE field = 45.0;
+    >>>
+    >>> print 'WHERE field = %s;' % cfloat(None)
+    WHERE field = NULL;
     """
-    
+
     # Check if the data passed is a NULL value
-    if input_ is None or str(input_).lower() == 'null' or input_ == '':
+    if flt is None or str(flt).lower() == 'null' or flt == '':
         return 'NULL'
 
-    elif isinstance(input_, float):
-        return input_
+    elif isinstance(flt, float):
+        return flt
 
     try:
-        return float(input_)
+        return float(flt)
     except:
-        raise error.TypeConversionError(input_, 'sql float')
+        raise error.TypeConversionError(flt, 'sql float')
 
-def cint(input_):
+def cint(integer):
     """
-    Returns a formatted string safe for use in SQL. If None is passed, it
-    will return 'NULL' so as to insert a NULL value into the database.
-    
-    @param input_: Integer to be cleaned
-    @type input_: Anything
-    @return: Integer, or 'NULL'
-    
+    Returns a formatted string safe for use in SQL. If :class:`None`
+    is passed, it will return ``NULL`` so as to insert a NULL value
+    into the database.
+
+    :param integer: Integer to be cleaned
+    :type integer: Anything
+    :rtype: :class:`int`, or ``NULL``
+
     >>> print 'WHERE field = %s;' % cint("45")
     WHERE field = 45;
     """
-    
+
     # Check if the data passed is a NULL value
-    if input_ is None or str(input_).lower() == 'null' or input_ == '':
+    if integer is None or str(integer).lower() == 'null' or integer == '':
         return 'NULL'
 
-    elif isinstance(input_, int):
-        return input_
+    elif isinstance(integer, int):
+        return integer
 
     try:
-        return int(input_)
+        return int(integer)
     except:
-        raise error.TypeConversionError(input_, 'sql float')
+        raise error.TypeConversionError(integer, 'sql float')
 
-def cregex(input_, doquote=True):
+def cregex(string, doquote=True):
     """
-    Returns a regular expression safe for use in SQL.  If None is
-    passed if will raise an exception as None is not a valid regular
-    expression.  The intented use is with regex based SQL expressions.
+    Returns a regular expression safe for use in SQL.  If
+    :class:`None` is passed if will raise an exception as None is not
+    a valid regular expression.  The intented use is with regex based
+    SQL expressions.
 
 
-    @param input_: Value to evaluate
-    @type input_: str
-    @param doquote: I{OPTIONAL}: Wrapped in single quotes, defaults to B{True}
-    @type doquote: bool
-    @return: str
+    :param string: Value to evaluate
+    :type string: :class:`str`
+    :param doquote: optionally wrap in single quotes, default is :class:`True`
+    :type doquote: :class:`bool`
+    :rtype: :class:`str`
     """
 
-    if data.isregex(input_):
+    if data.isregex(string):
         if doquote:
-            return data.wrap(input_, "'")
+            return data.wrap(string, "'")
         else:
-            return input_
+            return string
     else:
-        raise error.TypeConversionError(input_, 'sql regex')
+        raise error.TypeConversionError(string, 'sql regex')
 
-def cstr(input_, doquote=True, doescape=True):
+def cstr(string, doquote=True, doescape=True):
     """
-    Returns a formatted string safe for use in SQL. If None is passed, it
-    will return 'NULL' so as to insert a NULL value into the database.
-    Single quotes will be escaped.
-    
-    @param input_: String to be cleaned
-    @type input_: String
-    @param doquote: I{OPTIONAL}: Wrapped in single quotes, defaults to B{True}
-    @type doquote: bool
-    @param doescape: I{OPTIONAL}: Escape single quotes, defaults to B{True}
-    @type doescape: bool
-    @return: String, or 'NULL'
-    
+    Returns a formatted string safe for use in SQL. If :class:`None`
+    is passed, it will return ``NULL`` so as to insert a NULL value
+    into the database.  Single quotes will be escaped.
+
+    :param string: String to be cleaned
+    :type string: :class:`str`
+    :param doquote: Optionally wrap in single quotes, default is :class:`True`
+    :type doquote: bool
+    :param doescape: Optionally escape single quotes, default is :class:`True`
+    :type doescape: :class:`bool`
+    :rtype: :class:`str`, or ``NULL``
+
     >>> print 'SET description = %s;' % cstr("I don't")
     SET description = 'I don''t';
+    >>>
     >>> print 'SET now = %s;' % cstr("CURRENT_TIME", doquote=False)
     SET now = CURRENT_TIME;
     """
-    
-    if input_ is None:
+
+    if string is None:
         return 'NULL'
-    
-    input_ = str(input_) 
+
+    string = str(string)
     if doescape:
         escape = {"'":"''", "\\":"\\\\"}
-        input_ = data.replace_all(escape, input_)
+        string = data.replace_all(escape, string)
 
     if doquote:
-        return data.wrap(input_, "'")
+        return data.wrap(string, "'")
     else:
-        return input_
+        return string
 
-def ctags(input_):
+def ctags(string):
     """
     Returns a string safe for use in a sql statement
 
-    @param: input_
-    @type input_: Anything
-    @return: 'NULL', or input_ string
-    
+    :param: string
+    :type string: Anything
+    :rtype: ``NULL``, or :class:`str`
+
     >>> print ctags('')
     NULL
     >>> print ctags('linux git foo')
     'foo git linux'
     """
 
-    if input_ in [None, '']:
+    if string in [None, '']:
         return 'NULL'
-    
-    if isinstance(input_, list):
-        input_ = ' '.join(input_)
 
-    tags = data.tags2str(data.str2tags(input_))
+    if isinstance(string, list):
+        string = ' '.join(string)
+
+    tags = data.tags2str(data.str2tags(string))
     return "'%s'" % tags.lower()
 
-def empty2null(input_):
+def empty2null(string):
     """
-    Returns NULL if an empty string or None is passed, else returns the
-    input_ string.
+    Returns ``NULL`` if an empty string or :class:`None` is passed,
+    else returns the string string.
 
-    @param: input_
-    @type input_: Anything
-    @return: 'NULL', or input_ string
-    
+    :param: string
+    :type string: Anything
+    :rtype: ``NULL``, or :class:`str`
+
     >>> print empty2null('')
     NULL
     """
 
-    if input_ in [None, '']:
+    if string in [None, '']:
         return 'NULL'
     else:
-        return input_
+        return string
 
-def unquote(input_):
+def unquote(string):
     """
     Return string not padded with single quotes.  This is useful to
     clean something changed by cstr()
 
-    @param: input_
-    @type input_: str
-    @return: str, or input unchanged
+    :param: string
+    :type string: :class:`str`
+    :rtype: :class:`str`, or input unchanged
     """
 
-    if isinstance(input_, str):
-        if input_.startswith("'") and input_.endswith("'"):
-            input_ = input_[1:-1]
+    if isinstance(string, str):
+        if string.startswith("'") and string.endswith("'"):
+            string = string[1:-1]
 
-    return input_
+    return string

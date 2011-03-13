@@ -6,11 +6,16 @@ _now = time.time
 
 def guid():
     """
-    Generate a random guid 64 characters in length
+    Generate a random guid 64 characters in length.
 
-    @return: String
+    :return: :class:`str`
+
+    .. note::
+
+       This module should be removed, and callers updated to use
+       :mod:`uuid`.
     """
-    
+
     def builder():
         now = '%16f-' % _now()
         max = 64 - len(now)

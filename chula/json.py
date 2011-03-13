@@ -1,5 +1,16 @@
 """
-Wrapper to make it easy to switch from one json library to another
+Wrapper to make it easy to switch from one json library to another.
+Currently this module is searching for a json provider in the
+following order:
+
+#. :mod:`json` (builtin)
+#. simplejson
+#. simpljson (as packaged with Django)
+
+The purpose behind this module is to allow Chula to avoid having a
+static copy of a json provider (for older vesions of Python) yet still
+*work* in most cases.  If one of the above json providers cannot be
+found, a :class:`chula.error.MissingDependencyError` will be raised.
 """
 
 # Python imports

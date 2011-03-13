@@ -25,6 +25,7 @@ import chula
 # Support docs from the following external locations
 intersphinx_mapping = {
     'http://docs.python.org': None,
+    'http://packages.python.org/CouchDB': None,
 }
 
 # Add any Sphinx extension module names here, as strings. They can be extensions

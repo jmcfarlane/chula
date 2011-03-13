@@ -8,6 +8,11 @@ Modules
    collection
    config
    data
+   db/functions
+   ecalendar
    error
+   guid
+   json
+   nosql/couch
    www/adapters/base
    www/adapters/env
