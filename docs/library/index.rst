@@ -16,3 +16,5 @@ Modules
    nosql/couch
    www/adapters/base
    www/adapters/env
+   www/controller/base
+   www/http

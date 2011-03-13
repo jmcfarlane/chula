@@ -1,5 +1,5 @@
 """
-Chula adapter environment class
+Chula adapter environment class (:pep:`0333`)
 """
 
 from copy import deepcopy
@@ -245,10 +245,13 @@ class BaseEnv(collection.RestrictedCollection):
 
     def fill(self, env):
         """
-        Populate the collection with values.  Some keys contain "."
+        Populate the collection with values.  Some keys contain ``.``
         characters which would break attribute access on this
         collection.  For this reason dots will be replaced with
         underbars.
+
+        :param env: Data to update the env object from
+        :type env: :class:`dict`
         """
 
         for key, value in env.iteritems():

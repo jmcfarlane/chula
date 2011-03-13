@@ -1,4 +1,5 @@
 """
+HTTP status codes for use as variable constants.
 """
 
 HTTP_CONTINUE = 100

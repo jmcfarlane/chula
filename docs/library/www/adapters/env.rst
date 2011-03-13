@@ -6,118 +6,144 @@
    pair: base; env
 
 .. automodule:: chula.www.adapters.env
+
+.. autoclass:: chula.www.adapters.env.BaseEnv
    :members:
 
-Env variables
-+++++++++++++
+   .. attribute:: CONTENT_LENGTH
 
-REFERENCE: :pep:`0333`
-
-.. glossary::
-
-    CONTENT_LENGTH
       Document length.
 
-    DOCUMENT_ROOT
+   .. attribute:: DOCUMENT_ROOT
+
       Document root accordng to the web server.
 
-    GATEWAY_INTERFACE
+   .. attribute:: GATEWAY_INTERFACE
+
       CGI version.
 
-    HTTP_ACCEPT
+   .. attribute:: HTTP_ACCEPT
+
       http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
 
-    HTTP_ACCEPT_CHARSET
+   .. attribute:: HTTP_ACCEPT_CHARSET
+
       Accepted character sets.
 
-    HTTP_ACCEPT_ENCODING
+   .. attribute:: HTTP_ACCEPT_ENCODING
+
       The MIME types the requestor will accept as defined in the HTTP
       header e.g.
 
-    HTTP_ACCEPT_LANGUAGE
+   .. attribute:: HTTP_ACCEPT_LANGUAGE
+
       Retrieves a list of ISO languages that are set for the browser.
 
-    HTTP_CONNECTION
+   .. attribute:: HTTP_CONNECTION
+
       The type of connection as defined in the HTTP header.
 
-    HTTP_COOKIE
+   .. attribute:: HTTP_COOKIE
+
       The value of any cookie in the HTTP header. Standard cookie
       formats are defined by RFC 2965 (Set-Cookie2 header).
 
-    HTTP_HOST
+   .. attribute:: HTTP_HOST
+
       The base URL of the host.
 
-    HTTP_KEEP_ALIVE
+   .. attribute:: HTTP_KEEP_ALIVE
+
       Document...
 
-    HTTP_USER_AGENT
+
+   .. attribute:: HTTP_USER_AGENT
+
       The browser id or user-agent string identifying the browser
       (nominally defined by RFC 1945 and RFC 2068).
 
-    PATH
+   .. attribute:: PATH
+
       Operating system :envvar:`PATH` as seen by the web server.
 
-    PATH_INFO
+   .. attribute:: PATH_INFO
+
       The extra path information followin the script's path in the URL.
 
       Example: ``/foo/bar/``
 
-    QUERY_STRING
+   .. attribute:: QUERY_STRING
+
       Contains query information passed via the calling URL, following
       a question mark after the script location.
 
       Example: ``foo=bar&color=purple``
 
-    REMOTE_ADDR
+   .. attribute:: REMOTE_ADDR
+
       The IP address from which the client is issuing the request.
 
-    REMOTE_HOST
+   .. attribute:: REMOTE_HOST
+
       The name of the host from which the client issues the request.
 
-    REMOTE_PORT
+   .. attribute:: REMOTE_PORT
+
 
       The port of the host from which the client issues the request.
 
-    REQUEST_METHOD
+   .. attribute:: REQUEST_METHOD
+
       The method used for the request.
 
       Usually ``GET``, ``POST``, ``PUT`` or ``HEAD``
 
-    REQUEST_URI
+   .. attribute:: REQUEST_URI
+
       The URI for this request (relative to DOCUMENT_ROOT).
 
       Example: ``/foo/bar/?foo=bar&color=purple``
 
-    SCRIPT_FILENAME
+   .. attribute:: SCRIPT_FILENAME
+
       The path to the script being executed.
 
-    SCRIPT_NAME
+   .. attribute:: SCRIPT_NAME
+
       The file name of the script being executed (relative to DOCUMENT_ROOT).
 
-    SERVER_ADDR
+   .. attribute:: SERVER_ADDR
+
       The IP address of the server for this URL.
 
-    SERVER_ADMIN
+   .. attribute:: SERVER_ADMIN
+
       The administrators e-mail address for this SERVER_NAME.
 
-    SERVER_NAME
+   .. attribute:: SERVER_NAME
+
       The servers host name, DNS alias or IP address.
 
-    SERVER_PORT
+   .. attribute:: SERVER_PORT
+
       The port number on this server to which this request was directed.
 
-    SERVER_PROTOCOL
+   .. attribute:: SERVER_PROTOCOL
+
       The name and revision of the protocol that delivered the current
       request.
 
-    SERVER_SIGNATURE
+   .. attribute:: SERVER_SIGNATURE
+
       The HTML string that may be embedded in the page to identify
       this host.
 
-    SERVER_SOFTWARE
+   .. attribute:: SERVER_SOFTWARE
+
       The name and version of the information server answering the query.
 
-    chula_adapter
+   .. attribute:: chula_adapter
+
       The type of adapter being used to fascilitate communication
       between the Chula application and the server.  Possible values
       are:
@@ -126,22 +152,28 @@ REFERENCE: :pep:`0333`
       #. ``MOD_PYTHON``
       #. ``WSGI``
 
-    chula_class
+   .. attribute:: chula_class
+
       The Python class to which this request was directed.
 
-    chula_method
+   .. attribute:: chula_method
+
       The Python method to which this request was directed.
 
-    chula_module
+   .. attribute:: chula_module
+
       The Python module to which this request was directed.
 
-    chula_package
+   .. attribute:: chula_package
+
       The Python package to which this request was directed.
 
-    chula_version
+   .. attribute:: chula_version
+
       The version of Chula which serviced this request.
 
-    wsgi_errors
+   .. attribute:: wsgi_errors
+
         An output stream (file-like object) to which error output can
         be written, for the purpose of recording program or other
         errors in a standardized and possibly centralized location.
@@ -156,7 +188,8 @@ REFERENCE: :pep:`0333`
         recorded output. A server or gateway may supply different
         error streams to different applications, if this is desired.
 
-    wsgi_file_wrapper
+    .. attribute:: wsgi_file_wrapper
+
          A callable that accepts one required positional parameter,
          and one optional positional parameter. The first parameter is
          the file-like object to be sent, and the second parameter is
@@ -168,7 +201,8 @@ REFERENCE: :pep:`0333`
          middleware from being able to interpret or override the
          response data.)
 
-    wsgi_input
+    .. attribute:: wsgi_input
+
         An input stream (file-like object) from which the HTTP request
         body can be read. (The server or gateway may perform reads
         on-demand as requested by the application, or it may pre- read
@@ -176,75 +210,92 @@ REFERENCE: :pep:`0333`
         or use any other technique for providing such an input stream,
         according to its preference.)
 
-    wsgi_multiprocess
+    .. attribute:: wsgi_multiprocess
+
         This value should evaluate true if an equivalent application
         object may be simultaneously invoked by another process, and
         should evaluate false otherwise.
 
-    wsgi_multithread
+    .. attribute:: wsgi_multithread
+
         This value should evaluate true if the application object may
         be simultaneously invoked by another thread in the same
         process, and should evaluate false otherwise.
 
-    wsgi_run_once
+    .. attribute:: wsgi_run_once
+
         This value should evaluate true if the server or gateway
         expects (but does not guarantee!) that the application will
         only be invoked this one time during the life of its
         containing process. Normally, this will only be true for a
         gateway based on CGI (or something similar).
 
-    wsgi_url_scheme
+    .. attribute:: wsgi_url_scheme
+
         A string representing the "scheme" portion of the URL at which
         the application is being invoked. Normally, this will have the
         value "http" or "https", as appropriate.
 
-    wsgi_version
+    .. attribute:: wsgi_version
+
         The :class:`tuple` ``(1, 0)``, representing WSGI version 1.0.
 
-    ajax_uri
+    .. attribute:: ajax_uri
+
         The HTTP protocol (taking into consideration SSL) and matching
         domain name used on this request.  This variable can be used
         when authoring javascript ajax requests that must match the
         domain exactly, so as to honor XSS rules.
 
-    content_type
+    .. attribute:: content_type
+
         The value in the ``Content-Type`` HTTP header sent with this
         request.
 
-    cookies
+    .. attribute:: cookies
+
         Cookies sent to the browser with this request, of type
         :class:`str`.
 
-    debug
+    .. attribute:: debug
+
         The value currently set for :attr:`chula.config.Config.debug`.
 
-    form
+    .. attribute:: form
+
         :class:`dict` holding both HTTP GET and POST variables,
         with POST taking precidence if a key is in both.
 
-    form_get
+    .. attribute:: form_get
+
         :class:`dict` holding HTTP GET values.
 
-    form_post
+    .. attribute:: form_post
+
         :class:`dict` holding HTTP POST values.
 
-    form_raw
+    .. attribute:: form_raw
+
         :class:`str` holding raw payload (typically json or
         xml) if received.
 
-    headers
+    .. attribute:: headers
+
         :class:`list` of :class:`dict` objects to be sent as HTTP
         headers for this request.
 
-    route
+    .. attribute:: route
+
         :class:`dict` holding the Chula route information.  This is
         the collection that holds the package, module, class, and
         method routing destination.
 
-    status
+    .. attribute:: status
+
         HTTP status code.
 
-    under_construction
+    .. attribute:: under_construction
+
         :class:`bool` indicating if the application is currently under
         construction.  See
         :attr:`chula.config.Config.construction_controller` for
