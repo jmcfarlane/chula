@@ -38,15 +38,17 @@ understand now is: :attr:`Config.classpath`.
 
    .. note::
 
-      The following two attributes are **mandatory**, meaning your
+      The following attributes are **mandatory**, meaning your
       configuration must provide values for them.
 
    .. attribute:: classpath
 
-      The :attr:`classpath` option specifies a package in Python's path that
-      holds one or more Chula controllers.  The convention typically used is
-      ``project.www.controllers``.  You can use any location you like, it
-      just needs to be a valid Python package in Python's path.
+      The :attr:`classpath` option specifies a package in Python's
+      path that holds one or more Chula controllers.  The convention
+      typically used is ``controller``, which would be located in
+      :file:`webapp/controller` from a fileystem perspective.  You can
+      use any location you like, it just needs to be a valid Python
+      package in Python's path.
 
       Most applications will either be installed or use a symlink expose the
       package without actually installing it.  Another option that's handy
@@ -112,7 +114,7 @@ understand now is: :attr:`Config.classpath`.
 
       The mandatory method that must exist in this controller is
       ``index()``.  For example with the above configuration this would be
-      ``example.www.controllers.construction.Construction.index()``.
+      ``controller.construction.Construction.index()``.
 
    .. attribute:: construction_trigger
 
@@ -213,7 +215,7 @@ understand now is: :attr:`Config.classpath`.
 
       * http://localhost
 
-        1. ``example.www.controllers.home.Home.index()``
+        1. ``controller.home.Home.index()``
 
         With no :const:`env.REQUEST_URI` a direct call to the home
         controller can be made.  The home controller is named ``home``
@@ -223,9 +225,9 @@ understand now is: :attr:`Config.classpath`.
 
       * http://localhost/products
 
-        1. ``example.www.controllers.products.Products.index()``
-        #. ``example.www.controllers.home.Home.products()``
-        #. ``example.www.controllers.error.Error.e404()``
+        1. ``controller.products.Products.index()``
+        #. ``controller.home.Home.products()``
+        #. ``controller.error.Error.e404()``
 
         When there is a single part this can either be a specified
         controller (and an assumed method) or this could be a specified
@@ -233,16 +235,16 @@ understand now is: :attr:`Config.classpath`.
 
       * http://localhost/products/dog
 
-        1. ``example.www.controllers.products.Products.Dog()``
-        #. ``example.www.controllers.error.Error.e404()``
+        1. ``controller.products.Products.Dog()``
+        #. ``controller.error.Error.e404()``
 
         When there are two parts, it must be a specified controller and
         method.
 
       * http://localhost/products/dog/small
 
-        1. ``example.www.controllers.products.dog.Dog.index()``
-        #. ``example.www.controllers.error.Error.e404()``
+        1. ``controller.products.dog.Dog.index()``
+        #. ``controller.error.Error.e404()``
 
         When there are more than two parts, it must be fully qualified,
         meaning a package(s), module, and controller.
@@ -268,7 +270,7 @@ understand now is: :attr:`Config.classpath`.
       will expect all actual controller classes to have an upper cased
       first letter, and the parens on the method are implied.  So
       using the last map in the map above, the actual class/method
-      used would be: ``example.www.controllers.auth.Auth.logout()``
+      used would be: ``controller.auth.Auth.logout()``
 
    .. attribute: mqueue_db
 
