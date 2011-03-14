@@ -45,7 +45,11 @@ if json_provider is None:
     msg = 'Simplejson, or Python >=2.6'
     raise error.MissingDependencyError(msg)
 
-# Expose the two methods we care about
+# Expose the native methods you'd expect
+dumps = json_provider.dumps
+loads = json_provider.loads
+
+# Expose legacy methods
 decode = json_provider.loads
 encode = json_provider.dumps
 

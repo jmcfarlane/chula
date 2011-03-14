@@ -14,6 +14,7 @@ Modules
    guid
    json
    nosql/couch
+   webservice
    www/adapters/base
    www/adapters/env
    www/controller/base

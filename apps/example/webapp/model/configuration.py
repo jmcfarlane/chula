@@ -21,18 +21,20 @@ if 'CHULA_REGEX_MAPPER' in os.environ:
         (r'^/sample/page/?$', 'sample.page'),
 
         # Bad imports
-        (r'^/bad_import/index/?$',
-          'bad_import.index'),
+        (r'^/bad_import/index/?$', 'bad_import.index'),
 
         # Controller raising exceptions
-        (r'^/global_exception/index/?$',
-          'global_exception.index'),
+        (r'^/global_exception/index/?$', 'global_exception.index'),
 
         # Controller with syntax errors
-        (r'^/syntax_exception/index/?$',
-          'syntax_exception.index'),
+        (r'^/syntax_exception/index/?$', 'syntax_exception.index'),
 
         # Controller with runtime errors
-        (r'^/runtime_exception/index/?$',
-          'runtime_exception.index'),
+        (r'^/runtime_exception/index/?$', 'runtime_exception.index'),
+
+        # Webservice test methods
+        (r'^/webservice/ascii/?$', 'webservice.ascii'),
+        (r'^/webservice/pickle/?$', 'webservice.pickle'),
+        (r'^/webservice/simple_json/?$', 'webservice.simple_json'),
+        (r'^/webservice/xjson/?$', 'webservice.xjson'),
     )

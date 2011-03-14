@@ -51,21 +51,21 @@ class Transport(collection.RestrictedCollection):
         webservice usage to be controlled either at creation or
         runtime (kwargs, http args).
 
+        :param kwargs: The collection of key=value arguments
+        :type keyargs: Dict
+        :param arg: The specific argument to be used
+        :type arg: String
+        :param default: The default value
+        :type: default: Boolean
+
         The algorithm used is:
             1. Fetch from HTTP GET variables
             2. Fetch from HTTP POST variables
-            3. Fetch from **kwargs passed in the decorated method
+            3. Fetch from ``kwargs`` passed in the decorated method
             4. Use the default value set in the transport
 
         Currently supported keyword arguments:
             - x_header: Should the HTTP X-JSON header be used for payload
-
-        @param kwargs: The collection of key=value arguments
-        @type keyargs: Dict
-        @param arg: The specific argument to be used
-        @type arg: String
-        @param default: The default value
-        @type: default: Boolean
         """
 
         # The default then update with the desired algorithm
@@ -81,6 +81,17 @@ class Transport(collection.RestrictedCollection):
         retval = controller.env.form_get.get(arg, retval)
 
         return retval
+
+    def encode(self, **kwargs):
+        """
+        Each transport child class overloads this method to encode the
+        supplied payload, into the appropriate transport encoding.
+        For example when the transport is JSON, this method (defined
+        in the subclass) will take the payload and :func:`json.dumps`
+        it.
+        """
+
+        raise NotImplementedError('Subclasses must overload this method')
 
 class JSON(Transport):
     """
@@ -119,7 +130,7 @@ class PICKLE(Transport):
         """
         Encode the transport into a Python pickled string
         """
-        
+
         self.controller.content_type = 'text/plain'
         return cPickle.dumps(dict(self.strip()))
 
@@ -132,7 +143,7 @@ class ASCII(Transport):
         """
         Encode the transport into an acii string
         """
-        
+
         payload = str(self.data)
         self.controller.content_type = 'text/plain'
 
@@ -155,20 +166,160 @@ class Transports(object):
 def expose(**kwargs):
     """
     Decorator for exposing a method as a web service.  It takes a list
-    of keyword arguments which are passed to the webservice encoding()
-    method for use with making decisions.  For example:
+    of keyword arguments which are passed to the transport
+    :meth:`chula.webservice.Transport.encode` method for use with
+    making decisions.  This is best illustrated with a few examples:
 
-        @webservice.expose(x_header=True)
-        def foo(self):
-            pass
-    
-    will cause services using JSON as a transport to include the
-    payload in a X-JSON HTTP header rather than the actual body.  You
-    can also set these via HTTP GET arguments. See
-    chula.webservice.Transport.__default__() for more information.
+    :param transport: Desired transpoort
+    :type transport: :class:`str`, default is ``JSON``
+    :param x_header: Should json payload use the HTTP X-JSON header
+    :type x_header: :class:`bool`, default is ``False``
+    :rtype: Decorator, see: :pep:`318`
+
+    **Simple JSON web service method:**
+
+    >>> from chula import webservice
+    >>> from chula.www.controller import base
+    >>>
+    >>> class Webservice(base.Controller):
+    ...     @webservice.expose()
+    ...     def simple_json(self):
+    ...         return {'some':'payload'}
+    >>>
+
+    ... Calling this webservice will look something like:
+
+    >>> import json, urllib2
+    >>>
+    >>> url = 'http://localhost:8080/webservice/simple_json'
+    >>> payload = json.loads(urllib2.urlopen(url).read())
+    >>> payload.keys()
+    [u'msg', u'exception', u'data', u'success']
+    >>> payload['success']
+    True
+    >>> payload['data']
+    {u'some': u'payload'}
+
+    ... You can also call this method with some GET args:
+
+    >>> import json, urllib2
+    >>>
+    >>> url = 'http://localhost:8080/webservice/simple_json?indent=2'
+    >>> pretty_json = urllib2.urlopen(url).read()
+
+    **A webservice that breaks, will always return valid payload:**
+
+    >>> from chula import webservice
+    >>> from chula.www.controller import base
+    >>>
+    >>> class Webservice(base.Controller):
+    ...     @webservice.expose()
+    ...     def broken(self):
+    ...         return 0 / 0
+    >>>
+
+    ... Calling this webservice will look something like:
+
+    >>> import json, urllib2
+    >>>
+    >>> url = 'http://localhost:8080/webservice/broken'
+    >>> payload = json.loads(urllib2.urlopen(url).read())
+    >>> payload['success']
+    False
+    >>> payload['exception']
+    u'integer division or modulo by zero'
+
+    **JSON web service method that uses the X-JSON HTTP header:**
+
+    >>> from chula import webservice
+    >>> from chula.www.controller import base
+    >>>
+    >>> class Webservice(base.Controller):
+    ...     @webservice.expose(x_header=True)
+    ...     def xjson(self):
+    ...         return {'some':'payload'}
+    >>>
+
+    ... Calling this webservice will look something like:
+
+    >>> import json, urllib2
+    >>>
+    >>> url = 'http://localhost:8080/webservice/xjson'
+    >>> payload = json.loads(urllib2.urlopen(url).info().get('X-JSON'))
+    >>> payload.keys()
+    [u'msg', u'exception', u'data', u'success']
+    >>> payload['success']
+    True
+    >>> payload['data']
+    {u'some': u'payload'}
+
+    **PICKLE web service method:**
+
+    >>> from chula import webservice
+    >>> from chula.www.controller import base
+    >>>
+    >>> class Webservice(base.Controller):
+    ...     @webservice.expose(transport='PICKLE')
+    ...     def pickle(self):
+    ...         return {'some':'payload'}
+    >>>
+
+    ... Calling this webservice will look something like:
+
+    >>> import cPickle, urllib2
+    >>>
+    >>> url = 'http://localhost:8080/webservice/pickle'
+    >>> payload = cPickle.loads(urllib2.urlopen(url).read())
+    >>> payload.keys()
+    ['msg', 'exception', 'data', 'success']
+    >>> payload['success']
+    True
+    >>> payload['data']
+    {'some': 'payload'}
+
+    .. note::
+
+       Using a :mod:`cPickle` transport will provide more "native"
+       encoding.  This method maintains the non unicode encoded
+       string.  Contrast this with the json transport which results in
+       unicode encoded strings as a by product of json dumps/loads.
+
+    .. note::
+
+       It's also true that while :mod:`cPickle` is not portable to non
+       Python clients, it's **way** faster, by orders of magnitude.
+
+    **ASCII web service method:**
+
+    >>> from chula import webservice
+    >>> from chula.www.controller import base
+    >>>
+    >>> class Foo(base.Controller):
+    ...     @webservice.expose(transport='ASCII')
+    ...     def foo(self):
+    ...         return {'some':'payload'}
+    >>>
+
+    This isn't super usefull, but say you the client is
+    :program:`curl` or something, this might actually be easiser to
+    work with.
+
+    .. note::
+
+       **Client's can also specify the transport they want:**
+
+    >>> import json, urllib2
+    >>>
+    >>> url = 'http://localhost:8080/webservice/pickle?transport=json'
+    >>> payload = json.loads(urllib2.urlopen(url).read())
+    >>> payload.keys()
+    [u'msg', u'exception', u'data', u'success']
+
+    Notice here that the webservice itself was configured to use the
+    pickle transport, but the client specifically asked for json :)
     """
 
-    def decorator(fcn): 
+    def decorator(fcn):
         def wrapper(self):
             transport = Transport.__default__(self,
                                               kwargs,
