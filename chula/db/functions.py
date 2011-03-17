@@ -13,13 +13,14 @@ def cbool(string):
     :type string: :class:`str`
     :rtype: :class:`str` ``TRUE``, ``FALSE``, or ``NULL``
 
-    >>> print 'SET active = %s;' % cbool(True)
+    >>> from chula.db import functions
+    >>> print 'SET active = %s;' % functions.cbool(True)
     SET active = TRUE;
     >>>
-    >>> print 'SET active = %s;' % cbool(False)
+    >>> print 'SET active = %s;' % functions.cbool(False)
     SET active = FALSE;
     >>>
-    >>> print 'SET active = %s;' % cbool(None)
+    >>> print 'SET active = %s;' % functions.cbool(None)
     SET active = NULL;
     """
 
@@ -51,10 +52,11 @@ def cdate(string, doquote=True, isfunction=False):
     :type string: :class:`str`
     :rtype: :class:`str`, or ``NULL``
 
-    >>> print 'SET updated = %s;' % cdate('1/1/2005')
+    >>> from chula.db import functions
+    >>> print 'SET updated = %s;' % functions.cdate('1/1/2005')
     SET updated = '1/1/2005';
 
-    >>> print 'SET updated = %s;' % cdate('now()', isfunction=True)
+    >>> print 'SET updated = %s;' % functions.cdate('now()', isfunction=True)
     SET updated = now();
     """
 
@@ -83,10 +85,11 @@ def cfloat(flt):
     :type flt: Anything
     :rtype: :class:`float`, or ``NULL``
 
-    >>> print 'WHERE field = %s;' % cfloat("45")
+    >>> from chula.db import functions
+    >>> print 'WHERE field = %s;' % functions.cfloat("45")
     WHERE field = 45.0;
     >>>
-    >>> print 'WHERE field = %s;' % cfloat(None)
+    >>> print 'WHERE field = %s;' % functions.cfloat(None)
     WHERE field = NULL;
     """
 
@@ -112,7 +115,8 @@ def cint(integer):
     :type integer: Anything
     :rtype: :class:`int`, or ``NULL``
 
-    >>> print 'WHERE field = %s;' % cint("45")
+    >>> from chula.db import functions
+    >>> print 'WHERE field = %s;' % functions.cint("45")
     WHERE field = 45;
     """
 
@@ -165,10 +169,11 @@ def cstr(string, doquote=True, doescape=True):
     :type doescape: :class:`bool`
     :rtype: :class:`str`, or ``NULL``
 
-    >>> print 'SET description = %s;' % cstr("I don't")
+    >>> from chula.db import functions
+    >>> print 'SET description = %s;' % functions.cstr("I don't")
     SET description = 'I don''t';
     >>>
-    >>> print 'SET now = %s;' % cstr("CURRENT_TIME", doquote=False)
+    >>> print 'SET now = %s;' % functions.cstr("CURRENT_TIME", doquote=False)
     SET now = CURRENT_TIME;
     """
 
@@ -193,9 +198,10 @@ def ctags(string):
     :type string: Anything
     :rtype: ``NULL``, or :class:`str`
 
-    >>> print ctags('')
+    >>> from chula.db import functions
+    >>> print functions.ctags('')
     NULL
-    >>> print ctags('linux git foo')
+    >>> print functions.ctags('linux git foo')
     'foo git linux'
     """
 
@@ -217,7 +223,8 @@ def empty2null(string):
     :type string: Anything
     :rtype: ``NULL``, or :class:`str`
 
-    >>> print empty2null('')
+    >>> from chula.db import functions
+    >>> print functions.empty2null('')
     NULL
     """
 

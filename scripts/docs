@@ -22,7 +22,13 @@ if [ -f "$dest/searchindex.js" ]; then
 fi
 
 # Generate documentation
-sphinx-build -E -b html docs $dest
+sphinx-build -q -E -b doctest docs $dest
+if [ $? == 0 ]; then
+    sphinx-build -q -E -b html docs $dest
+else
+    echo "Doctest checks failed, fix and try again."
+    exit 1
+fi
 
 # Print browsable path
 echo

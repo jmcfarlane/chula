@@ -52,8 +52,8 @@ Useful attributes
    ...     def http_get_variables(self):
    ...         html = []
    ...         html.append('<ul>')
-   ...             for key, value in self.env.form_get.iteritems():
-   ...                 html.append('<li>%s = %s</li>' % (key, value))
+   ...         for key, value in self.env.form_get.iteritems():
+   ...             html.append('<li>%s = %s</li>' % (key, value))
    ...         html.append('</ul>')
    ...         return ''.join(html)
    >>>
@@ -66,8 +66,8 @@ Useful attributes
    ...     def http_get_variables(self):
    ...         html = []
    ...         html.append('<ul>')
-   ...             for key, value in self.env.form_post.iteritems():
-   ...                 html.append('<li>%s = %s</li>' % (key, value))
+   ...         for key, value in self.env.form_post.iteritems():
+   ...             html.append('<li>%s = %s</li>' % (key, value))
    ...         html.append('</ul>')
    ...         return ''.join(html)
    >>>
@@ -97,8 +97,8 @@ Useful attributes
    ...     def form_variables(self):
    ...         html = []
    ...         html.append('<ul>')
-   ...             for key, value in self.form.iteritems():
-   ...                 html.append('<li>%s = %s</li>' % (key, value))
+   ...         for key, value in self.form.iteritems():
+   ...             html.append('<li>%s = %s</li>' % (key, value))
    ...         html.append('</ul>')
    ...         return ''.join(html)
    >>>

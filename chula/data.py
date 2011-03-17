@@ -22,7 +22,8 @@ def commaify(string):
     :type string: :class:`int` or :class:`str`
     :rtype: :class:`str`
 
-    >>> print commaify('45000000000')
+    >>> from chula import data
+    >>> print data.commaify('45000000000')
     45,000,000,000
     """
 
@@ -56,8 +57,9 @@ def date_add(unit, delta, date):
     :type date: :class:`datetime.datetime`
     :rtype: :class:`datetime.datetime`
 
-    >>> start = str2date('1/1/2005 11:35')
-    >>> print date_add('days', -5, start)
+    >>> from chula import data
+    >>> start = data.str2date('1/1/2005 11:35')
+    >>> print data.date_add('days', -5, start)
     2004-12-27 11:35:00
     """
 
@@ -90,11 +92,12 @@ def date_diff(start, stop, unit='seconds'):
     :type unit: :class:`str`
     :rtype: :class:`int` (defaults to seconds, if unit not passed)
 
-    >>> start = str2date('1/1/2005')
-    >>> stop = str2date('1/5/2005')
-    >>> print date_diff(start, stop)
+    >>> from chula import data
+    >>> start = data.str2date('1/1/2005')
+    >>> stop = data.str2date('1/5/2005')
+    >>> print data.date_diff(start, stop)
     345600.0
-    >>> print date_diff(start, stop, 'd')
+    >>> print data.date_diff(start, stop, 'd')
     4.0
     """
 
@@ -144,9 +147,10 @@ def date_within_range(time, offset, now=None):
     :type now: :class:`datetime.datetime`
     :rtype: :class:`bool`
 
-    >>> print date_within_range('11:00', 30, str2date('1/1/2005 11:25'))
+    >>> from chula import data
+    >>> data.date_within_range('11:00', 30, data.str2date('1/1/2005 11:25'))
     True
-    >>> print date_within_range('11:00', 30, str2date('1/1/2005 11:35'))
+    >>> data.date_within_range('11:00', 30, data.str2date('1/1/2005 11:35'))
     False
     """
 
@@ -198,7 +202,8 @@ def format_phone(string):
     :type string: :class:`str`
     :rtype: :class:`str` formatted as: (area) exchange-number
 
-    >>> print format_phone('555-123-1234')
+    >>> from chula import data
+    >>> print data.format_phone('555-123-1234')
     (555) 123-1234
     """
 
@@ -227,9 +232,10 @@ def format_money(amount):
     :type amount: :class:`float`, :class:`int`
     :rtype: :class:`str`
 
-    >>> print format_money(15000)
+    >>> from chula import data
+    >>> print data.format_money(15000)
     15,000.00
-    >>> print format_money(15000.100030)
+    >>> print data.format_money(15000.100030)
     15,000.10
     """
 
@@ -249,9 +255,10 @@ def isdate(string):
     :type string: :class:`str`
     :rtype: :class:`bool`
 
-    >>> print isdate('1/1/2005')
+    >>> from chula import data
+    >>> print data.isdate('1/1/2005')
     True
-    >>> print isdate('1/41/2005')
+    >>> print data.isdate('1/41/2005')
     False
     """
     try:
@@ -271,9 +278,10 @@ def isregex(string):
     :type string: :class:`str`
     :rtype: :class:`bool`
 
-    >>> print isregex(r'.*')
+    >>> from chula import data
+    >>> print data.isregex(r'.*')
     True
-    >>> print isregex(r'[')
+    >>> print data.isregex(r'[')
     False
     """
 
@@ -294,9 +302,10 @@ def istag(string, regexp=None):
     :type regexp: Valid regular expression :class:`str`
     :rtype: :class:`bool`
 
-    >>> print istag('foo')
+    >>> from chula import data
+    >>> print data.istag('foo')
     True
-    >>> print istag('foo!!')
+    >>> print data.istag('foo!!')
     False
     """
 
@@ -321,11 +330,12 @@ def istags(string, regexp=None):
     :type regexp: Valid regular expression :class:`str`
     :rtype: :class:`bool`
 
-    >>> print istags('foo bar')
+    >>> from chula import data
+    >>> print data.istags('foo bar')
     True
-    >>> print istags('foo, bar')
+    >>> print data.istags('foo, bar')
     True
-    >>> print istags('foo!! bar')
+    >>> print data.istags('foo!! bar')
     False
     """
 
@@ -348,9 +358,10 @@ def none2empty(string):
     :type string: :class:`str`
     :rtype: Empty :class:`str` or value passed
 
-    >>> print none2empty([1])
+    >>> from chula import data
+    >>> print data.none2empty([1])
     [1]
-    >>> if none2empty(None) == '':
+    >>> if data.none2empty(None) == '':
     ...     print True
     True
     """
@@ -370,7 +381,8 @@ def replace_all(subs, string):
     :type string: :class:`str`
     :rtype: :class:`str`
 
-    >>> print replace_all({'l':'1', 'o':'0'}, "Hello world")
+    >>> from chula import data
+    >>> print data.replace_all({'l':'1', 'o':'0'}, "Hello world")
     He110 w0r1d
     """
 
@@ -392,9 +404,10 @@ def str2bool(string):
     :type string: :class:`str`
     :rtype: :class:`bool`
 
-    >>> str2bool(True)
+    >>> from chula import data
+    >>> data.str2bool(True)
     True
-    >>> str2bool('on')
+    >>> data.str2bool('on')
     True
     """
 
@@ -419,7 +432,8 @@ def str2date(string):
     :type string: :class:`str`, or :class:`None`
     :rtype: :class:`datetime.datetime`
 
-    >>> print str2date("10/4/2005 21:45")
+    >>> from chula import data
+    >>> print data.str2date("10/4/2005 21:45")
     2005-10-04 21:45:00
 
     .. NOTE::
@@ -485,7 +499,8 @@ def str2tags(string):
     :type string: :class:`str`
     :rtype: :class:`list`
 
-    >>> print str2tags('linux good ms annoying linux good')
+    >>> from chula import data
+    >>> print data.str2tags('linux good ms annoying linux good')
     ['annoying', 'good', 'linux', 'ms']
     """
 
@@ -518,10 +533,11 @@ def str2unicode(retval, encoding='utf8', errors='ignore'):
     :type: :class:`str` (valid values: 'strict', 'replace', 'ignore')
     :rtype: :class:`str`
 
-    >>> print str2unicode('abc')
+    >>> from chula import data
+    >>> print data.str2unicode('abc')
     abc
 
-    >>> unicode('a').encode('utf-8') is str2unicode('a')
+    >>> unicode('a').encode('utf-8') is data.str2unicode('a')
     True
     """
 
@@ -540,7 +556,8 @@ def wrap(string, wrap):
     :type wrap: :class:`str`
     :rtype: :class:`str`
 
-    >>> print wrap('sql', "'")
+    >>> from chula import data
+    >>> print data.wrap('sql', "'")
     'sql'
     """
 
@@ -556,7 +573,8 @@ def tags2str(tags):
     :type tags: :class:`list`
     :rtype: :class:`list`
 
-    >>> print tags2str(['annoying', 'good', 'linux', 'ms'])
+    >>> from chula import data
+    >>> print data.tags2str(['annoying', 'good', 'linux', 'ms'])
     annoying good linux ms
     """
 
