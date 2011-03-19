@@ -41,18 +41,20 @@ class Logger(object):
             fh.setFormatter(logging.Formatter(fmt))
             logger.addHandler(fh)
 
-        # Create console handler for DEBUG and above (stderr)
-        if config.debug:
+        # Create file handler for DEBUG and above
+        if config.debug and config.log:
             fmt = ('%(levelname)-9s'
                    '%(name)-35s'
                    '%(filename)-15s'
                    '%(lineno)-5d'
                    '%(message)s'
                   )
-            ch = logging.StreamHandler()
-            ch.setLevel(config.log_level - 20)
-            ch.setFormatter(logging.Formatter(fmt))
-            logger.addHandler(ch)
+            fh = RotatingFileHandler(config.log + '.debug',
+                                     maxBytes=104857600,
+                                     backupCount=5)
+            fh.setLevel(config.log_level - 20)
+            fh.setFormatter(logging.Formatter(fmt))
+            logger.addHandler(fh)
 
     def logger(self, name=ROOT):
         if not name.startswith(ROOT):

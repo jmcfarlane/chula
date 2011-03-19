@@ -100,7 +100,10 @@ def run():
     try:
         print 'Starting server on: http://localhost:%s' % port
         if 'log' in app_config:
-            print 'Errors being logged to:', app_config.log
+            print 'Errors log:', app_config.log
+            if app_config.debug:
+                print 'Debug log: ', app_config.log + '.debug'
+
         httpd.serve_forever()
     except KeyboardInterrupt:
         sys.exit()
