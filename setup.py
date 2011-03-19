@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from setuptools import setup, find_packages
+from distutils.core import setup
 import os
 import sys
 
@@ -28,6 +28,11 @@ from chula import error
 if 'install' in sys.argv:
     if sys.version_info < (2, 6):
         raise error.MissingDependencyError('Python-2.6 or higher')
+
+def find_packages():
+    for root, dirs, files in os.walk('chula'):
+        if '__init__.py' in files:
+            yield root.replace(os.path.sep, '.')
 
 # Attributes
 AUTHOR = 'John McFarlane'
@@ -61,7 +66,7 @@ setup(
     license = LICENSE,
     long_description = '\n'.join(chula.__doc__.split('\n')[2:]),
     name = NAME,
-    packages = find_packages(),
+    packages = list(find_packages()),
     scripts = ['scripts/chula-run'],
     test_suite = TESTS,
     url = URL,

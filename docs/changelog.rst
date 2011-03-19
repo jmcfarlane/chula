@@ -27,6 +27,7 @@ Chula v0.9.0 (dev)
   [crude] stack trace formatting in html when debugging is enabled.
 - Added support for :attr:`chula.config.Config.auto_reload` to make coding
   even funner.
+- Removed dependency on setuptools, now we only use :mod:`distutils`.
 - [`GH-16 <http://github.com/jmcfarlane/chula/issues#issue/16>`_]
   Improved logging.  Both error and debug logging use files.  This
   fixes the long standing stderr blocking issue.
