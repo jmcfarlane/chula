@@ -48,11 +48,9 @@ Topic :: Software Development
 Topic :: Software Development :: Libraries :: Python Modules
 """
 EMAIL = 'john.mcfarlane@rockfloat.com'
-INSTALL_REQUIRES = []
 LICENSE = 'GPL'
 NAME = 'Chula'
 PYPI = 'http://pypi.python.org/packages/source/C/Chula'
-TESTS = 'tests'
 URL = 'http://chula.rockfloat.com'
 ZIP_SAFE = True
 
@@ -62,14 +60,11 @@ setup(
     classifiers = [c for c in CLASSIFIERS.split('\n') if c],
     description = chula.__doc__.split('\n')[0],
     download_url = '%s/Chula-%s.tar.gz' % (PYPI, chula.version),
-    install_requires = INSTALL_REQUIRES,
     license = LICENSE,
     long_description = '\n'.join(chula.__doc__.split('\n')[2:]),
     name = NAME,
     packages = list(find_packages()),
     scripts = ['scripts/chula-run'],
-    test_suite = TESTS,
     url = URL,
-    version = chula.version,
-    zip_safe = ZIP_SAFE
+    version = chula.version
 )
