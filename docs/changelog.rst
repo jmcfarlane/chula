@@ -12,10 +12,10 @@ Changelog
 
  :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.9.0 (dev)
-++++++++++++++++++
+Chula v0.9.0
+++++++++++++
 
-*Still under development*
+*Released 2011-03-24*
 
 - Added :program:`chula-run` to serve a Chula application using
   Python's reference :mod:`wsgiref.simple_server`.  Remember this is
@@ -36,7 +36,10 @@ Chula v0.9.0 (dev)
 - [`GH-20 <http://github.com/jmcfarlane/chula/issues#issue/20>`_]
   Fixed :class:`chula.nosql.couch.Documents` to use ``document=value``.
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.9.0 </0.9.0/>`_
+:Download: `</downloads/Chula-0.9.0.tar.gz>`_
+:Download: `</downloads/Chula-0.9.0.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.9.0
 
 Chula v0.8.0 (stable)
 +++++++++++++++++++++
