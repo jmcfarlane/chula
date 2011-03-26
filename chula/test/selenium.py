@@ -7,7 +7,6 @@ import unittest
 from chula.vendor import selenium as upstream
 
 KEY_ENTER = '10'
-UNSET = 'UNSET'
 
 class TestCase(unittest.TestCase):
     def __init__(self, methodName):
@@ -16,23 +15,23 @@ class TestCase(unittest.TestCase):
         # Member variables
         self.browser = '*firefox'
         self.max_wait = 15 * 1000
-        self.remote_control_port = 4444
-        self.remote_control = 'localhost'
+        self.rc = 'localhost'
+        self.rc_port = 4444
         self.speed = 0
         self.target = 'http://localhost'
 
         # Fill any attributes from the environment
-        for key in os.environ:
-            if getattr(self, key, None) is UNSET:
-                setattr(self, key, os.environ[key])
+        for key, value in os.environ.iteritems():
+            setattr(self, key, value)
 
         # Cast a few types
-        self.speed = int(self.speed)
         self.max_wait = int(self.max_wait)
+        self.rc_port = int(self.rc_port)
+        self.speed = int(self.speed)
 
     def setUp(self):
-        self.selenium = upstream.selenium(self.remote_control,
-                                          self.remote_control_port,
+        self.selenium = upstream.selenium(self.rc,
+                                          self.rc_port,
                                           self.browser,
                                           self.target)
 
@@ -42,7 +41,7 @@ class TestCase(unittest.TestCase):
         # Start a session on the remote control, slow things down a little
         self.selenium.start()
         self.selenium.set_speed(int(self.speed))
-        
+
     def tearDown(self):
         self.selenium.stop()
 
