@@ -3,7 +3,9 @@ Chula base adapter for all supported web adapters
 """
 
 from copy import deepcopy
+import os
 import re
+import sys
 import time
 
 import chula
@@ -12,7 +14,8 @@ from chula.www import cookie
 from chula.www.mapper import ClassPathMapper
 from chula.www.mapper import RegexMapper
 
-RE_HTML = re.compile(r"</body>\s*</html>\s*$", re.IGNORECASE)
+RE_HTML = re.compile(r'</body>\s*</html>\s*$', re.IGNORECASE)
+RE_REQ = re.compile(r'(chula|fastcgi|mod_python|wsgi)')
 
 class BaseAdapter(object):
     def __init__(self, config):
@@ -21,8 +24,8 @@ class BaseAdapter(object):
 
         self.controller = None
         self.log = logger.Logger(config).logger('chula.www.adapters.base')
-
         self.mapper = None
+        self._reload_all_modules()
 
     def _gc(self):
         del self.config
@@ -30,6 +33,17 @@ class BaseAdapter(object):
         del self.env
         del self.mapper
         del self.timer
+
+    def _reload_all_modules(self):
+        if not self.config.auto_reload:
+            return
+
+        for k, v in sys.modules.items():
+            pyc = getattr(v, '__file__', None)
+
+            if pyc and os.access(pyc, os.W_OK) and not RE_REQ.search(repr(v)):
+                del sys.modules[k]
+                self.log.debug('Unloaded module: %s' % k)
 
     def exception(self, controller, ex):
         # Prepare a collection to hold exception context

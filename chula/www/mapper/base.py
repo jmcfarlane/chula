@@ -4,7 +4,6 @@ class can be subclassed to customize the url mapping behavior.
 """
 
 # Python imports
-import imp
 import os
 
 # Project imports
@@ -74,22 +73,7 @@ class BaseMapper(object):
         msg = "%s - %s [Route being used: %s]"
 
         try:
-            # Import the controller.  If reloading is enabled, then
-            # use imp so it gets reloaded fresh.  This is more
-            # complicated as imp doesn't support dot notation, so we
-            # have to walk the namespace ourselves.
-            if self.config.auto_reload:
-                parent_path = None
-                for i, part in enumerate(path.split('.')):
-                    if i > 0:
-                        parent_path = importee.__path__
-
-                    file, pathname, descr = imp.find_module(part, parent_path)
-                    importee = imp.load_module(part, file, pathname, descr)
-                    if not '__init__.py' in importee.__file__:
-                        return importee
-            else:
-                return __import__(path, globals(), locals(), [class_name])
+            return __import__(path, globals(), locals(), [class_name])
 
             # Better safe than sorry
             raise ImportError('Unable to import: %s' % path)

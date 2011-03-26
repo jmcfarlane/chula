@@ -17,10 +17,15 @@ Chula v0.10.0 (dev)
 
 *Still under development*
 
+- Switched the :attr:`chula.config.Config.auto_reload` logic to fully
+  reload everything.  Previously there were situations where
+  code imported by model classes was not getting reloaded.  **This is
+  currently experimental, and might eat your computer**.
+
 :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.9.0
-++++++++++++
+Chula v0.9.0 (latest)
++++++++++++++++++++++
 
 *Released 2011-03-24*
 
