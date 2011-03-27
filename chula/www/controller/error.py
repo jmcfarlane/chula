@@ -64,6 +64,27 @@ class Error(base.Controller):
         # The url doesn't seem to be supported
         self.env.status = http.HTTP_NOT_FOUND
 
+        return self.e404_render()
+
+    def e404_render(self):
+        """
+        Method to render the 404.  The intended use of this method is
+        for an application to have an `error` controller that
+        overloads this method.  This way applications can share the
+        [somewhat crazy] logic of serving static resources (css, js),
+        but still have a custom 404 page (if the web server isn't
+        doing this).
+
+        Here's an example error controller that might do this:
+
+        >>> from chula.www.controller import error
+        >>>
+        >>> class Error(error.Error):
+        ...     def e404_render(self):
+        ...         return self.render('/view/e404.tmpl')
+        >>>
+        """
+
         return '<html><body><h1>404</h1></body></html>'
 
     def e500(self):
