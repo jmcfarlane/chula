@@ -1,5 +1,6 @@
 # Python imports
 import cgi
+import mimetypes
 import os
 import re
 import sys
@@ -10,7 +11,7 @@ from chula import collection
 from chula.www.controller import base
 from chula.www import http
 
-RE_STATIC_FILE = re.compile(r'.*\.(css|gif|jpg|js|png|txt|xsl|ico|json)$')
+RE_STATIC_FILE = re.compile(r'.*\.([a-zA-Z0-9]+)$')
 
 class Error(base.Controller):
     """Default error controller."""
@@ -29,21 +30,9 @@ class Error(base.Controller):
             raise NotImplementedError
 
         self.env.status = http.HTTP_OK
-        if path.endswith('.css'):
-            self.content_type = 'text/css'
-        elif path.endswith('.js'):
-            self.content_type = 'text/javascript'
-        elif path.endswith('.gif'):
-            self.content_type = 'image/gif'
-        elif path.endswith('.jpg'):
-            self.content_type = 'image/jpg'
-        elif path.endswith('.xsl'):
-            self.content_type = 'text/xsl'
-        elif path.endswith('.json'):
-            self.content_type = 'text/json'
+        self.content_type = mimetypes.guess_type(path)[0]
 
-        static = self.config.htdocs + path
-        with open(static, 'r') as data:
+        with open(self.config.htdocs + path, 'r') as data:
             return data.read()
 
     def e404(self):

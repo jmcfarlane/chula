@@ -21,6 +21,10 @@ Chula v0.10.0 (dev)
   reload everything.  Previously there were situations where
   code imported by model classes was not getting reloaded.  **This is
   currently experimental, and might eat your computer**.
+- Improved :meth:`chula.www.controller.error.Error._crappy_static_server`
+  so it can serve almost any static content (hypothetically).  For
+  sure it can serve html files, which was sadly not supported
+  previously.
 - Added a :meth:`chula.www.controller.error.Error.e404_render` method
   to the base error controller for custom rendering while still using
   :meth:`chula.www.controller.error.Error._crappy_static_server` for
