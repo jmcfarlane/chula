@@ -2,6 +2,10 @@
 Chula fastcgi adapter
 """
 
+# Python imports
+from httplib import responses
+
+# Project imports
 from chula.www.adapters import base
 from chula.www.adapters.fcgi import env
 
@@ -16,7 +20,8 @@ def configured_app(environ, start_response, config):
     adapter.add_header(('Content-Type', adapter.env.content_type))
 
     # Execute the wsgi callback
-    start_response('%s OK' % adapter.env.status, adapter.env.headers) 
+    status = '%s %s' % (adapter.env.status, responses[adapter.env.status])
+    start_response(status, adapter.env.headers)
 
     # Yield the data to the client
     for chunk in chunks:

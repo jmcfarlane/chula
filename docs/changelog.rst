@@ -17,6 +17,14 @@ Chula v0.10.0 (dev)
 
 *Still under development*
 
+- Fixed **major** defect in the http status header sent by
+  :mod:`chula.www.adapters.fcgi.adapter` and
+  :mod:`chula.www.adapters.wsgi.adapter`.  Prior to this fix it
+  appears the status code would look something like ``404 OK`` in the
+  event of a not found error condition.  The code had ``OK`` hard
+  coded, and thus wasn't taking into consideration the actual status.
+  This is now fixed using :attr:`httplib.responses` for the W3C string
+  representations of the status code(s).
 - Switched the :attr:`chula.config.Config.auto_reload` logic to fully
   reload everything.  Previously there were situations where
   code imported by model classes was not getting reloaded.  **This is
