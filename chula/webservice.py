@@ -4,7 +4,7 @@ Chula helper module for working with web services
 
 import cPickle
 
-from chula import error, json, collection
+from chula import error, json, collection, logger
 
 class Transport(collection.RestrictedCollection):
     """
@@ -15,13 +15,14 @@ class Transport(collection.RestrictedCollection):
     def __init__(self, controller):
         super(Transport, self).__init__()
         self.controller = controller
+        self.log = logger.Logger(controller.config).logger('chula.webservice')
 
     def __privatekeys__(self):
         """
         Populate the private keys
         """
 
-        return ('controller',)
+        return ('controller', 'log')
 
     def __validkeys__(self):
         """
@@ -340,6 +341,9 @@ def expose(**kwargs):
                 ws.success = True
             except Exception, ex:
                 ws.exception = str(ex)
+                extra = {'clientip':ws.controller.env.REMOTE_ADDR}
+                msg = 'Unhandled exception in webservice'
+                ws.log.error(msg, exc_info=True, extra=extra)
 
             # Let the controller specify the msg if provided
             if hasattr(self, 'msg'):

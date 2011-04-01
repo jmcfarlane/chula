@@ -34,6 +34,7 @@ if 'CHULA_REGEX_MAPPER' in os.environ:
 
         # Webservice test methods
         (r'^/webservice/ascii/?$', 'webservice.ascii'),
+        (r'^/webservice/broken/?$', 'webservice.broken'),
         (r'^/webservice/pickle/?$', 'webservice.pickle'),
         (r'^/webservice/simple_json/?$', 'webservice.simple_json'),
         (r'^/webservice/xjson/?$', 'webservice.xjson'),

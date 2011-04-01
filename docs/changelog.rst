@@ -25,6 +25,13 @@ Chula v0.10.0 (dev)
   so it can serve almost any static content (hypothetically).  For
   sure it can serve html files, which was sadly not supported
   previously.
+- Added a default :class:`chula.logger.Logger` instance to
+  :class:`chula.www.controller.base.Controller`.
+- Added logging for 404 failures when
+  :meth:`chula.www.controller.error.Error._crappy_static_server` is in
+  use.
+- Added logging for unhandled excpetions in controller methods
+  decorated as a webservice, via :func:`chula.webservice.expose`.
 - Added a :meth:`chula.www.controller.error.Error.e404_render` method
   to the base error controller for custom rendering while still using
   :meth:`chula.www.controller.error.Error._crappy_static_server` for

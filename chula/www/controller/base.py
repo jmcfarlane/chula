@@ -2,7 +2,7 @@
 Generic base controller used by all web requests.
 """
 
-from chula import collection, guid, error, session
+from chula import collection, error, guid, logger, session
 from chula.www import http
 
 class Controller(object):
@@ -32,6 +32,7 @@ class Controller(object):
         self.config = config
         self.env = env
         self.form = env.form
+        self.log = logger.Logger(config).logger('chula.www.controller.base')
 
         # Create a default model. This object is optionally populated by the
         # controller, or it can do it's own thing.

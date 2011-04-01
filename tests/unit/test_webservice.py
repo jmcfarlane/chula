@@ -1,7 +1,7 @@
 import cPickle
 import unittest
 
-from chula import collection, error, json, webservice
+from chula import collection, error, config, json, webservice
 from chula.www.adapters import env
 
 class Test_webservice(unittest.TestCase):
@@ -17,6 +17,7 @@ class Test_webservice(unittest.TestCase):
         # Sample controller
         self.controller = collection.Collection()
         self.controller.env = self.env
+        self.controller.config = config.Config()
 
 
         # Sample webservice payload

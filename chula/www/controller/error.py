@@ -31,9 +31,18 @@ class Error(base.Controller):
 
         self.env.status = http.HTTP_OK
         self.content_type = mimetypes.guess_type(path)[0]
+        fq_path = self.config.htdocs + path
 
-        with open(self.config.htdocs + path, 'r') as data:
-            return data.read()
+        # Attempt to serve the file only setting 200 OK if successful
+        try:
+            with open(fq_path, 'r') as data:
+                return data.read()
+        except Exception, ex:
+            extra = {'clientip':self.env.REMOTE_ADDR}
+            msg = 'Unable to serve: %s' % fq_path
+            self.log.error(msg, exc_info=True, extra=extra)
+
+            raise
 
     def e404(self):
         """
@@ -52,6 +61,7 @@ class Error(base.Controller):
 
         # The url doesn't seem to be supported
         self.env.status = http.HTTP_NOT_FOUND
+        self.content_type = 'text/html'
 
         return self.e404_render()
 

@@ -103,6 +103,14 @@ Useful attributes
    ...         return ''.join(html)
    >>>
 
+.. attribute:: log
+
+   Attribute holding :class:`chula.logger.Logger` object.  The
+   intended use of this attribute is to allow app specific logging.
+   The default configuration will send ``error`` messags to
+   :attr:`chula.config.Config.log` and debug messages (and higher) to
+   :attr:`chula.config.Config.log` suffixed with ``.debug``
+
 .. attribute:: model
 
    Attribute holding :class:`chula.collection.Collection`
