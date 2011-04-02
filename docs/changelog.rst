@@ -25,6 +25,11 @@ Chula v0.10.0 (dev)
   coded, and thus wasn't taking into consideration the actual status.
   This is now fixed using :attr:`httplib.responses` for the W3C string
   representations of the status code(s).
+- Set psycopg2.extensions.{UNICODE,UNICODEARRAY} globally in
+  :mod:`chula.db.engines.postgresql`.  This considerably simplifies
+  unicode struggles when downstream code doesn't know what encoding
+  was used.  With this change all data returned by psycopg2 will be of
+  type :class:`unicode` instead of :class:`str`.
 - Switched the :attr:`chula.config.Config.auto_reload` logic to fully
   reload everything.  Previously there were situations where
   code imported by model classes was not getting reloaded.  **This is

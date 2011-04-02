@@ -7,6 +7,11 @@ from chula import error
 try:
     import psycopg2
     from psycopg2 import extensions, extras
+
+    # We want unicode objects, makes life much easier
+    # See: http://www.initd.org/psycopg/docs/usage.html#unicode-handling
+    psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+    psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 except:
     raise error.MissingDependencyError('Psycopg2')
 
@@ -16,13 +21,13 @@ class DataStore(engine.Engine):
     """
     Postgresql engine class using the Psycopg2 driver
     """
-    
+
     def __init__(self, uri, passwd='', *args, **kwargs):
         super(DataStore, self).__init__()
         m = re.match(r'(?P<user>[-a-zA-Z0-9]+)@'
                      r'(?P<host>[-a-zA-Z0-9]+)/'
                      r'(?P<db>[-a-zA-Z0-9_]+)$', uri)
-        
+
         if m is None:
             raise error.MalformedConnectionStringError(engine)
 
@@ -42,7 +47,7 @@ class DataStore(engine.Engine):
         self.error.NotSupportedError = psycopg2.NotSupportedError
         self.error.OperationalError = psycopg2.OperationalError
         self.error.ProgrammingError = psycopg2.ProgrammingError
-        
+
     def set_isolation(self, level=1):
         """
         Toggle the isolation level. Here are the available
@@ -50,13 +55,13 @@ class DataStore(engine.Engine):
             - 0 = No isolation
             - 1 = READ COMMITTED (the default)
             - 3 = SERIALIZABLE
-        
+
         @param level: Isolation level
         @type level: Integer
         """
-        
+
         self.conn.set_isolation_level(level)
-    
+
     def cursor(self, type='dict'):
         """
         Create database cursor
