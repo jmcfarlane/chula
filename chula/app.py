@@ -1,5 +1,4 @@
 # Python imports
-from wsgiref.simple_server import make_server
 import imp
 import optparse
 import os
@@ -58,6 +57,27 @@ def getopts():
 
     return (p, p.parse_args())
 
+def _builtin(application, port):
+    from wsgiref.simple_server import make_server
+    httpd = make_server('', port, application)
+    print 'WSGI provider: wsgiref.simple_server (builtin)'
+    return httpd
+
+def _gevent(application, port):
+    from gevent import wsgi
+    httpd = wsgi.WSGIServer(('', port), application)
+    print 'WSGI provider: gevent.wsgi'
+    return httpd
+
+def wsgi_provider(application, port):
+    for provider in [_gevent, _builtin]:
+        try:
+            return provider(application, port)
+        except (ImportError, NameError):
+            pass
+
+    raise Exception('Unable to find a wsgi provider')
+
 def run():
     # Parse command line options
     parser, (options, args) = getopts()
@@ -94,9 +114,9 @@ def run():
     def application():
         return app_config
 
-    # Setup a simple server using the proxy app and it's configuration
     port = int(options.port)
-    httpd = make_server('', port, application)
+    httpd = wsgi_provider(application, port)
+
     try:
         print 'Starting server on: http://localhost:%s' % port
         if 'log' in app_config:

@@ -38,6 +38,9 @@ Chula v0.10.0 (dev)
   so it can serve almost any static content (hypothetically).  For
   sure it can serve html files, which was sadly not supported
   previously.
+- Improved :command:`chula-run` to use Gevent's wsgi server
+  (http://www.gevent.org/gevent.wsgi.html) when available.  If not
+  available the builtin :mod:`wsgiref.simple_server` is used.
 - Added a default :class:`chula.logger.Logger` instance to
   :class:`chula.www.controller.base.Controller`.
 - Added logging for 404 failures when
