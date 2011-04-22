@@ -52,6 +52,9 @@ Chula v0.10.0 (dev)
   to the base error controller for custom rendering while still using
   :meth:`chula.www.controller.error.Error._crappy_static_server` for
   testing.
+- Added a skeleton application for use as a reasonable starting
+  place for a hello world type application
+  (https://github.com/jmcfarlane/chula/tree/master/apps/skel).
 
 :Source: http://github.com/jmcfarlane/chula
 
