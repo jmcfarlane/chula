@@ -37,6 +37,7 @@ class Logger(object):
             fh = RotatingFileHandler(config.log,
                                      maxBytes=104857600,
                                      backupCount=5)
+            fh.addFilter(logging.Filter(ROOT))
             fh.setLevel(config.log_level)
             fh.setFormatter(logging.Formatter(fmt))
             logger.addHandler(fh)
