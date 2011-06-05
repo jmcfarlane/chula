@@ -2,20 +2,25 @@
 Chula base adapter for all supported web adapters
 """
 
+# Python imports
 from copy import deepcopy
 import os
 import re
 import sys
 import time
 
-import chula
+# Project imports
 from chula import collection, error, guid, logger
 from chula.www import cookie
 from chula.www.mapper import ClassPathMapper
 from chula.www.mapper import RegexMapper
 
+# Constants
+EXTRA = {'clientip':''}
 RE_HTML = re.compile(r'</body>\s*</html>\s*$', re.IGNORECASE)
-RE_REQ = re.compile(r'(chula|fastcgi|mod_python|wsgi)')
+
+# Cache namespace lookups
+getmtime = os.path.getmtime
 
 class BaseAdapter(object):
     def __init__(self, config):
@@ -39,11 +44,31 @@ class BaseAdapter(object):
             return
 
         for k, v in sys.modules.items():
-            pyc = getattr(v, '__file__', None)
+            mod = getattr(v, '__file__', None)
 
-            if pyc and os.access(pyc, os.W_OK) and not RE_REQ.search(repr(v)):
-                del sys.modules[k]
-                self.log.debug('Unloaded module: %s' % k)
+            if not mod:
+                continue
+
+            # After reloading mod will end with 'py', not 'pyc'.
+            # Would like to understand this behavior, coding by
+            # observation seems bad.
+            if mod.endswith('.py'):
+                mod += 'c'
+
+            if not mod.endswith('.pyc'):
+                self.log.debug('Skipping: %s' % mod, extra=EXTRA)
+                continue
+
+            try:
+                stale = getmtime(mod[:-1]) > getmtime(mod)
+            except:
+                msg = 'Auto reload error while analyzing: %s' % k
+                self.log.debug(msg, exc_info=True, extra=EXTRA)
+                stale = False
+
+            if stale:
+                reload(v)
+                self.log.debug('Auto reload successful: %s' % k)
 
     def exception(self, controller, ex):
         # Prepare a collection to hold exception context
