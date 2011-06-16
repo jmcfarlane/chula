@@ -99,7 +99,7 @@ understand now is: :attr:`Config.classpath`.
       application with every http request.  The idea here is to save
       code in your editor, and refresh the browser - super handy.
 
-      Default: ``True``
+      Default: ``False``
 
    .. attribute:: construction_controller
 
