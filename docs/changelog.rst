@@ -12,10 +12,17 @@ Changelog
 
  :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.10.0 (dev)
+Chula v0.11.0 (dev)
 +++++++++++++++++++
 
 *Still under development*
+
+:Source: http://github.com/jmcfarlane/chula
+
+Chula v0.10.0 (latest)
+++++++++++++++++++++++
+
+*Released 2011-06-16*
 
 - Fixed **major** defect in the http status header sent by
   :mod:`chula.www.adapters.fcgi.adapter` and
@@ -56,9 +63,12 @@ Chula v0.10.0 (dev)
   place for a hello world type application
   (https://github.com/jmcfarlane/chula/tree/master/apps/skel).
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.10.0 </0.10.0/>`_
+:Download: `</downloads/Chula-0.10.0.tar.gz>`_
+:Download: `</downloads/Chula-0.10.0.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.10.0
 
-Chula v0.9.0 (latest)
+Chula v0.9.0 (stable)
 +++++++++++++++++++++
 
 *Released 2011-03-24*
@@ -87,8 +97,8 @@ Chula v0.9.0 (latest)
 :Download: `</downloads/Chula-0.9.0.checksums>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.9.0
 
-Chula v0.8.0 (stable)
-+++++++++++++++++++++
+Chula v0.8.0
+++++++++++++
 
 *Released 2010-12-26*
 
