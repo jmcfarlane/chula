@@ -17,10 +17,19 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from distutils.core import setup
+# Python imports
 import os
 import sys
 
+# Third party imports (use distribute's setuptools, or distutils)
+try:
+    import setuptools
+    if setuptools._distribute:
+        from setuptools import setup
+except:
+    from distutils.core import setup
+
+# Project imports
 import chula
 from chula import error
 

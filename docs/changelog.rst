@@ -17,6 +17,8 @@ Chula v0.11.0 (dev)
 
 *Still under development*
 
+- Improved setup to use distribute's setuptools, or distutils.
+
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.10.0 (latest)
