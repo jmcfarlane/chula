@@ -35,7 +35,7 @@ from chula import error
 
 # Check for dependencies
 if 'install' in sys.argv:
-    if sys.version_info < (2, 6):
+    if sys.version_info < (2, 5):
         raise error.MissingDependencyError('Python-2.6 or higher')
 
 def find_packages():

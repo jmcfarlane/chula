@@ -4,7 +4,10 @@ Module to return operating system information
 TODO: This module has not been tested on win32 at all
 """
 
+# Python2.5 backports
 from __future__ import with_statement
+
+# Python imports
 import os
 
 LINUX = 'LINUX'
@@ -27,7 +30,7 @@ class System(object):
                 return name
 
         return 'UNKONWN'
-            
+
     def fetch_procs_linux(self):
         procs = 0
         with open('/proc/cpuinfo', 'r') as cpuinfo:

@@ -10,7 +10,6 @@ from chula.singleton import singleton
 
 ROOT = 'chula'
 
-@singleton
 class Logger(object):
     def __init__(self, config=None):
         if config is None:
@@ -62,6 +61,10 @@ class Logger(object):
             name = '%s.%s' % (ROOT, name)
 
         return logging.getLogger(name)
+
+# Make the Logger a singleton.  Switch to a class decorator when
+# python-2.5 support is no longer needed
+Logger = singleton(Logger)
 
 if __name__ == '__main__':
     from chula import config

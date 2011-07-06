@@ -1,3 +1,6 @@
+# Python2.5 backports
+from __future__ import with_statement
+
 # Python imports
 import cgi
 import mimetypes
