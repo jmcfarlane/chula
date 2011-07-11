@@ -12,17 +12,21 @@ Changelog
 
  :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.11.0 (dev)
-+++++++++++++++++++
+Chula v0.11.0 (latest)
+++++++++++++++++++++++
 
-*Still under development*
+*Released 2011-07-11*
 
 - Improved setup to use distribute's setuptools, or distutils.
+- Added (previously removed) support for python-2.5
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.11.0 </0.11.0/>`_
+:Download: `</downloads/Chula-0.11.0.tar.gz>`_
+:Download: `</downloads/Chula-0.11.0.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.11.0
 
-Chula v0.10.0 (latest)
-++++++++++++++++++++++
+Chula v0.10.0
++++++++++++++
 
 *Released 2011-06-16*
 

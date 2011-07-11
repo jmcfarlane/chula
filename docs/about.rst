@@ -43,9 +43,8 @@ depending on configuration:
 Mandatory
 ~~~~~~~~~
 
-#. Python_ (2.6 or 2.7)
+#. Python_ (2.5, 2.6 or 2.7)
 
-.. NOTE:: Python-2.5 can work with minor changes, see Roadmap_
 .. NOTE:: Python-3.1 builds are available, but are considered unstable
 
 Optional
@@ -94,13 +93,6 @@ currently thinking about:
 #. Support for MySQL_ based session.  Currently only PostgreSQL_ and
    CouchDB are supported.  With either backend Memcached_ will continue to be
    used.
-#. Consider adding back support for Python-2.5.  This wouldn't be too
-   difficult - just need to change how the logging singleton works.
-   The other complication would be managing early versions of 2.5 that
-   did not include httplib2, as this is needed by couchdb (if that
-   session backend is used).  To further complicate things, the
-   version of httplib2 available to most distros [that ship such an
-   old version of Python] is not compatible with couchdb-python_.
 
 Who's using it
 ++++++++++++++
