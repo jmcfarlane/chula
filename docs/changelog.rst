@@ -12,6 +12,13 @@ Changelog
 
  :Source: http://github.com/jmcfarlane/chula
 
+Chula v0.12.0 (dev)
++++++++++++++++++++
+
+*Still under development*
+
+:Source: http://github.com/jmcfarlane/chula
+
 Chula v0.11.0 (latest)
 ++++++++++++++++++++++
 
