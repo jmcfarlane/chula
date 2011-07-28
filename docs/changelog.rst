@@ -17,6 +17,8 @@ Chula v0.12.0 (dev)
 
 *Still under development*
 
+- Add support for using the Gunicorn wsgi provider
+
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.11.0 (latest)

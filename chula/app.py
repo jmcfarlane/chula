@@ -49,30 +49,58 @@ def getopts():
     p.add_option('-p', '--port',
                  dest='port',
                  help='TCP port to run the webserver on')
+    p.add_option('-w', '--workers',
+                 dest='workers',
+                 help='Number of workers if the provider supports it')
+    p.add_option('-P', '--provider',
+                 dest='provider',
+                 help='Use the specified provider (gevent, gunicorn, etc)')
+
     # Defaults
     p.set_defaults(config_module='configuration')
     p.set_defaults(config_obj='app')
     p.set_defaults(debug=False)
     p.set_defaults(port=8080)
+    p.set_defaults(workers=4)
 
     return (p, p.parse_args())
 
-def _builtin(application, port):
+def _builtin(application, options):
     from wsgiref.simple_server import make_server
-    httpd = make_server('', port, application)
+    httpd = make_server('', int(options.port), application)
     print 'WSGI provider: wsgiref.simple_server (builtin)'
     return httpd
 
-def _gevent(application, port):
+def _gevent(application, options):
     from gevent import wsgi
-    httpd = wsgi.WSGIServer(('', port), application)
+    httpd = wsgi.WSGIServer(('', int(options.port)), application)
     print 'WSGI provider: gevent.wsgi'
     return httpd
 
-def wsgi_provider(application, port):
-    for provider in [_gevent, _builtin]:
+def _gunicorn(application, options):
+    from gunicorn.app import base
+    class Gunicorn(base.Application):
+        sys.argv = [] # Stop gunicorn from choking on our optparse options
+        def init(self, parser, opts, args):
+            return {'bind': '0.0.0.0:%s' % options.port,
+                    'workers': options.workers}
+
+        def load(self):
+            return application
+
+    httpd = Gunicorn()
+    print 'WSGI provider: gunicorn.app.base.Application'
+    return httpd
+
+def wsgi_provider(application, options):
+    if options.provider:
+        providers = [getattr(sys.modules[__name__], '_%s' % options.provider)]
+    else:
+        providers = [_gevent, _gunicorn, _builtin]
+
+    for provider in providers:
         try:
-            return provider(application, port)
+            return provider(application, options)
         except (ImportError, NameError):
             pass
 
@@ -114,17 +142,23 @@ def run():
     def application():
         return app_config
 
-    port = int(options.port)
-    httpd = wsgi_provider(application, port)
+    httpd = wsgi_provider(application, options)
 
     try:
-        print 'Starting server on: http://localhost:%s' % port
+        print 'Starting server on: http://localhost:%s' % options.port
         if 'log' in app_config:
             print 'Errors log:', app_config.log
             if app_config.debug:
                 print 'Debug log: ', app_config.log + '.debug'
 
-        httpd.serve_forever()
+        for method in ['run', 'serve_forever']:
+            if hasattr(httpd, method):
+                getattr(httpd, method)()
+        else:
+            print 'Chula does not know how to use this wsgi provider'
+            print 'Type of provider given:', httpd
+            sys.exit(1)
+
     except KeyboardInterrupt:
         sys.exit()
 

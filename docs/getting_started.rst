@@ -204,6 +204,26 @@ these.
    mod_wsgi
    mod_python
 
+You can also run any Chula application with many of the existing WSGI
+providers, such as:
+
+- Python's builtin :mod:`SimpleHTTPServer`
+- `Gevent <http://www.gevent.org>`_
+- `Gunicorn <http://gunicorn.org>`_
+
+By default :program:`chula-run` will try to find and use whatever WSGI
+provider is available, but you can specifically tell it which one to
+use (if supported) via the :option:`-P` argument.  For example::
+
+ # Gevent
+ chula-run -P gevent myapp
+
+ # Gunicorn
+ chula-run -P gunicorn myapp
+
+ # SimpleHTTPServer
+ chula-run -P builtin myapp
+
 Terminology
 +++++++++++
 
