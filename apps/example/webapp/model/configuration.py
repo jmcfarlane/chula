@@ -38,4 +38,12 @@ if 'CHULA_REGEX_MAPPER' in os.environ:
         (r'^/webservice/pickle/?$', 'webservice.pickle'),
         (r'^/webservice/simple_json/?$', 'webservice.simple_json'),
         (r'^/webservice/xjson/?$', 'webservice.xjson'),
+
+        # Restfull blog urls
+        (r'^/blog'                              # blog
+          '(/(?P<username>[a-z]+))?'            # username
+          '(/(?P<date>\d\d\d\d-\d\d-\d\d))?'    # date
+          '(/(?P<commens>comments))?'           # comments
+          '?/?$',                               # Optional trailing slash
+         'rest.blog'),
     )

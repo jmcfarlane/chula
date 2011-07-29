@@ -279,6 +279,11 @@
         :class:`str` holding raw payload (typically json or
         xml) if received.
 
+    .. attribute:: form_rest
+
+        :class:`dict` holding any key/value pairs defined in a regex
+        mapper.
+
     .. attribute:: headers
 
         :class:`list` of :class:`dict` objects to be sent as HTTP

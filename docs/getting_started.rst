@@ -57,6 +57,8 @@ Make the ``model`` and ``controller`` actual python packages::
  touch myapp/model/__init__.py
  touch myapp/controller/__init__.py
 
+.. _configuration:
+
 Configuration
 ^^^^^^^^^^^^^
 
@@ -80,6 +82,22 @@ Create the following file in :file:`myapp/model/configuration.py`::
    (r'^/myapp/blog/?$', 'home.blog'),
    (r'^/myapp/envinfo/?$', 'home.envinfo'),
  )
+
+If you want to use restfull style urls you can use named capturing
+groups (:mod:`re`) in your app mapper.  Consider::
+
+ app.mapper = (
+  (r'^/blog'                              # blog
+    '(/(?P<username>[a-z]+))?'            # username
+    '(/(?P<date>\d\d\d\d-\d\d-\d\d))?'    # date
+    '(/(?P<commens>comments))?'           # comments
+    '?/?$',                               # Optional trailing slash
+   'rest.blog'),
+ )
+
+The above route would match: ``/blog/jmcfarlane/2010-05-12/comments``
+and would expose username, date, and comments via
+:attr:`chula.www.adapters.env.BaseEnv.form_rest`.
 
 Controllers
 ^^^^^^^^^^^

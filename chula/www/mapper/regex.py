@@ -2,8 +2,10 @@
 Python route/route based Chula URL mapper
 """
 
+# Python imports
 import re
 
+# Project imports
 from chula import logger
 from chula.www.mapper import base
 
@@ -15,8 +17,12 @@ class RegexMapper(base.BaseMapper):
 
     def _process_route(self, route, force=False):
         regex, target = route
-        if re.match(regex, self.uri) is None and force is False:
-            return
+        match = re.match(regex, self.uri)
+        if match:
+            self.rest.update(match.groupdict())
+        else:
+            if force is False:
+                return
 
         # Pull off the method() and module
         parts = target.split('.')
@@ -29,7 +35,7 @@ class RegexMapper(base.BaseMapper):
 
         self.log.debug('Set route: %s via %s' % (self.route, regex))
         return self.route
-        
+
     def parse(self):
         # Process each route looking for a match
         for route in self.route_map:

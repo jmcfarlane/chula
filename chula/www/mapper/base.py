@@ -41,6 +41,9 @@ class BaseMapper(object):
         self.route_404.module = self.config.error_controller
         self.route_404.method = 'e404'
 
+        # Set the structure to hold restfull args if available
+        self.rest = collection.Collection()
+
     def __str__(self):
         namespace = '%(package)s.%(module)s.%(class_name)s.%(method)s'
         try:
@@ -113,6 +116,7 @@ class BaseMapper(object):
                 # and it should use e500
             else:
                 self.parse()
+                self.env.form_rest = self.rest
         elif status == 404:
             self.route = self.route_404
         elif status == 500:

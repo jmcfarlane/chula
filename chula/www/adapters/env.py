@@ -73,6 +73,7 @@ class BaseEnv(collection.RestrictedCollection):
                 'form_get',
                 'form_post',
                 'form_raw',
+                'form_rest',
                 'headers',
                 'route',
                 'status',
@@ -138,6 +139,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.form_get = collection.UNSET
         self.form_post = collection.UNSET
         self.form_raw = None
+        self.form_rest = collection.UNSET
         self.status = http.HTTP_OK
         self.under_construction = False
 
