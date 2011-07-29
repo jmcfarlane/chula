@@ -17,7 +17,9 @@ Chula v0.12.0 (dev)
 
 *Still under development*
 
-- Add support for using the Gunicorn wsgi provider
+- Add support for using the Gunicorn wsgi provider.
+- Don't include a stacktrace for 404 requests served by
+  :meth:`chula.www.controller.error.Error._crappy_static_server`.
 
 :Source: http://github.com/jmcfarlane/chula
 
@@ -27,7 +29,7 @@ Chula v0.11.0 (latest)
 *Released 2011-07-11*
 
 - Improved setup to use distribute's setuptools, or distutils.
-- Added (previously removed) support for python-2.5
+- Added (previously removed) support for python-2.5.
 
 :Documentation: `Chula-0.11.0 </0.11.0/>`_
 :Download: `</downloads/Chula-0.11.0.tar.gz>`_

@@ -41,10 +41,7 @@ class Error(base.Controller):
             with open(fq_path, 'r') as data:
                 return data.read()
         except Exception, ex:
-            extra = {'clientip':self.env.REMOTE_ADDR}
-            msg = 'Unable to serve: %s' % fq_path
-            self.log.error(msg, exc_info=True, extra=extra)
-
+            self.log.error(ex, extra={'clientip':self.env.REMOTE_ADDR})
             raise
 
     def e404(self):
