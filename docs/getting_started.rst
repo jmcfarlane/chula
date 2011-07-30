@@ -228,6 +228,7 @@ providers, such as:
 - Python's builtin :mod:`SimpleHTTPServer`
 - `Gevent <http://www.gevent.org>`_
 - `Gunicorn <http://gunicorn.org>`_
+- `Tornado <http://www.tornadoweb.org>`_
 
 By default :program:`chula-run` will try to find and use whatever WSGI
 provider is available, but you can specifically tell it which one to
@@ -238,6 +239,9 @@ use (if supported) via the :option:`-P` argument.  For example::
 
  # Gunicorn
  chula-run -P gunicorn myapp
+
+ # Tornado
+ chula-run -P tornado myapp
 
  # SimpleHTTPServer
  chula-run -P builtin myapp

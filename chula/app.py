@@ -93,11 +93,19 @@ def _gunicorn(application, options):
     print 'WSGI provider: gunicorn.app.base.Application'
     return httpd
 
+def _tornado(application, options):
+    from tornado import httpserver, ioloop, wsgi
+    container = wsgi.WSGIContainer(application)
+    httpd = httpserver.HTTPServer(container)
+    httpd.listen(int(options.port))
+    print 'WSGI provider: tornado.httpserver.HTTPServer'
+    return ioloop.IOLoop.instance()
+
 def wsgi_provider(application, options):
     if options.provider:
         providers = [getattr(sys.modules[__name__], '_%s' % options.provider)]
     else:
-        providers = [_gevent, _gunicorn, _builtin]
+        providers = [_gevent, _gunicorn, _tornado, _builtin]
 
     for provider in providers:
         try:
@@ -152,7 +160,7 @@ def run():
             if app_config.debug:
                 print 'Debug log: ', app_config.log + '.debug'
 
-        for method in ['run', 'serve_forever']:
+        for method in ['run', 'serve_forever', 'start']:
             if hasattr(httpd, method):
                 getattr(httpd, method)()
         else:

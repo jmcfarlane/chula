@@ -114,7 +114,7 @@ class BaseEnv(collection.RestrictedCollection):
         self.SERVER_PORT = collection.UNSET
         self.SERVER_PROTOCOL = collection.UNSET
         self.SERVER_SIGNATURE = collection.UNSET
-        self.SERVER_SOFTWARE = collection.UNSET
+        self.SERVER_SOFTWARE = 'Unknown WSGI provider'
         self.chula_adapter = collection.UNSET
         self.chula_class = collection.UNSET
         self.chula_method = collection.UNSET
