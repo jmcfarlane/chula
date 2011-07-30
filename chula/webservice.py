@@ -191,8 +191,9 @@ def expose(**kwargs):
     ... Calling this webservice will look something like:
 
     >>> import json, urllib2
+    >>> from chula.test.bat import PORT
     >>>
-    >>> url = 'http://localhost:8080/webservice/simple_json'
+    >>> url = 'http://localhost:%s/webservice/simple_json' % PORT
     >>> payload = json.loads(urllib2.urlopen(url).read())
     >>> payload.keys()
     [u'msg', u'exception', u'data', u'success']
@@ -204,8 +205,9 @@ def expose(**kwargs):
     ... You can also call this method with some GET args:
 
     >>> import json, urllib2
+    >>> from chula.test.bat import PORT
     >>>
-    >>> url = 'http://localhost:8080/webservice/simple_json?indent=2'
+    >>> url = 'http://localhost:%s/webservice/simple_json?indent=2' % PORT
     >>> pretty_json = urllib2.urlopen(url).read()
 
     **A webservice that breaks, will always return valid payload:**
@@ -222,8 +224,9 @@ def expose(**kwargs):
     ... Calling this webservice will look something like:
 
     >>> import json, urllib2
+    >>> from chula.test.bat import PORT
     >>>
-    >>> url = 'http://localhost:8080/webservice/broken'
+    >>> url = 'http://localhost:%s/webservice/broken' % PORT
     >>> payload = json.loads(urllib2.urlopen(url).read())
     >>> payload['success']
     False
@@ -244,8 +247,9 @@ def expose(**kwargs):
     ... Calling this webservice will look something like:
 
     >>> import json, urllib2
+    >>> from chula.test.bat import PORT
     >>>
-    >>> url = 'http://localhost:8080/webservice/xjson'
+    >>> url = 'http://localhost:%s/webservice/xjson' % PORT
     >>> payload = json.loads(urllib2.urlopen(url).info().get('X-JSON'))
     >>> payload.keys()
     [u'msg', u'exception', u'data', u'success']
@@ -268,8 +272,9 @@ def expose(**kwargs):
     ... Calling this webservice will look something like:
 
     >>> import cPickle, urllib2
+    >>> from chula.test.bat import PORT
     >>>
-    >>> url = 'http://localhost:8080/webservice/pickle'
+    >>> url = 'http://localhost:%s/webservice/pickle' % PORT
     >>> payload = cPickle.loads(urllib2.urlopen(url).read())
     >>> payload.keys()
     ['msg', 'exception', 'data', 'success']
@@ -310,8 +315,9 @@ def expose(**kwargs):
        **Client's can also specify the transport they want:**
 
     >>> import json, urllib2
+    >>> from chula.test.bat import PORT
     >>>
-    >>> url = 'http://localhost:8080/webservice/pickle?transport=json'
+    >>> url = 'http://localhost:%s/webservice/pickle?transport=json' % PORT
     >>> payload = json.loads(urllib2.urlopen(url).read())
     >>> payload.keys()
     [u'msg', u'exception', u'data', u'success']

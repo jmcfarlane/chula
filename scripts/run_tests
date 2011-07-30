@@ -9,12 +9,11 @@ import sys
 
 # For those running tests without Chula actually installed
 project_root = os.path.join(os.path.dirname(sys.argv[0]), '..')
-sys.path.insert(0, project_root)
-sys.path.insert(0, os.path.join(project_root, 'apps/example/webapp'))
+webapp = os.path.join(project_root, 'apps/example/webapp')
 
 # Chula imports
-from chula import testutils
-import webserver
+from chula import app, testutils
+from chula.test import bat
 
 if __name__ == "__main__":
     # Search the passed paths, or the current working directory
@@ -23,7 +22,9 @@ if __name__ == "__main__":
         path = os.getcwd()
 
     # Start up the webserver
-    proc = multiprocessing.Process(target=webserver.main)
+    sys.argv.append('-p %s' % bat.PORT)
+    sys.argv.append('%s' % webapp)
+    proc = multiprocessing.Process(target=app.run)
     proc.start()
     proc.join(1)
 

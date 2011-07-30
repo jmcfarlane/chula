@@ -21,9 +21,16 @@ if [ -f "$dest/searchindex.js" ]; then
     echo "Previous docs purged..."
 fi
 
-# Generate documentation
+# Start up a webserver and unittest the documentation (then stop the server)
+port=$(grep PORT chula/test/bat.py | grep -E -o '[0-9]+')
+scripts/chula-run -p $port apps/example/webapp > /dev/null 2>&1 &
+pid=$!
 sphinx-build -q -E -b doctest docs $dest
-if [ $? == 0 ]; then
+passed=$?
+kill $pid
+
+# Generate documentation if the above tests passed
+if [ $passed == 0 ]; then
     sphinx-build -q -E -b html docs $dest
 else
     echo "Doctest checks failed, fix and try again."
