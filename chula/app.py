@@ -47,13 +47,12 @@ def getopts():
                  dest='config_obj',
                  help='Configuration object inside the config')
     p.add_option('-p', '--port',
-                 dest='port',
                  help='TCP port to run the webserver on')
+    p.add_option('-t', '--timeout',
+                 help='Max time in sec per request if provider supported')
     p.add_option('-w', '--workers',
-                 dest='workers',
                  help='Number of workers if the provider supports it')
     p.add_option('-P', '--provider',
-                 dest='provider',
                  help='Use the specified provider (gevent, gunicorn, etc)')
 
     # Defaults
@@ -61,6 +60,7 @@ def getopts():
     p.set_defaults(config_obj='app')
     p.set_defaults(debug=False)
     p.set_defaults(port=8080)
+    p.set_defaults(timeout=120)
     p.set_defaults(workers=4)
 
     return (p, p.parse_args())
@@ -83,6 +83,7 @@ def _gunicorn(application, options):
         sys.argv = [] # Stop gunicorn from choking on our optparse options
         def init(self, parser, opts, args):
             return {'bind': '0.0.0.0:%s' % options.port,
+                    'timeout': int(options.timeout),
                     'workers': options.workers}
 
         def load(self):
