@@ -12,10 +12,10 @@ Changelog
 
  :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.12.0 (dev)
-+++++++++++++++++++
+Chula v0.12.0 (latest)
+++++++++++++++++++++++
 
-*Still under development*
+*Released 2011-08-02*
 
 - Add support for using the Gunicorn wsgi provider.
 - Add support for using the Tornado wsgi provider.
@@ -24,9 +24,12 @@ Chula v0.12.0 (dev)
 - Don't include a stacktrace for 404 requests served by
   :meth:`chula.www.controller.error.Error._crappy_static_server`.
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.12.0 </0.12.0/>`_
+:Download: `</downloads/Chula-0.12.0.tar.gz>`_
+:Download: `</downloads/Chula-0.12.0.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.12.0
 
-Chula v0.11.0 (latest)
+Chula v0.11.0 (stable)
 ++++++++++++++++++++++
 
 *Released 2011-07-11*
@@ -88,8 +91,8 @@ Chula v0.10.0
 :Download: `</downloads/Chula-0.10.0.checksums>`_
 :Source: http://github.com/jmcfarlane/chula/tree/v0.10.0
 
-Chula v0.9.0 (stable)
-+++++++++++++++++++++
+Chula v0.9.0
+++++++++++++
 
 *Released 2011-03-24*
 
