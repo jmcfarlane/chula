@@ -66,18 +66,26 @@ def getopts():
     return (p, p.parse_args())
 
 def _builtin(application, options):
+    print 'WSGI provider: wsgiref.simple_server (builtin)'
     from wsgiref.simple_server import make_server
     httpd = make_server('', int(options.port), application)
-    print 'WSGI provider: wsgiref.simple_server (builtin)'
     return httpd
 
+def _eventlet(application, options):
+    print 'WSGI provider: eventlet.wsgi'
+    import eventlet
+    from eventlet import wsgi
+    e = eventlet.listen(('', int(options.port)))
+    return lambda : wsgi.server(e, application)
+
 def _gevent(application, options):
+    print 'WSGI provider: gevent.wsgi'
     from gevent import wsgi
     httpd = wsgi.WSGIServer(('', int(options.port)), application)
-    print 'WSGI provider: gevent.wsgi'
     return httpd
 
 def _gunicorn(application, options):
+    print 'WSGI provider: gunicorn.app.base.Application'
     from gunicorn.app import base
     class Gunicorn(base.Application):
         sys.argv = [] # Stop gunicorn from choking on our optparse options
@@ -90,22 +98,21 @@ def _gunicorn(application, options):
             return application
 
     httpd = Gunicorn()
-    print 'WSGI provider: gunicorn.app.base.Application'
     return httpd
 
 def _tornado(application, options):
+    print 'WSGI provider: tornado.httpserver.HTTPServer'
     from tornado import httpserver, ioloop, wsgi
     container = wsgi.WSGIContainer(application)
     httpd = httpserver.HTTPServer(container)
     httpd.listen(int(options.port))
-    print 'WSGI provider: tornado.httpserver.HTTPServer'
     return ioloop.IOLoop.instance()
 
 def wsgi_provider(application, options):
     if options.provider:
         providers = [getattr(sys.modules[__name__], '_%s' % options.provider)]
     else:
-        providers = [_gevent, _gunicorn, _tornado, _builtin]
+        providers = [_gevent, _gunicorn, _eventlet, _tornado, _builtin]
 
     for provider in providers:
         try:
@@ -160,9 +167,13 @@ def run():
             if app_config.debug:
                 print 'Debug log: ', app_config.log + '.debug'
 
-        for method in ['run', 'serve_forever', 'start']:
-            if hasattr(httpd, method):
-                getattr(httpd, method)()
+        for attribute in ['run', 'serve_forever', 'start', None]:
+            if attribute and hasattr(httpd, attribute):
+                httpd = getattr(httpd, attribute)()
+                break
+
+        if callable(httpd):
+            httpd()
         else:
             print 'Chula does not know how to use this wsgi provider'
             print 'Type of provider given:', httpd

@@ -226,6 +226,7 @@ You can also run any Chula application with many of the existing WSGI
 providers, such as:
 
 - Python's builtin :mod:`SimpleHTTPServer`
+- `Eventlet <http://www.eventlet.net>`_
 - `Gevent <http://www.gevent.org>`_
 - `Gunicorn <http://gunicorn.org>`_
 - `Tornado <http://www.tornadoweb.org>`_
@@ -239,6 +240,9 @@ use (if supported) via the :option:`-P` argument.  For example::
 
  # Gunicorn
  chula-run -P gunicorn myapp
+
+ # Eventlet
+ chula-run -P eventlet myapp
 
  # Tornado
  chula-run -P tornado myapp
