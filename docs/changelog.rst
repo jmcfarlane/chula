@@ -18,6 +18,7 @@ Chula v0.13.0 (dev)
 *Still under development*
 
 - Add support for using the Eventlet wsgi provider.
+- Switch to httplib2 when running bat tests.
 
 :Source: http://github.com/jmcfarlane/chula
 
@@ -29,7 +30,7 @@ Chula v0.12.0 (latest)
 - Add support for using the Gunicorn wsgi provider.
 - Add support for using the Tornado wsgi provider.
 - Add support for "restfull" urls.  This feature is only available
-  when using the regex mapper, see: :ref:`configuration`
+  when using the regex mapper, see: :ref:`configuration`.
 - Don't include a stacktrace for 404 requests served by
   :meth:`chula.www.controller.error.Error._crappy_static_server`.
 
