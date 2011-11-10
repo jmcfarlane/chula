@@ -40,9 +40,15 @@ Help:
 
 def getopts():
     p = optparse.OptionParser(usage())
+    p.add_option('-a', '--access-log',
+                 dest='access_log',
+                 help='Access log to write to, "-" for stdout')
     p.add_option('-c', '--config',
                  dest='config_module',
                  help='Module name containing app configuration')
+    p.add_option('-m', '--max-requests',
+                 dest='max_requests',
+                 help='Max requests per worker before re-spawning')
     p.add_option('-o', '--config-object',
                  dest='config_obj',
                  help='Configuration object inside the config')
@@ -56,9 +62,11 @@ def getopts():
                  help='Use the specified provider (gevent, gunicorn, etc)')
 
     # Defaults
+    p.set_defaults(access_log='-')
     p.set_defaults(config_module='configuration')
     p.set_defaults(config_obj='app')
     p.set_defaults(debug=False)
+    p.set_defaults(max_requests=0)
     p.set_defaults(port=8080)
     p.set_defaults(timeout=120)
     p.set_defaults(workers=4)
@@ -87,12 +95,17 @@ def _gevent(application, options):
 def _gunicorn(application, options):
     print 'WSGI provider: gunicorn.app.base.Application'
     from gunicorn.app import base
+    from gunicorn import config
     class Gunicorn(base.Application):
         sys.argv = [] # Stop gunicorn from choking on our optparse options
         def init(self, parser, opts, args):
-            return {'bind': '0.0.0.0:%s' % options.port,
-                    'timeout': int(options.timeout),
-                    'workers': options.workers}
+            c = {'bind': '0.0.0.0:%s' % options.port,
+                 'max_requests': int(options.max_requests),
+                 'timeout': int(options.timeout),
+                 'workers': options.workers}
+            if hasattr(config, 'AccessLog'):
+                c.update({'accesslog':options.access_log})
+            return c
 
         def load(self):
             return application

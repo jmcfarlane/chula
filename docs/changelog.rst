@@ -18,6 +18,7 @@ Chula v0.13.0 (dev)
 *Still under development*
 
 - Add support for using the Eventlet wsgi provider.
+- Add max-request and access-log support to :command:`chula-run`.
 
 :Source: http://github.com/jmcfarlane/chula
 
