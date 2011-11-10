@@ -19,6 +19,7 @@ Chula v0.13.0 (dev)
 
 - Add support for using the Eventlet wsgi provider.
 - Switch to httplib2 when running bat tests.
+- Fix various http GET/POST bugs.
 
 :Source: http://github.com/jmcfarlane/chula
 

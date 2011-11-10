@@ -1,7 +1,7 @@
-"""Class for use with Basic Acceptance Testing"""
+
 
 # Python imports
-from urllib import urlencode
+import urllib
 import os
 import unittest
 
@@ -12,6 +12,7 @@ import httplib2
 from chula import collection
 
 PORT = os.environ.get('CHULA_TEST_PORT', 8090)
+PROVIDER = os.environ.get('CHULA_TEST_PROVIDER', 'builtin')
 
 class Bat(unittest.TestCase):
     def response(self, request):
@@ -30,9 +31,21 @@ class Bat(unittest.TestCase):
         return self.response(http.request(self.url(url), 'GET'))
 
     def post(self, url, data):
+        # For some reason chula is responding oddly to http POST
+        # variables when requested by httplib2.  It responds fine with
+        # urllib or curl.  Using urllib for a bit longer (for this
+        # method only.
+        data = urllib.urlencode(data)
+        response = urllib.urlopen(self.url(url), data)
+        retval = collection.Collection()
+        retval.data = response.read()
+        retval.status = response.code
+        retval.headers = response.info().headers
+        return retval
+
+    def post_file(self, url, body):
         http = httplib2.Http()
-        data = urlencode(data)
-        return self.response(http.request(self.url(url), 'POST', data))
+        return self.response(http.request(self.url(url), 'POST', body=body))
 
     def put(self, url, body, headers=None):
         http = httplib2.Http()

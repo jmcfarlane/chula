@@ -209,7 +209,10 @@ class BaseEnv(collection.RestrictedCollection):
 
         # Cast any dict-like objects (FieldStorage for example) to
         # real dicts, so method like get() and iteritems() exist.
-        self.form = dict(self.form)
+        try:
+            self.form = dict(self.form)
+        except TypeError:
+            self.form = {}
 
         # Create object to hold only HTTP GET variables
         self.form_get = cgi.parse_qs(self.QUERY_STRING, keep_blank_values=1)
@@ -232,13 +235,19 @@ class BaseEnv(collection.RestrictedCollection):
 
         # Create an object to hold only HTTP POST variables
         self.form_post = {}
-        passed = deepcopy(self.form)
-        for key in passed.keys():
-            if not key in self.form_get:
-                if isinstance(passed[key], list):
-                    self.form_post[key] = passed[key]
-                else:
-                    self.form_post[key] = passed[key].value
+        for key in self.form:
+            if isinstance(self.form[key], list):
+                self.form_post[key] = [k.value for k in self.form[key]]
+                if key in self.form_get:
+                    for v in self.form_get[key]:
+                        self.form_post[key].remove(v)
+
+                if isinstance(self.form_post[key], list):
+                    if len(self.form_post[key]) == 1:
+                        self.form_post[key] = self.form_post[key].pop()
+
+            else:
+                self.form_post[key] = self.form[key].value
 
         # Make sure the form object contains both while taking
         # precedence over POST when overlap exists
