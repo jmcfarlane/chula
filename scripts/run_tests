@@ -22,8 +22,9 @@ if __name__ == "__main__":
         path = os.getcwd()
 
     # Start up the webserver
-    sys.argv.append('-p %s' % bat.PORT)
-    sys.argv.append('%s' % webapp)
+    sys.argv.extend(['--port', bat.PORT])
+    sys.argv.extend(['--provider', bat.PROVIDER])
+    sys.argv.extend([webapp])
     proc = multiprocessing.Process(target=app.run)
     proc.start()
     proc.join(1)

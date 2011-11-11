@@ -1,46 +1,63 @@
-"""Class for use with Basic Acceptance Testing"""
+
 
 # Python imports
+import urllib
 import os
 import unittest
-import urllib2
+
+# Third party imports
+import httplib2
 
 # Chula imports
 from chula import collection
 
-#class RedirectHandler(urllib2.HTTPRedirectHandler):
-#    def http_error_301(self, req, fp, code, msg, headers):
-#        upstream = urllib2.HTTPRedirectHandler.http_error_301
-#        result = upstream(self, req, fp, code, msg, headers)
-#        result.code = code
-#        return result
-#
-#    def http_error_302(self, req, fp, code, msg, headers):
-#        upstream = urllib2.HTTPRedirectHandler.http_error_302
-#        result = upstream(self, req, fp, code, msg, headers)
-#        result.code = code
-#        return result
-
 PORT = os.environ.get('CHULA_TEST_PORT', 8090)
+PROVIDER = os.environ.get('CHULA_TEST_PROVIDER', 'builtin')
 
 class Bat(unittest.TestCase):
+    def response(self, request):
+        resp, content = request
+        retval = collection.Collection()
+        retval.data = content
+        retval.status = int(resp.get('status'))
+        retval.headers = resp
+        return retval
+
     def request(self, url):
-        if not url.startswith('http://'):
-            url = 'http://localhost:%s' % PORT + url
+        return self.get(url)
 
-        #opener = urllib2.build_opener(RedirectHandler())
-        #response = opener.open(url)
+    def get(self, url):
+        http = httplib2.Http()
+        return self.response(http.request(self.url(url), 'GET'))
 
-        try:
-            response = urllib2.urlopen(url)
-        except urllib2.HTTPError, ex:
-            response = ex
-        except urllib2.URLError, ex:
-            response = ex
-
+    def post(self, url, data):
+        # For some reason chula is responding oddly to http POST
+        # variables when requested by httplib2.  It responds fine with
+        # urllib or curl.  Using urllib for a bit longer (for this
+        # method only.
+        data = urllib.urlencode(data)
+        response = urllib.urlopen(self.url(url), data)
         retval = collection.Collection()
         retval.data = response.read()
         retval.status = response.code
         retval.headers = response.info().headers
-
         return retval
+
+    def post_file(self, url, body):
+        http = httplib2.Http()
+        return self.response(http.request(self.url(url), 'POST', body=body))
+
+    def put(self, url, body, headers=None):
+        http = httplib2.Http()
+        headers = headers or {'content-type':'text/plain'}
+        resp = http.request(self.url(url), 'PUT', body=body, headers=headers)
+        return self.response(resp)
+
+    def delete(self, url, body, headers=None):
+        http = httplib2.Http()
+        headers = headers or {'content-type':'text/plain'}
+        resp = http.request(self.url(url), 'DELETE', body=body, headers=headers)
+        return self.response(resp)
+
+    def url(self, url):
+        return 'http://localhost:%s' % PORT + url
