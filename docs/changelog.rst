@@ -15,7 +15,7 @@ Changelog
 Chula v0.13.0 (dev)
 +++++++++++++++++++
 
-*Still under development*
+*Released 2011-11-15*
 
 - Add support for using the Eventlet wsgi provider.
 - Add max-request, keep-alive, preload, worker-provider, and
