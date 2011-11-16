@@ -46,6 +46,12 @@ def getopts():
     p.add_option('-c', '--config',
                  dest='config_module',
                  help='Module name containing app configuration')
+    p.add_option('-k', '--keep-alive',
+                 dest='keep_alive',
+                 help='Keep-Alive in seconds if supported by provider')
+    p.add_option('-l', '--preload',
+                 action='store_true',
+                 help='Preload prior to forking if supported by provider')
     p.add_option('-m', '--max-requests',
                  dest='max_requests',
                  help='Max requests per worker before re-spawning')
@@ -58,6 +64,9 @@ def getopts():
                  help='Max time in sec per request if provider supported')
     p.add_option('-w', '--workers',
                  help='Number of workers if the provider supports it')
+    p.add_option('-W', '--worker-provider',
+                 dest='worker_provider',
+                 help='Type of worker class to use if supported by provider')
     p.add_option('-P', '--provider',
                  help='Use the specified provider (gevent, gunicorn, etc)')
 
@@ -66,9 +75,12 @@ def getopts():
     p.set_defaults(config_module='configuration')
     p.set_defaults(config_obj='app')
     p.set_defaults(debug=False)
+    p.set_defaults(keep_alive=2)
     p.set_defaults(max_requests=0)
     p.set_defaults(port=8080)
+    p.set_defaults(preload=False)
     p.set_defaults(timeout=120)
+    p.set_defaults(worker_provider='sync')
     p.set_defaults(workers=4)
 
     return (p, p.parse_args())
@@ -101,7 +113,10 @@ def _gunicorn(application, options):
         def init(self, parser, opts, args):
             c = {'bind': '0.0.0.0:%s' % options.port,
                  'max_requests': int(options.max_requests),
+                 'preload_app': options.preload,
+                 'keepalive': int(options.keep_alive),
                  'timeout': int(options.timeout),
+                 'worker_class': options.worker_provider,
                  'workers': options.workers}
             if hasattr(config, 'AccessLog'):
                 c.update({'accesslog':options.access_log})
