@@ -252,7 +252,7 @@ class BaseEnv(collection.RestrictedCollection):
         # Make sure the form object contains both while taking
         # precedence over POST when overlap exists
         self.form = deepcopy(self.form_get)
-        self.form.update(self.form_post)
+        self.form.update(dict([(k,v) for k,v in self.form_post.items() if v]))
 
     def fill(self, env):
         """

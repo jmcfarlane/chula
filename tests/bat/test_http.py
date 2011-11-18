@@ -8,13 +8,18 @@ class Test_http(bat.Bat):
         self.assertEquals(retval.data, HTML)
         self.assertEquals(retval.status, 200)
 
-    def test_get_args_in_form_get(self):
+    def test_get_args_in_form(self):
         retval = self.get('/http/render_form?a=b&foo=bar')
         self.assertTrue('a==b' in retval.data, retval.data)
         self.assertTrue('foo==bar' in retval.data, retval.data)
         self.assertEquals(retval.status, 200)
 
-    def test_get_args_in_form(self):
+    def test_get_args_in_form_multiple(self):
+        retval = self.get('/http/render_form?a=b&a=c')
+        self.assertTrue("a==['b', 'c']" in retval.data,  retval.data)
+        self.assertEquals(retval.status, 200)
+
+    def test_get_args_in_form_get(self):
         retval = self.get('/http/render_form_get?a=b&foo=bar')
         self.assertTrue('a==b' in retval.data,  retval.data)
         self.assertTrue('foo==bar' in retval.data, retval.data)
@@ -42,6 +47,16 @@ class Test_http(bat.Bat):
         self.assertTrue('a==b' in retval.data,  retval)
         self.assertTrue('foo==bar' in retval.data, retval.data)
         self.assertEquals(retval.status, 200)
+
+    def test_post_args_in_form_multiple(self):
+        data = dict(a=['b', 'c'])
+        retval = self.post('/http/render_form', data)
+        self.assertTrue("a==['b', 'c']" in retval.data,  retval.data)
+
+    def test_post_args_in_form_post_multiple(self):
+        data = dict(a=['b', 'c'])
+        retval = self.post('/http/render_form_post', data)
+        self.assertTrue("a==['b', 'c']" in retval.data,  retval.data)
 
     def test_post_and_get_args(self):
         data = dict(a='b', foo='bar')

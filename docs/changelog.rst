@@ -12,10 +12,10 @@ Changelog
 
  :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.13.0 (dev)
+Chula v0.13.1 (dev)
 +++++++++++++++++++
 
-*Released 2011-11-15*
+*Released 2011-11-18*
 
 - Add support for using the Eventlet wsgi provider.
 - Add max-request, keep-alive, preload, worker-provider, and
