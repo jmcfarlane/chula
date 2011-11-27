@@ -42,10 +42,11 @@ class Test_http(bat.Bat):
         self.assertEquals(retval.status, 200)
 
     def test_post_args_in_form(self):
-        data = dict(a='b', foo='bar')
+        data = dict(a='b', foo='bar', empty='')
         retval = self.post('/http/render_form', data)
         self.assertTrue('a==b' in retval.data,  retval)
         self.assertTrue('foo==bar' in retval.data, retval.data)
+        self.assertTrue('empty==' in retval.data, retval.data)
         self.assertEquals(retval.status, 200)
 
     def test_post_args_in_form_multiple(self):
@@ -69,9 +70,10 @@ class Test_http(bat.Bat):
 
     def test_post_and_get_args_that_overlap(self):
         data = dict(a='A', foo='bar')
-        retval = self.post('/http/render_form?a=b', data)
+        retval = self.post('/http/render_form?a=b&c=C', data)
         self.assertTrue('a==A' in retval.data,  retval)
         self.assertTrue('foo==bar' in retval.data, retval.data)
+        self.assertTrue('c==C' in retval.data, retval.data)
         self.assertEquals(retval.status, 200)
 
     def test_post_args_isolated_from_get(self):

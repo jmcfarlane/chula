@@ -68,9 +68,13 @@ class Environment(env.BaseEnv):
             wsgi_input = self.wsgi_input
 
         # Extract HTTP form information (later enriched by extras())
-        self.form = FieldStorage(fp=wsgi_input,
-                                 environ=environ,
-                                 keep_blank_values=1)
+        e = environ.copy()
+        e['QUERY_STRING'] = ''
+        p = FieldStorage(fp=wsgi_input, environ=e, keep_blank_values=1)
+        try:
+            self.form_post = dict(p)
+        except TypeError:
+            self.form_post = {}
 
         # Add additional variables provided by the base class
         super(Environment, self).extras()

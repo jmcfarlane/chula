@@ -207,13 +207,6 @@ class BaseEnv(collection.RestrictedCollection):
          - self.form_raw (usually xml or json)
         """
 
-        # Cast any dict-like objects (FieldStorage for example) to
-        # real dicts, so method like get() and iteritems() exist.
-        try:
-            self.form = dict(self.form)
-        except TypeError:
-            self.form = {}
-
         # Create object to hold only HTTP GET variables
         self.form_get = cgi.parse_qs(self.QUERY_STRING, keep_blank_values=1)
         for key in self.form_get.keys():
@@ -227,32 +220,28 @@ class BaseEnv(collection.RestrictedCollection):
         # keys).  In the case of a raw string post, the key will
         # actually contain the raw string (probably xml or json).  If
         # we do find raw input, we skip form_post processing.
-        keys = [k for k in self.form.keys() if not k in self.form_get.keys()]
+        keys = [k for k in self.form_post if not k in self.form_get]
         if len(keys) == 1 and RE_HTTP_GET_OR_POST_KEY.search(keys.pop()):
             self.form = self.form_get
             self.form_post = {}
             return
 
-        # Create an object to hold only HTTP POST variables
-        self.form_post = {}
-        for key in self.form:
-            if isinstance(self.form[key], list):
-                self.form_post[key] = [k.value for k in self.form[key]]
-                if key in self.form_get:
-                    for v in self.form_get[key]:
-                        self.form_post[key].remove(v)
-
-                if isinstance(self.form_post[key], list):
-                    if len(self.form_post[key]) == 1:
-                        self.form_post[key] = self.form_post[key].pop()
-
+        # Convert FieldStorage objects to simple values
+        for k in self.form_post:
+            if isinstance(self.form_post[k], list):
+                self.form[k] = [v.value for v in self.form_post[k]]
+                if len(self.form_post[k]) == 1:
+                    self.form_post[k] = self.form_post[k].pop()
             else:
-                self.form_post[key] = self.form[key].value
+                self.form_post[k] = self.form_post[k].value
 
-        # Make sure the form object contains both while taking
-        # precedence over POST when overlap exists
-        self.form = deepcopy(self.form_get)
-        self.form.update(dict([(k,v) for k,v in self.form_post.items() if v]))
+        # Expose all of the POST data in form
+        self.form = self.form_post
+
+        # Add any GET args to form that aren't populated (thus POST
+        # takes precidence over GET)
+        for k in [k for k in self.form_get if not k in self.form]:
+            self.form[k] = self.form_get[k]
 
     def fill(self, env):
         """
