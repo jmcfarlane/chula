@@ -46,7 +46,7 @@ understand now is: :attr:`Config.classpath`.
       The :attr:`classpath` option specifies a package in Python's
       path that holds one or more Chula controllers.  The convention
       typically used is ``controller``, which would be located in
-      :file:`webapp/controller` from a fileystem perspective.  You can
+      :file:`webapp/controller` from a file system perspective.  You can
       use any location you like, it just needs to be a valid Python
       package in Python's path.
 
