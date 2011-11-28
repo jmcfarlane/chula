@@ -89,7 +89,7 @@ Chula v0.10.0
 - Added logging for 404 failures when
   :meth:`chula.www.controller.error.Error._crappy_static_server` is in
   use.
-- Added logging for unhandled excpetions in controller methods
+- Added logging for unhandled exceptions in controller methods
   decorated as a webservice, via :func:`chula.webservice.expose`.
 - Added a :meth:`chula.www.controller.error.Error.e404_render` method
   to the base error controller for custom rendering while still using

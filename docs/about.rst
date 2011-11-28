@@ -20,7 +20,7 @@ it's main purpose: to be a vehicle for me to have fun and learn stuff.
 
 If you're really wanting to build the next killer application I'd
 prolly recommend using `Django <http://djangoproject.org>`__.  If
-you're looing for something smaller or even just something *different*
+you're looking for something smaller or even just something *different*
 then give Chula a try :)
 
 Features
@@ -89,7 +89,7 @@ Roadmap
 The roadmap right now is pretty small.  Here are the features I'm
 currently thinking about:
 
-1. Profiling - profilng of both Chula and apps running on it
+1. Profiling - profiling of both Chula and apps running on it
 #. Support for MySQL_ based session.  Currently only PostgreSQL_ and
    CouchDB are supported.  With either backend Memcached_ will continue to be
    used.

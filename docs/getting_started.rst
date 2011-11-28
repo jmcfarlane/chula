@@ -8,7 +8,7 @@ Preferred::
 
  sudo pip install chula
 
-Alternatiely::
+Alternatively::
 
  sudo easy_install chula
 
@@ -136,7 +136,7 @@ Hit :kbd:`Control-c` to stop the server.
 Add more to it
 ++++++++++++++
 
-Let's add a page that's a little bit more usefull.  This one will
+Let's add a page that's a little bit more useful.  This one will
 generate an HTML table of the environment variables.  This page will
 also use Mako_ for the view.
 
@@ -204,7 +204,7 @@ Let's see what this looks like now::
 Now browse to http://localhost:8080/myapp/envinfo and you should see a table
 of environment variables.  It's a little hard to read because the keys
 are not sorted, but that's because keys in the standard dict are not
-sorted.  I leave the sorting issue as an excercise for the reader :)
+sorted.  I leave the sorting issue as an exercise for the reader :)
 
 Hit :kbd:`Control-c` to stop the server.
 
@@ -253,7 +253,7 @@ use (if supported) via the :option:`-P` argument.  For example::
 Terminology
 +++++++++++
 
-Welcome to Chula. Let's go thru a few things before you get started
+Welcome to Chula. Let's go through a few things before you get started
 building your first app.  Chula is a simple toolkit that is based on
 the MVC_ pattern.  From now on we'll use the terms "*model*",
 "*view*", and "*controller*" when describing things.  Here's a brief
@@ -283,10 +283,10 @@ Controller  The controller is the main class responsible for coordinating
 What's next
 +++++++++++
 
-When creating your own application is's going to be important that you
-understand the configuration options available.  You'll also want to
-learn more about featues available, and how to use them.  You can find
-detail on configuration `here <library/config.html>`_.
+When creating your own application it's important that you understand
+the configuration options available.  You'll also want to learn more
+about features available, and how to use them.  You can find detail on
+configuration `here <library/config.html>`_.
 
 .. _Apache: http://www.apache.org
 .. _BAT: http://en.wikipedia.org/wiki/Acceptance_testing

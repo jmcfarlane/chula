@@ -35,7 +35,7 @@ the backend is always consulted in the event of a cache miss.
 A current limitation of the session store is that it does not use
 connection pooling.  This can optionally be added by fronting your
 PostgreSQL server with pgpool_.  When CouchDB is used as the backend,
-connection pooling isn't relevent as it uses HTTP.
+connection pooling isn't relevant as it uses HTTP.
 
 Native storage
 ++++++++++++++
@@ -82,10 +82,10 @@ so.
 CouchDB
 -------
 
-You wil need to configure :attr:`config.Config.session_nosql` with the
+You will need to configure :attr:`config.Config.session_nosql` with the
 full HTTP path to your CouchDB server.  If this is a local install,
 you'd set the value to http://localhost:5984.  Don't worry about the
-database, as it wil be created automatically on demand.
+database, as it will be created automatically on demand.
 
 Memcached
 ---------
