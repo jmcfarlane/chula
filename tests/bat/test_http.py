@@ -1,3 +1,4 @@
+from chula import json
 from chula.test import bat
 
 HTML = 'Hello <a href="home/foo">world</a>'
@@ -33,6 +34,11 @@ class Test_http(bat.Bat):
     def test_post(self):
         retval = self.post('', dict(a='a', b='b'))
         self.assertEquals(retval.data, HTML)
+
+    def test_post_raw_json_with_nasty_contents(self):
+        j = json.dumps(dict(b=open('tests/bat/test_http.py').read()))
+        retval = self.post('/http/render_form_raw', j)
+        self.assertEquals(retval.data, j)
 
     def test_post_args_in_form_post(self):
         data = dict(a='b', foo='bar')

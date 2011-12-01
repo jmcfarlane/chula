@@ -1,9 +1,7 @@
-
-
 # Python imports
-import urllib
 import os
 import unittest
+import urllib
 
 # Third party imports
 import httplib2
@@ -35,7 +33,7 @@ class Bat(unittest.TestCase):
         # variables when requested by httplib2.  It responds fine with
         # urllib or curl.  Using urllib for a bit longer (for this
         # method only.
-        data = urllib.urlencode(data)
+        data = urllib.urlencode(data) if isinstance(data, dict) else data
         response = urllib.urlopen(self.url(url), data)
         retval = collection.Collection()
         retval.data = response.read()

@@ -229,7 +229,7 @@ class BaseEnv(collection.RestrictedCollection):
         # Convert FieldStorage objects to simple values
         for k in self.form_post:
             if isinstance(self.form_post[k], list):
-                self.form[k] = [v.value for v in self.form_post[k]]
+                self.form_post[k] = [v.value for v in self.form_post[k]]
                 if len(self.form_post[k]) == 1:
                     self.form_post[k] = self.form_post[k].pop()
             else:

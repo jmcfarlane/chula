@@ -12,3 +12,6 @@ class Http(controller.Controller):
 
     def render_form_post(self):
         return self._format(self.env.form_post)
+
+    def render_form_raw(self):
+        return self.env.form_raw
