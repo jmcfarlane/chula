@@ -12,8 +12,15 @@ Changelog
 
  :Source: http://github.com/jmcfarlane/chula
 
-Chula v0.13.3 (dev)
+Chula v0.14.0 (dev)
 +++++++++++++++++++
+
+*Still under development*
+
+:Source: http://github.com/jmcfarlane/chula
+
+Chula v0.13.3 (latest)
+++++++++++++++++++++++
 
 *Released 2011-11-30*
 
@@ -23,9 +30,12 @@ Chula v0.13.3 (dev)
 - Switch to httplib2 when running bat tests.
 - Fix various http GET/POST bugs.
 
-:Source: http://github.com/jmcfarlane/chula
+:Documentation: `Chula-0.13.3 </0.13.3/>`_
+:Download: `</downloads/Chula-0.13.3.tar.gz>`_
+:Download: `</downloads/Chula-0.13.3.checksums>`_
+:Source: http://github.com/jmcfarlane/chula/tree/v0.13.3
 
-Chula v0.12.0 (latest)
+Chula v0.12.0 (stable)
 ++++++++++++++++++++++
 
 *Released 2011-08-02*
