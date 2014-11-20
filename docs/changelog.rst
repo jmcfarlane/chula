@@ -17,6 +17,8 @@ Chula v0.14.0 (dev)
 
 *Still under development*
 
+- Fix decoding of unicode/non-unicode session data.
+
 :Source: http://github.com/jmcfarlane/chula
 
 Chula v0.13.3 (latest)
