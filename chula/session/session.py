@@ -3,6 +3,7 @@
 import cPickle
 
 from chula import json, logger
+from chula.data import str2unicode
 from chula.session.backends import memcached
 
 CPICKLE = 'cPickle'
@@ -104,6 +105,7 @@ class Session(dict):
             return data
 
         # Decode using the desired transport
+        data = str2unicode(data)
         if self._transport == CPICKLE:
             return cPickle.loads(data)
         else:
